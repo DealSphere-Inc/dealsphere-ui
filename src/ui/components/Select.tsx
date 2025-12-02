@@ -1,0 +1,44 @@
+import { Select as NextUISelect, SelectItem, SelectProps as NextUISelectProps } from '@nextui-org/react';
+import { forwardRef } from 'react';
+
+export interface SelectOption {
+  value: string;
+  label: string;
+}
+
+export interface SelectProps extends Omit<NextUISelectProps, 'children'> {
+  options: SelectOption[];
+  variant?: 'flat' | 'bordered' | 'faded' | 'underlined';
+  size?: 'sm' | 'md' | 'lg';
+}
+
+export const Select = forwardRef<HTMLSelectElement, SelectProps>((props, ref) => {
+  const {
+    options,
+    variant = 'bordered',
+    size = 'md',
+    classNames,
+    ...rest
+  } = props;
+
+  return (
+    <NextUISelect
+      ref={ref}
+      variant={variant}
+      size={size}
+      classNames={{
+        trigger: 'bg-[var(--app-surface-hover)] border border-[var(--app-border-subtle)]',
+        ...classNames,
+      }}
+      {...rest}
+    >
+      {options.map((option) => (
+        <SelectItem key={option.value} value={option.value}>
+          {option.label}
+        </SelectItem>
+      ))}
+    </NextUISelect>
+  );
+});
+
+Select.displayName = 'Select';

@@ -1,0 +1,61 @@
+:root {
+  /* Luxurious Tech Energetic - Light Mode */
+  --app-bg: #FAFAFA; /* Soft white for comfort */
+  --app-surface: #FFFFFF; /* Pure white cards */
+  --app-surface-hover: #F4F4F5; /* Zinc 100 hover */
+  --app-border: #E4E4E7; /* Zinc 200 borders */
+  --app-border-subtle: #F4F4F5; /* Zinc 100 subtle */
+  --app-text: #0A0A0F; /* Deep navy-black for luxury */
+  --app-text-muted: #71717A; /* Zinc 500 muted */
+  --app-text-subtle: #A1A1AA; /* Zinc 400 subtle */
+  --app-primary: #6366F1; /* Electric indigo - tech & energetic */
+  --app-primary-hover: #4F46E5; /* Indigo 600 hover */
+  --app-primary-bg: #EEF2FF; /* Indigo 50 background */
+  --app-secondary: #C4941F; /* Rich gold - luxurious */
+  --app-secondary-hover: #A67C1A; /* Darker gold hover */
+  --app-success: #10B981; /* Emerald - intuitive success */
+  --app-success-bg: #ECFDF5; /* Emerald 50 */
+  --app-warning: #F59E0B; /* Amber - intuitive warning */
+  --app-warning-bg: #FFFBEB; /* Amber 50 */
+  --app-danger: #EF4444; /* Red - intuitive danger */
+  --app-danger-bg: #FEF2F2; /* Red 50 */
+  --app-accent: #06B6D4; /* Cyan - energetic tech accent */
+  --app-accent-hover: #0891B2; /* Cyan 600 hover */
+  --app-info: #3B82F6; /* Blue - intuitive info */
+  --app-info-bg: #EFF6FF; /* Blue 50 */
+  --app-sidebar-bg: #FFFFFF;
+  --app-sidebar-border: #E4E4E7;
+}
+
+.dark {
+  /* Luxurious Tech Energetic - Dark Mode */
+  --app-bg: #09090B; /* Deep black for luxury & OLED */
+  --app-surface: #18181B; /* Zinc 900 cards */
+  --app-surface-hover: #27272A; /* Zinc 800 hover */
+  --app-border: #27272A; /* Zinc 800 borders */
+  --app-border-subtle: #3F3F46; /* Zinc 700 subtle */
+  --app-text: #FAFAFA; /* Bright white text */
+  --app-text-muted: #A1A1AA; /* Zinc 400 muted */
+  --app-text-subtle: #71717A; /* Zinc 500 subtle */
+  --app-primary: #818CF8; /* Bright electric indigo - energetic */
+  --app-primary-hover: #A5B4FC; /* Indigo 300 hover */
+  --app-primary-bg: #312E81; /* Indigo 900 background */
+  --app-secondary: #EAB308; /* Bright gold - luxurious & visible */
+  --app-secondary-hover: #FDE047; /* Yellow 300 hover */
+  --app-success: #22C55E; /* Bright green - intuitive success */
+  --app-success-bg: #14532D; /* Green 900 */
+  --app-warning: #FBBF24; /* Bright amber - intuitive warning */
+  --app-warning-bg: #451A03; /* Amber 950 */
+  --app-danger: #F87171; /* Bright red - intuitive danger */
+  --app-danger-bg: #450A0A; /* Red 950 */
+  --app-accent: #22D3EE; /* Bright cyan - energetic tech */
+  --app-accent-hover: #67E8F9; /* Cyan 300 hover */
+  --app-info: #60A5FA; /* Bright blue - intuitive info */
+  --app-info-bg: #1E3A8A; /* Blue 900 */
+  --app-sidebar-bg: #18181B; /* Zinc 900 */
+  --app-sidebar-border: #27272A; /* Zinc 800 */
+}
+
+html {
+  font-size: 16px;
+}

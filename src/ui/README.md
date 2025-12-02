@@ -1,0 +1,255 @@
+# DealSphere UI Library
+
+A centralized, type-safe UI component library for the DealSphere application. Built on top of NextUI with custom styling that follows the luxurious, tech-forward, and energetic design system.
+
+## 🎨 Design Principles
+
+- **Luxurious**: Deep blacks, rich golds, and premium indigo tones
+- **Tech-Forward**: Electric blues, cyan accents, and vibrant gradients
+- **Energetic**: Bright, saturated colors that feel dynamic and modern
+- **Intuitive**: Clear semantic colors (green=success, red=danger, etc.)
+- **Consistent**: All components use CSS variables for automatic theme switching
+
+## 📦 Installation
+
+The UI library is already part of the frontend app. Simply import components:
+
+```tsx
+import { Button, Card, Heading } from '@/ui';
+```
+
+## 🧩 Component Categories
+
+### Components (Base)
+- **Button** - Primary action buttons with variants
+- **Card** - Content containers with header/footer support
+- **Badge** - Status indicators and labels
+- **IconButton** - Icon-only buttons
+- **Input** - Text input fields
+- **Select** - Dropdown selection
+- **Checkbox** - Boolean selection
+- **Switch** - Toggle controls
+- **Textarea** - Multi-line text input
+
+### Layout
+- **Container** - Max-width content wrapper
+- **Grid** - Responsive grid system
+- **Stack** - Vertical/horizontal spacing
+- **Flex** - Flexible box layouts
+
+### Typography
+- **Heading** - Semantic headings (h1-h6)
+- **Text** - Body text with variants
+- **Link** - Navigation links
+
+### Feedback
+- **Alert** - Contextual messages
+- **Modal** - Dialog overlays
+- **Spinner** - Loading indicators
+- **Skeleton** - Content placeholders
+- **Progress** - Progress bars
+
+## 📖 Usage Examples
+
+### Button
+
+```tsx
+import { Button } from '@/ui';
+
+<Button color="primary" size="lg">
+  Get Started
+</Button>
+
+<Button variant="bordered" color="secondary">
+  Learn More
+</Button>
+
+<Button variant="light" color="danger">
+  Delete
+</Button>
+```
+
+### Card
+
+```tsx
+import { Card } from '@/ui';
+
+<Card
+  header={<h3>Card Title</h3>}
+  footer={<Button>Action</Button>}
+  padding="lg"
+>
+  Card content goes here
+</Card>
+```
+
+### Layout Components
+
+```tsx
+import { Container, Grid, Stack } from '@/ui';
+
+<Container maxWidth="xl">
+  <Grid cols={3} gap="lg">
+    <Card>Item 1</Card>
+    <Card>Item 2</Card>
+    <Card>Item 3</Card>
+  </Grid>
+</Container>
+
+<Stack direction="horizontal" spacing="md" align="center">
+  <Button>Cancel</Button>
+  <Button color="primary">Submit</Button>
+</Stack>
+```
+
+### Typography
+
+```tsx
+import { Heading, Text } from '@/ui';
+
+<Heading level={1} color="primary">
+  Welcome to DealSphere
+</Heading>
+
+<Text size="lg" color="muted">
+  Manage your VC portfolio with precision
+</Text>
+```
+
+### Feedback Components
+
+```tsx
+import { Alert, Modal, Spinner } from '@/ui';
+
+<Alert variant="success" title="Success!">
+  Your changes have been saved
+</Alert>
+
+<Modal
+  title="Confirm Action"
+  isOpen={isOpen}
+  onOpenChange={setIsOpen}
+  footer={
+    <>
+      <Button onClick={handleCancel}>Cancel</Button>
+      <Button color="primary" onClick={handleConfirm}>Confirm</Button>
+    </>
+  }
+>
+  Are you sure you want to proceed?
+</Modal>
+
+<Spinner size="lg" color="primary" />
+```
+
+### Form Components
+
+```tsx
+import { Input, Select, Checkbox, Switch } from '@/ui';
+
+<Input
+  label="Email"
+  type="email"
+  placeholder="you@company.com"
+  isRequired
+/>
+
+<Select
+  label="Stage"
+  options={[
+    { value: 'seed', label: 'Seed' },
+    { value: 'series-a', label: 'Series A' },
+    { value: 'series-b', label: 'Series B' },
+  ]}
+/>
+
+<Checkbox color="primary">
+  I agree to the terms
+</Checkbox>
+
+<Switch color="primary">
+  Enable notifications
+</Switch>
+```
+
+## 🎨 Color System
+
+All components automatically adapt to light/dark mode using CSS variables:
+
+### Semantic Colors
+- `primary` - Electric indigo (main brand color)
+- `secondary` - Rich gold (luxury accent)
+- `success` - Emerald green (positive actions)
+- `warning` - Amber (caution)
+- `danger` - Red (destructive actions)
+- `default` - Neutral gray
+
+### Usage in Custom Components
+```tsx
+// Use CSS variables for consistency
+<div className="bg-[var(--app-surface)] text-[var(--app-text)]">
+  Content
+</div>
+```
+
+## 🔧 Customization
+
+Components are built with Tailwind CSS and accept `className` props for additional styling:
+
+```tsx
+<Button className="shadow-lg hover:shadow-xl">
+  Custom Styled Button
+</Button>
+```
+
+## 📁 File Structure
+
+```
+src/ui/
+├── components/       # Base UI components
+│   ├── Button.tsx
+│   ├── Card.tsx
+│   ├── Badge.tsx
+│   ├── Input.tsx
+│   ├── Select.tsx
+│   └── ...
+├── layout/          # Layout components
+│   ├── Container.tsx
+│   ├── Grid.tsx
+│   ├── Stack.tsx
+│   └── Flex.tsx
+├── typography/      # Text components
+│   ├── Heading.tsx
+│   ├── Text.tsx
+│   └── Link.tsx
+├── feedback/        # Feedback components
+│   ├── Alert.tsx
+│   ├── Modal.tsx
+│   ├── Spinner.tsx
+│   └── ...
+└── index.ts         # Main export file
+```
+
+## 🚀 Best Practices
+
+1. **Always use UI library components** instead of creating ad-hoc components
+2. **Leverage semantic colors** (success, warning, danger) for intuitive UX
+3. **Use layout components** (Container, Grid, Stack) for consistent spacing
+4. **Maintain type safety** by importing and using TypeScript types
+5. **Follow the color system** by using CSS variables for custom styling
+
+## 🔄 Theme Support
+
+All components automatically support light/dark mode via `next-themes`. Toggle the theme anywhere:
+
+```tsx
+import { useTheme } from 'next-themes';
+
+const { theme, setTheme } = useTheme();
+```
+
+## 📚 Additional Resources
+
+- Built on [NextUI](https://nextui.org/)
+- Styled with [Tailwind CSS](https://tailwindcss.com/)
+- Icons from [Lucide React](https://lucide.dev/)
