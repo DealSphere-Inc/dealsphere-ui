@@ -59,7 +59,10 @@ export function Homepage() {
   return (
     <div className="min-h-screen bg-[var(--app-bg)]">
       {/* Navigation */}
-      <nav className="border-b border-[var(--app-border)] bg-[var(--app-surface)]">
+      <nav
+        className="sticky top-0 left-0 right-0 z-50 w-full border-b border-[var(--app-border)] bg-[var(--app-surface)]/90 backdrop-blur-md supports-[backdrop-filter]:bg-[var(--app-surface)]/75"
+        style={{ position: 'sticky', top: 0 }}
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4 sm:gap-8">
             <h1 className="text-xl sm:text-2xl tracking-tight text-[var(--app-primary)]">dealsphere</h1>
