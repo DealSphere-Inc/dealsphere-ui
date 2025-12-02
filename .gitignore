@@ -1,0 +1,23 @@
+# Node / Next build artifacts
+node_modules
+.next
+out
+.vercel
+coverage
+*.log
+pnpm-debug.log*
+npm-debug.log*
+
+# Env / tooling
+.env
+.env.*
+.DS_Store
+.idea
+.vscode
+.turbo
+.pnpm-store
+tsconfig.tsbuildinfo
+
+# Cypress output
+cypress/videos
+cypress/screenshots
