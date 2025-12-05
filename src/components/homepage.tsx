@@ -65,7 +65,7 @@ export function Homepage() {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4 sm:gap-8">
-            <h1 className="text-xl sm:text-2xl tracking-tight text-[var(--app-primary)]">vestledger</h1>
+            <h1 className="text-xl sm:text-2xl tracking-tight text-[var(--app-primary)]">VestLedger</h1>
             <div className="hidden md:flex items-center gap-6">
               <a href="#features" className="text-sm text-[var(--app-text-muted)] hover:text-[var(--app-text)] transition-colors">Features</a>
               <a href="#about" className="text-sm text-[var(--app-text-muted)] hover:text-[var(--app-text)] transition-colors">About</a>

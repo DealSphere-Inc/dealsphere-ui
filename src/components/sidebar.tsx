@@ -40,7 +40,7 @@ export function Sidebar() {
   return (
     <aside className="w-64 h-full bg-[var(--app-sidebar-bg)] border-r border-[var(--app-sidebar-border)] flex flex-col">
       <div className="p-6 border-b border-[var(--app-sidebar-border)]">
-        <h1 className="text-xl tracking-tight text-[var(--app-primary)]">vestledger</h1>
+        <h1 className="text-xl tracking-tight text-[var(--app-primary)]">VestLedger</h1>
         <p className="text-xs text-[var(--app-text-muted)] mt-1">Venture Capital OS</p>
       </div>
 
