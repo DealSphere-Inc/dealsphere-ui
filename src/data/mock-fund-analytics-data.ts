@@ -133,7 +133,7 @@ export const cohortsByVintage: CohortPerformance[] = [
 
 // Cohort Analysis by Stage
 export const cohortsByStage: CohortPerformance[] = [
-  { cohort: 'Seed', count: 2, totalInvested: 3500000, currentValuation: 6300000, moic: 1.80, irr: 42.5, tvpi: 1.80, dpi: 0.12, percentageExited: 0 },
+  { cohort: 'Seed', count: 2, totalInvested: 3500000, currentValue: 6300000, moic: 1.80, irr: 42.5, tvpi: 1.80, dpi: 0.12, percentageExited: 0 },
   { cohort: 'Series A', count: 4, totalInvested: 14500000, currentValue: 29800000, moic: 2.06, irr: 48.2, tvpi: 2.06, dpi: 0.28, percentageExited: 0 },
   { cohort: 'Series B', count: 2, totalInvested: 14000000, currentValue: 28200000, moic: 2.01, irr: 45.8, tvpi: 2.01, dpi: 0.15, percentageExited: 0 },
 ];
