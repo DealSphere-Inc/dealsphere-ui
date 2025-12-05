@@ -10,7 +10,7 @@ import { ValuationTrends } from './analytics/valuation-trends';
 import { DeploymentPacing } from './analytics/deployment-pacing';
 import { ConcentrationRisk } from './analytics/concentration-risk';
 
-export function Analytics() {
+export function AnalyticsDashboard() {
   const [selected, setSelected] = useState<string>('performance');
 
   return (

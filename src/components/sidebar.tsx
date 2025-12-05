@@ -38,9 +38,9 @@ export function Sidebar() {
   if (!mounted) return null;
 
   return (
-    <aside className="w-64 h-full bg-[var(--app-sidebar-bg)] border-r border-[var(--app-sidebar-border)] flex flex-col">
-      <div className="p-6 border-b border-[var(--app-sidebar-border)]">
-        <h1 className="text-xl tracking-tight text-[var(--app-primary)]">VestLedger</h1>
+    <aside className="w-64 h-full bg-[var(--app-sidebar-bg)] border-r-2 border-[var(--app-sidebar-border)] flex flex-col">
+      <div className="p-6 border-b-2 border-[var(--app-sidebar-border)]">
+        <h1 className="text-xl tracking-tight text-[var(--app-primary)] font-bold" style={{ textShadow: 'var(--neon-glow-violet)' }}>VestLedger</h1>
         <p className="text-xs text-[var(--app-text-muted)] mt-1">Venture Capital OS</p>
       </div>
 
@@ -59,11 +59,12 @@ export function Sidebar() {
               as={Link}
               href={item.href}
               variant="light"
-              className={`w-full justify-start gap-3 mb-1 ${
+              className={`w-full justify-start gap-3 mb-1 transition-all ${
                 isActive
-                ? 'bg-[var(--app-secondary)]/10 text-[var(--app-secondary)]'
-                  : 'text-[var(--app-text-muted)] hover:bg-[var(--app-surface-hover)] hover:text-[var(--app-text)]'
+                ? 'bg-[var(--app-secondary)]/10 text-[var(--app-secondary)] border-l-2 border-[var(--app-secondary)]'
+                  : 'text-[var(--app-text-muted)] hover:bg-[var(--app-surface-hover)] hover:text-[var(--app-primary)] hover:border-l-2 hover:border-[var(--app-primary)]'
               }`}
+              style={isActive ? { boxShadow: 'var(--neon-glow-teal)' } : {}}
               startContent={<Icon className="w-5 h-5" />}
             >
               <span className="text-sm">{item.label}</span>
@@ -72,21 +73,21 @@ export function Sidebar() {
         })}
       </nav>
 
-      <div className="p-4 border-t border-[var(--app-sidebar-border)] space-y-2">
-        <div className="flex items-center justify-between w-full px-4 py-2 text-[var(--app-text-muted)] hover:bg-[var(--app-surface-hover)] hover:text-[var(--app-text)] rounded-medium transition-colors cursor-pointer" onClick={toggleTheme}>
+      <div className="p-4 border-t-2 border-[var(--app-sidebar-border)] space-y-2">
+        <div className="flex items-center justify-between w-full px-4 py-2 text-[var(--app-text-muted)] hover:bg-[var(--app-surface-hover)] hover:text-[var(--app-primary)] rounded-medium transition-all cursor-pointer hover:border hover:border-[var(--app-primary)]" onClick={toggleTheme}>
           <div className="flex items-center gap-3">
             {theme === 'dark' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
             <span className="text-sm">{theme === 'dark' ? 'Dark' : 'Light'} Mode</span>
           </div>
-          <Switch 
-            isSelected={theme === 'dark'} 
+          <Switch
+            isSelected={theme === 'dark'}
             onValueChange={(v) => setTheme(v ? 'dark' : 'light')}
-            size="sm" 
+            size="sm"
           />
         </div>
         <Button
           variant="light"
-          className="w-full justify-start gap-3 text-[var(--app-text-muted)] hover:bg-[var(--app-surface-hover)] hover:text-[var(--app-text)]"
+          className="w-full justify-start gap-3 text-[var(--app-text-muted)] hover:bg-[var(--app-surface-hover)] hover:text-[var(--app-accent)] hover:border hover:border-[var(--app-accent)] transition-all"
           startContent={<Settings className="w-5 h-5" />}
         >
           <span className="text-sm">Settings</span>
@@ -94,7 +95,7 @@ export function Sidebar() {
         <Button
           variant="light"
           onPress={handleLogout}
-          className="w-full justify-start gap-3 text-[var(--app-danger)] hover:bg-[var(--app-danger-bg)]"
+          className="w-full justify-start gap-3 text-[var(--app-danger)] hover:bg-[var(--app-danger-bg)] hover:border hover:border-[var(--app-danger)] transition-all"
           startContent={<LogOut className="w-5 h-5" />}
         >
           <span className="text-sm">Logout</span>

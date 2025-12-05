@@ -17,69 +17,75 @@ module.exports = {
       themes: {
         light: {
           colors: {
-            background: "#FAFAFA", // Off-white for reduced eye strain
-            foreground: "#0A0A0F", // Deep navy-black for luxury
+            background: "#FAFBFC", // Clean light background
+            foreground: "#1A1F36", // Deep tech gray
             primary: {
-              DEFAULT: "#6366F1", // Electric indigo - tech & energetic
+              DEFAULT: "#8B5CF6", // Rich violet
               foreground: "#FFFFFF",
             },
             secondary: {
-              DEFAULT: "#C4941F", // Rich gold - luxurious accent
+              DEFAULT: "#06B6D4", // Premium teal/cyan
               foreground: "#FFFFFF",
             },
             success: {
-              DEFAULT: "#10B981", // Emerald - intuitive positive action
+              DEFAULT: "#10B981", // Emerald green
               foreground: "#FFFFFF",
             },
             warning: {
-              DEFAULT: "#F59E0B", // Amber - intuitive caution
-              foreground: "#FFFFFF",
+              DEFAULT: "#F59E0B", // Amber gold
+              foreground: "#1A1F36",
             },
             danger: {
-              DEFAULT: "#EF4444", // Red - intuitive danger/delete
+              DEFAULT: "#EF4444", // Clean red
               foreground: "#FFFFFF",
             },
             default: {
-              DEFAULT: "#E4E4E7", // Neutral zinc
-              foreground: "#18181B",
+              DEFAULT: "#F7F8FA", // Light surface
+              foreground: "#1A1F36",
             },
-            focus: "#8B5CF6", // Purple focus ring for luxury feel
+            focus: "#8B5CF6", // Violet focus
+            content1: "#FFFFFF", // Pure white cards
+            content2: "#FAFBFC",
+            content3: "#F7F8FA",
+            content4: "#F0F2F5",
           },
+          extend: "light",
         },
         dark: {
           colors: {
-            background: "#09090B", // Deep black for luxury & contrast
-            foreground: "#FAFAFA", // Bright white text
+            background: "#0D0E14", // Deep space black
+            foreground: "#F0F2F5", // Bright metallic white
             primary: {
-              DEFAULT: "#818CF8", // Bright electric indigo - energetic
-              foreground: "#FFFFFF",
+              DEFAULT: "#A78BFA", // Bright violet
+              foreground: "#0D0E14",
             },
             secondary: {
-              DEFAULT: "#EAB308", // Bright gold - luxurious & visible
-              foreground: "#000000",
+              DEFAULT: "#22D3EE", // Bright teal/cyan
+              foreground: "#0D0E14",
             },
             success: {
-              DEFAULT: "#22C55E", // Bright green - intuitive success
-              foreground: "#000000",
+              DEFAULT: "#34D399", // Bright emerald
+              foreground: "#0D0E14",
             },
             warning: {
-              DEFAULT: "#FBBF24", // Bright amber - intuitive warning
-              foreground: "#000000",
+              DEFAULT: "#FBBF24", // Bright amber
+              foreground: "#0D0E14",
             },
             danger: {
-              DEFAULT: "#F87171", // Bright red - intuitive danger
-              foreground: "#000000",
+              DEFAULT: "#F87171", // Bright red
+              foreground: "#0D0E14",
             },
             default: {
-              DEFAULT: "#27272A", // Dark zinc
-              foreground: "#FAFAFA",
+              DEFAULT: "#161822", // Dark metallic surface
+              foreground: "#F0F2F5",
             },
-            focus: "#A78BFA", // Bright purple focus
-            content1: "#18181B", // Zinc 900 - cards
-            content2: "#27272A", // Zinc 800
-            content3: "#3F3F46", // Zinc 700
-            content4: "#52525B", // Zinc 600
+            focus: "#A78BFA", // Violet focus
+            content1: "#161822", // Dark cards
+            content2: "#1F212E",
+            content3: "#2A2D3A",
+            content4: "#353845",
           },
+          extend: "dark",
         },
       },
     }),
