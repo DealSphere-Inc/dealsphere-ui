@@ -1,10 +1,11 @@
 'use client'
 
 import { useState } from 'react';
-import { Plus, Filter, Grid, List, Eye, EyeOff } from 'lucide-react';
+import { Plus, Filter, Grid, List, GitBranch } from 'lucide-react';
 import { DealCard } from '@/components/deal-card';
-import { Button, Card, Badge, Progress } from '@/ui';
+import { Button, Card, Badge, Progress, Breadcrumb, PageHeader } from '@/ui';
 import { ButtonGroup, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from '@nextui-org/react';
+import { getRouteConfig } from '@/config/routes';
 
 type DealOutcome = 'active' | 'won' | 'lost' | 'withdrawn' | 'passed';
 
@@ -60,52 +61,83 @@ export function Pipeline() {
   const activeDealsCount = deals.filter(d => d.outcome === 'active').length;
   const closedDealsCount = deals.filter(d => d.outcome !== 'active').length;
 
+  // Get route config for breadcrumbs and AI suggestions
+  const routeConfig = getRouteConfig('/pipeline');
+
+  // Calculate AI insights
+  const highProbabilityDeals = filteredDeals.filter(d => d.probability >= 70 && d.outcome === 'active');
+  const stalledDeals = filteredDeals.filter(d => {
+    const lastContact = d.lastContact;
+    return d.outcome === 'active' && (lastContact.includes('week') || lastContact.includes('month'));
+  });
+
   return (
     <div className="p-4 sm:p-6 lg:p-8">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 sm:mb-8 gap-4">
-        <div>
-          <h2 className="text-2xl sm:text-3xl mb-2">Deal Pipeline</h2>
-          <p className="text-sm sm:text-base text-[var(--app-text-muted)]">
-            Track and manage your investment opportunities
-          </p>
+      {/* Breadcrumb Navigation */}
+      {routeConfig && (
+        <div className="mb-4">
+          <Breadcrumb
+            items={routeConfig.breadcrumbs}
+            aiSuggestion={routeConfig.aiSuggestion}
+          />
         </div>
-        <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
+      )}
+
+      {/* Page Header with AI Summary */}
+      <PageHeader
+        title="Deal Pipeline"
+        description="Track and manage your investment opportunities"
+        icon={GitBranch}
+        aiSummary={{
+          text: `${highProbabilityDeals.length} high-probability deals (≥70%) detected. ${stalledDeals.length} deals need follow-up (inactive >1 week). Total pipeline value: $${(filteredDeals.reduce((sum, d) => sum + parseFloat(d.amount.replace(/[$M]/g, '')), 0)).toFixed(1)}M.`,
+          confidence: 0.92
+        }}
+        primaryAction={{
+          label: 'Add Deal',
+          onClick: () => console.log('Add deal clicked'),
+          aiSuggested: true,
+          confidence: 0.78
+        }}
+        tabs={[
+          {
+            id: 'active',
+            label: 'Active',
+            count: activeDealsCount,
+            priority: stalledDeals.length > 0 ? 'high' : undefined
+          },
+          {
+            id: 'closed',
+            label: 'Closed',
+            count: closedDealsCount
+          }
+        ]}
+        activeTab={showClosedDeals ? 'closed' : 'active'}
+        onTabChange={(tabId) => setShowClosedDeals(tabId === 'closed')}
+      />
+
+      {/* Action Bar */}
+      <div className="flex items-center gap-2 sm:gap-3 mb-6">
+        <Button variant="bordered" className="text-[var(--app-text-muted)]" startContent={<Filter className="w-4 h-4" />}>
+          <span className="hidden sm:inline">Filter</span>
+        </Button>
+        <ButtonGroup>
           <Button
-            variant={showClosedDeals ? 'solid' : 'bordered'}
-            className="text-[var(--app-text-muted)]"
-            startContent={showClosedDeals ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-            onPress={() => setShowClosedDeals(!showClosedDeals)}
+            isIconOnly
+            variant={viewMode === 'kanban' ? 'solid' : 'bordered'}
+            onPress={() => setViewMode('kanban')}
+            aria-label="Kanban view"
           >
-            <span className="hidden sm:inline">{showClosedDeals ? 'Hide' : 'Show'} Closed</span>
-            <Badge size="sm" variant="flat" className="ml-1 bg-[var(--app-surface-hover)]">
-              {closedDealsCount}
-            </Badge>
+            <Grid className="w-4 h-4" />
           </Button>
-          <Button variant="bordered" className="text-[var(--app-text-muted)]" startContent={<Filter className="w-4 h-4" />}>
-            <span className="hidden sm:inline">Filter</span>
+          <Button
+            isIconOnly
+            variant={viewMode === 'list' ? 'solid' : 'bordered'}
+            onPress={() => setViewMode('list')}
+            aria-label="List view"
+          >
+            <List className="w-4 h-4" />
           </Button>
-          <ButtonGroup>
-            <Button
-              isIconOnly
-              variant={viewMode === 'kanban' ? 'solid' : 'bordered'}
-              onPress={() => setViewMode('kanban')}
-              aria-label="Kanban view"
-            >
-              <Grid className="w-4 h-4" />
-            </Button>
-            <Button
-              isIconOnly
-              variant={viewMode === 'list' ? 'solid' : 'bordered'}
-              onPress={() => setViewMode('list')}
-              aria-label="List view"
-            >
-              <List className="w-4 h-4" />
-            </Button>
-          </ButtonGroup>
-          <Button color="primary" startContent={<Plus className="w-4 h-4" />}>
-            <span className="hidden sm:inline">Add Deal</span>
-          </Button>
-        </div>
+        </ButtonGroup>
       </div>
 
       {viewMode === 'kanban' ? (

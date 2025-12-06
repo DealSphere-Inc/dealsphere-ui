@@ -1,98 +1,91 @@
 'use client'
 
 import { useState } from 'react';
-import { Tabs, Tab } from '@/ui';
-import { TrendingUp, BarChart3, PieChart, Activity, Layers, DollarSign } from 'lucide-react';
+import { Breadcrumb, PageHeader } from '@/ui';
+import { TrendingUp, BarChart3, PieChart, Activity } from 'lucide-react';
 import { FundPerformanceOverview } from './analytics/fund-performance-overview';
 import { JCurveChart } from './analytics/j-curve-chart';
 import { CohortAnalysis } from './analytics/cohort-analysis';
 import { ValuationTrends } from './analytics/valuation-trends';
 import { DeploymentPacing } from './analytics/deployment-pacing';
 import { ConcentrationRisk } from './analytics/concentration-risk';
+import { FundSelector } from './fund-selector';
+import { getRouteConfig } from '@/config/routes';
 
 export function Analytics() {
   const [selected, setSelected] = useState<string>('performance');
+  const routeConfig = getRouteConfig('/analytics');
 
   return (
-    <div>
-      <Tabs
-        selectedKey={selected}
-        onSelectionChange={(key) => setSelected(key as string)}
-      >
-        <Tab
-          key="performance"
-          title={
-            <div className="flex items-center gap-2">
-              <TrendingUp className="w-4 h-4" />
-              <span>Performance</span>
-            </div>
-          }
-        >
-          <div className="p-4 sm:p-6 lg:p-8 space-y-8">
-            {/* Fund Performance Overview */}
-            <FundPerformanceOverview />
+    <div className="p-4 sm:p-6 lg:p-8">
+      {routeConfig && (
+        <div className="mb-4">
+          <Breadcrumb items={routeConfig.breadcrumbs} aiSuggestion={routeConfig.aiSuggestion} />
+        </div>
+      )}
 
-            {/* J-Curve */}
+      <PageHeader
+        title="Analytics"
+        description="Fund performance and insights"
+        icon={BarChart3}
+        aiSummary={{
+          text: "Portfolio performing 12% above target. J-curve trending positively. 3 high-potential outliers detected in cohort analysis.",
+          confidence: 0.88
+        }}
+        tabs={[
+          { id: 'performance', label: 'Performance' },
+          { id: 'j-curve', label: 'J-Curve' },
+          { id: 'cohort', label: 'Cohort Analysis' },
+          { id: 'valuation', label: 'Valuation Trends' },
+          { id: 'deployment', label: 'Deployment' },
+          { id: 'risk', label: 'Risk Analysis' }
+        ]}
+        activeTab={selected}
+        onTabChange={(tabId) => setSelected(tabId)}
+      >
+        <div className="w-full sm:w-64">
+          <FundSelector />
+        </div>
+      </PageHeader>
+
+      <div className="mt-6">
+        {selected === 'performance' && (
+          <div className="space-y-8">
+            <FundPerformanceOverview />
             <JCurveChart />
           </div>
-        </Tab>
+        )}
 
-        <Tab
-          key="cohorts"
-          title={
-            <div className="flex items-center gap-2">
-              <Layers className="w-4 h-4" />
-              <span>Cohorts</span>
-            </div>
-          }
-        >
-          <div className="p-4 sm:p-6 lg:p-8">
+        {selected === 'j-curve' && (
+          <div>
+            <JCurveChart />
+          </div>
+        )}
+
+        {selected === 'cohort' && (
+          <div>
             <CohortAnalysis />
           </div>
-        </Tab>
+        )}
 
-        <Tab
-          key="valuation"
-          title={
-            <div className="flex items-center gap-2">
-              <DollarSign className="w-4 h-4" />
-              <span>Valuation</span>
-            </div>
-          }
-        >
-          <div className="p-4 sm:p-6 lg:p-8">
+        {selected === 'valuation' && (
+          <div>
             <ValuationTrends />
           </div>
-        </Tab>
+        )}
 
-        <Tab
-          key="deployment"
-          title={
-            <div className="flex items-center gap-2">
-              <Activity className="w-4 h-4" />
-              <span>Deployment</span>
-            </div>
-          }
-        >
-          <div className="p-4 sm:p-6 lg:p-8">
+        {selected === 'deployment' && (
+          <div>
             <DeploymentPacing />
           </div>
-        </Tab>
+        )}
 
-        <Tab
-          key="concentration"
-          title={
-            <div className="flex items-center gap-2">
-              <PieChart className="w-4 h-4" />
-              <span>Concentration</span>
-            </div>
-          }
-        >
-          <div className="p-4 sm:p-6 lg:p-8">
+        {selected === 'risk' && (
+          <div>
             <ConcentrationRisk />
           </div>
-        </Tab>
-      </Tabs>
+        )}
+      </div>
     </div>
   );
 }

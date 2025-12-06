@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Card, Button, Badge, Progress, Input } from '@/ui';
 import { Tabs, Tab } from '@/ui';
 import { Users, PieChart, TrendingUp, DollarSign, Plus, Edit3, Download, Share2, AlertCircle, Building2, Calendar, Percent, History, Calculator } from 'lucide-react';
+import { FundSelector } from '../fund-selector';
 
 interface Shareholder {
   id: string;
@@ -213,15 +214,18 @@ export function CapTable() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
+      {/* Header with Fund Selector */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold">Cap Table Management</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold">Cap Table Management</h2>
           <p className="text-sm text-[var(--app-text-muted)] mt-1">
             Track ownership, share classes, and equity distribution
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="w-full sm:w-64">
+            <FundSelector />
+          </div>
           <Button variant="flat" startContent={<Share2 className="w-4 h-4" />}>
             Share
           </Button>

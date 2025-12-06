@@ -1,9 +1,9 @@
 'use client'
 
 import { useState } from 'react';
-import { Card, Button, Badge, Progress } from '@/ui';
-import { Tabs, Tab } from '@/ui';
+import { Card, Button, Badge, Progress, Breadcrumb, PageHeader, Tabs, Tab } from '@/ui';
 import { Shield, FileText, AlertTriangle, CheckCircle, Clock, Download, Upload, Calendar, Users, Building2, Scale, BookOpen, Bell } from 'lucide-react';
+import { getRouteConfig } from '@/config/routes';
 
 interface ComplianceItem {
   id: string;
@@ -176,6 +176,16 @@ const mockAuditSchedule: AuditSchedule[] = [
 export function Compliance() {
   const [selectedTab, setSelectedTab] = useState<string>('overview');
 
+  // Get route config for breadcrumbs and AI suggestions
+  const routeConfig = getRouteConfig('/compliance');
+
+  // Calculate AI insights
+  const overdueItems = mockComplianceItems.filter(item => item.status === 'overdue').length;
+  const inProgressItems = mockComplianceItems.filter(item => item.status === 'in-progress').length;
+  const upcomingHighPriority = mockComplianceItems.filter(
+    item => item.status === 'upcoming' && item.priority === 'high'
+  ).length;
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'completed':
@@ -223,29 +233,56 @@ export function Compliance() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
+      {/* Breadcrumb Navigation */}
+      {routeConfig && (
         <div>
-          <h1 className="text-3xl font-bold text-[var(--app-text)]">Compliance & Regulatory</h1>
-          <p className="text-[var(--app-text-muted)] mt-1">
-            Track regulatory filings, audits, and compliance requirements
-          </p>
+          <Breadcrumb
+            items={routeConfig.breadcrumbs}
+            aiSuggestion={routeConfig.aiSuggestion}
+          />
         </div>
-        <div className="flex items-center gap-2">
-          <Button
-            variant="bordered"
-            startContent={<Download className="w-4 h-4" />}
-          >
-            Export Report
-          </Button>
-          <Button
-            className="bg-[var(--app-primary)] text-white"
-            startContent={<Upload className="w-4 h-4" />}
-          >
-            Upload Document
-          </Button>
-        </div>
-      </div>
+      )}
+
+      {/* Page Header with AI Summary */}
+      <PageHeader
+        title="Compliance & Regulatory"
+        description="Track regulatory filings, audits, and compliance requirements"
+        icon={Shield}
+        aiSummary={{
+          text: `${overdueItems} overdue items require immediate attention. ${inProgressItems} items in progress. ${upcomingHighPriority} high-priority deadlines approaching. AI recommends prioritizing Form ADV and annual certification.`,
+          confidence: 0.94
+        }}
+        primaryAction={{
+          label: 'Upload Document',
+          onClick: () => console.log('Upload document'),
+          aiSuggested: false
+        }}
+        secondaryActions={[
+          {
+            label: 'Export Report',
+            onClick: () => console.log('Export report')
+          }
+        ]}
+        tabs={[
+          {
+            id: 'overview',
+            label: 'Overview',
+            count: overdueItems,
+            priority: overdueItems > 0 ? 'high' : undefined
+          },
+          {
+            id: 'filings',
+            label: 'Regulatory Filings'
+          },
+          {
+            id: 'audits',
+            label: 'Audit Schedule',
+            count: mockAuditSchedule.filter(a => a.status === 'in-progress').length
+          }
+        ]}
+        activeTab={selectedTab}
+        onTabChange={(tabId) => setSelectedTab(tabId)}
+      />
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">

@@ -2,9 +2,9 @@
 
 import { useState } from 'react';
 import { CheckCircle2, Circle, Clock, Eye, FileText, Users, DollarSign, BarChart, Upload, Download, Search, Filter, TrendingUp, AlertCircle, ArrowLeft, Lightbulb } from 'lucide-react';
-import { Card, Badge, Progress, Button, Input } from '@/ui';
-import { Tabs, Tab } from '@/ui';
+import { Card, Badge, Progress, Button, Input, Breadcrumb, PageHeader, Tabs, Tab } from '@/ui';
 import { useFund } from '@/contexts/fund-context';
+import { getRouteConfig } from '@/config/routes';
 
 type DocumentCategory =
   | 'financial'
@@ -354,6 +354,7 @@ export function DealIntelligence() {
   const [selectedDeal, setSelectedDeal] = useState<ActiveDeal | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<DocumentCategory | 'all'>('all');
+  const [selectedDetailTab, setSelectedDetailTab] = useState<'overview' | 'analytics' | 'documents' | 'analysis' | 'ic-materials'>('overview');
 
   const getStatusIcon = (status: DocumentStatus) => {
     switch (status) {
@@ -429,17 +430,42 @@ export function DealIntelligence() {
   const overdueDocuments = mockDocuments.filter(d => d.status === 'overdue').length;
   const pendingReviews = mockDocuments.filter(d => d.status === 'pending').length;
 
+  // Get route config for breadcrumbs and AI suggestions
+  const routeConfig = getRouteConfig('/deal-intelligence');
+
   // Fund-Level View
   if (viewMode === 'fund-level') {
     return (
       <div className="p-4 sm:p-6 lg:p-8">
-        {/* Header */}
-        <div className="mb-6 sm:mb-8">
-          <h2 className="text-2xl sm:text-3xl mb-2">Deal Intelligence</h2>
-          <p className="text-sm sm:text-base text-[var(--app-text-muted)]">
-            Due diligence tracking and investment decisions
-          </p>
-        </div>
+        {/* Breadcrumb Navigation */}
+        {routeConfig && (
+          <div className="mb-4">
+            <Breadcrumb
+              items={routeConfig.breadcrumbs}
+              aiSuggestion={routeConfig.aiSuggestion}
+            />
+          </div>
+        )}
+
+        {/* Page Header with AI Summary */}
+        <PageHeader
+          title="Deal Intelligence"
+          description={`Track due diligence progress and documentation for ${selectedFund?.name || 'your fund'}`}
+          icon={Lightbulb}
+          aiSummary={{
+            text: `${dealsReadyForIC} deals ready for IC. ${overdueDocuments} overdue documents need immediate attention. ${dealsInProgress} deals in active DD. Average DD completion: ${fundAnalytics.ddProgress.avgCompletion}%.`,
+            confidence: 0.93
+          }}
+          tabs={[
+            {
+              id: 'fund-level',
+              label: 'Fund Overview',
+              count: fundAnalytics.ddProgress.atRisk,
+              priority: fundAnalytics.ddProgress.atRisk > 0 ? 'high' : undefined
+            }
+          ]}
+          activeTab="fund-level"
+        />
 
         {/* Fund Analytics Summary */}
         <div className="mb-8">

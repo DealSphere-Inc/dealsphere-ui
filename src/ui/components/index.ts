@@ -18,7 +18,7 @@ export type { IconProps } from './Icon';
 export { Input } from './Input';
 export type { InputProps } from './Input';
 
-export { Select } from './Select';
+export { Select, SelectItem } from './Select';
 export type { SelectProps, SelectOption } from './Select';
 
 export { Checkbox } from './Checkbox';
@@ -32,3 +32,13 @@ export type { TextareaProps } from './Textarea';
 
 export { Tabs, Tab } from './Tabs';
 export type { TabsProps, TabProps } from './Tabs';
+
+// Navigation Components
+export { Breadcrumb } from './Breadcrumb';
+export type { BreadcrumbProps, BreadcrumbItem, AISuggestion } from './Breadcrumb';
+
+export { PageHeader } from './PageHeader';
+export type { PageHeaderProps, PageHeaderTab } from './PageHeader';
+
+export { WorkflowStepper } from './WorkflowStepper';
+export type { WorkflowStepperProps, WorkflowStep } from './WorkflowStepper';

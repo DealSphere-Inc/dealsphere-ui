@@ -115,18 +115,10 @@ a:hover {
 
 /* Scrollbar styling */
 ::-webkit-scrollbar {
-  width: 10px;
+  display: none;
 }
 
-::-webkit-scrollbar-track {
-  background: var(--app-surface);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--app-primary);
-  border-radius: 5px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--app-secondary);
+html {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
 }

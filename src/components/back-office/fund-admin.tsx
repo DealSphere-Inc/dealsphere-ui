@@ -1,9 +1,10 @@
 'use client'
 
 import { useState } from 'react';
-import { Card, Button, Badge, Progress, Input, Select, SelectItem } from '@/ui';
-import { Tabs, Tab } from '@/ui';
-import { DollarSign, Send, Download, Clock, CheckCircle, AlertTriangle, Users, TrendingUp, Calendar, FileText, Mail, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { Card, Button, Badge, Progress, Input, Select, Breadcrumb, PageHeader } from '@/ui';
+import { DollarSign, Send, Download, Clock, CheckCircle, AlertTriangle, Users, FileText, Mail, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { FundSelector } from '../fund-selector';
+import { getRouteConfig } from '@/config/routes';
 
 interface CapitalCall {
   id: string;
@@ -166,6 +167,9 @@ const mockLPResponses: LPResponse[] = [
 export function FundAdmin() {
   const [selectedTab, setSelectedTab] = useState<string>('capital-calls');
 
+  // Get route config for breadcrumbs and AI suggestions
+  const routeConfig = getRouteConfig('/fund-admin');
+
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -210,31 +214,71 @@ export function FundAdmin() {
     }
   };
 
+  // Calculate AI insights
+  const activeCallsCount = mockCapitalCalls.filter(c => c.status === 'in-progress').length;
+  const totalOutstanding = mockCapitalCalls
+    .filter(c => c.status === 'in-progress')
+    .reduce((sum, c) => sum + (c.totalAmount - c.amountReceived), 0);
+  const pendingLPs = mockLPResponses.filter(r => r.status === 'pending' || r.status === 'partial').length;
+
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
+      {/* Breadcrumb Navigation */}
+      {routeConfig && (
         <div>
-          <h1 className="text-3xl font-bold text-[var(--app-text)]">Fund Administration</h1>
-          <p className="text-[var(--app-text-muted)] mt-1">
-            Manage capital calls, distributions, and LP communications
-          </p>
+          <Breadcrumb
+            items={routeConfig.breadcrumbs}
+            aiSuggestion={routeConfig.aiSuggestion}
+          />
         </div>
-        <div className="flex items-center gap-2">
-          <Button
-            variant="bordered"
-            startContent={<Download className="w-4 h-4" />}
-          >
-            Export Activity
-          </Button>
-          <Button
-            className="bg-[var(--app-primary)] text-white"
-            startContent={<Send className="w-4 h-4" />}
-          >
-            New Capital Call
-          </Button>
+      )}
+
+      {/* Page Header with AI Summary */}
+      <PageHeader
+        title="Fund Administration"
+        description="Manage capital calls, distributions, and LP communications"
+        icon={DollarSign}
+        aiSummary={{
+          text: `${activeCallsCount} active capital calls with ${formatCurrency(totalOutstanding)} outstanding. ${pendingLPs} LPs require follow-up. AI recommends sending reminders to improve collection rate.`,
+          confidence: 0.91
+        }}
+        primaryAction={{
+          label: 'New Capital Call',
+          onClick: () => console.log('New capital call'),
+          aiSuggested: false
+        }}
+        secondaryActions={[
+          {
+            label: 'Export Activity',
+            onClick: () => console.log('Export activity')
+          }
+        ]}
+        tabs={[
+          {
+            id: 'capital-calls',
+            label: 'Capital Calls',
+            count: activeCallsCount,
+            priority: totalOutstanding > 0 ? 'high' : undefined
+          },
+          {
+            id: 'distributions',
+            label: 'Distributions'
+          },
+          {
+            id: 'lp-responses',
+            label: 'LP Responses',
+            count: pendingLPs,
+            priority: pendingLPs > 2 ? 'medium' : undefined
+          }
+        ]}
+        activeTab={selectedTab}
+        onTabChange={(tabId) => setSelectedTab(tabId)}
+      >
+        {/* Fund Selector as child content */}
+        <div className="w-full sm:w-64">
+          <FundSelector />
         </div>
-      </div>
+      </PageHeader>
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -313,18 +357,10 @@ export function FundAdmin() {
         </Card>
       </div>
 
-      <Tabs selectedKey={selectedTab} onSelectionChange={(key) => setSelectedTab(key as string)}>
-        {/* Capital Calls Tab */}
-        <Tab
-          key="capital-calls"
-          title={
-            <div className="flex items-center gap-2">
-              <ArrowUpRight className="w-4 h-4" />
-              <span>Capital Calls</span>
-            </div>
-          }
-        >
-          <div className="mt-4 space-y-3">
+      {/* Tab Content */}
+      <div>
+        {selectedTab === 'capital-calls' && (
+          <div className="space-y-3">
             {mockCapitalCalls.map((call) => {
               const responseRate = (call.lpsResponded / call.lpCount) * 100;
               const collectionRate = (call.amountReceived / call.totalAmount) * 100;
@@ -429,19 +465,10 @@ export function FundAdmin() {
               );
             })}
           </div>
-        </Tab>
+        )}
 
-        {/* Distributions Tab */}
-        <Tab
-          key="distributions"
-          title={
-            <div className="flex items-center gap-2">
-              <ArrowDownRight className="w-4 h-4" />
-              <span>Distributions</span>
-            </div>
-          }
-        >
-          <div className="mt-4 space-y-3">
+        {selectedTab === 'distributions' && (
+          <div className="space-y-3">
             {mockDistributions.map((dist) => (
               <Card key={dist.id} padding="lg">
                 <div className="flex items-start justify-between">
@@ -507,19 +534,10 @@ export function FundAdmin() {
               </Card>
             ))}
           </div>
-        </Tab>
+        )}
 
-        {/* LP Responses Tab */}
-        <Tab
-          key="lp-responses"
-          title={
-            <div className="flex items-center gap-2">
-              <Users className="w-4 h-4" />
-              <span>LP Responses</span>
-            </div>
-          }
-        >
-          <div className="mt-4">
+        {selectedTab === 'lp-responses' && (
+          <div>
             <Card padding="lg">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-semibold">Capital Call #8 - LP Responses</h3>
@@ -527,13 +545,14 @@ export function FundAdmin() {
                   placeholder="Filter by status"
                   className="w-48"
                   size="sm"
-                >
-                  <SelectItem key="all">All Statuses</SelectItem>
-                  <SelectItem key="paid">Paid</SelectItem>
-                  <SelectItem key="partial">Partial</SelectItem>
-                  <SelectItem key="pending">Pending</SelectItem>
-                  <SelectItem key="overdue">Overdue</SelectItem>
-                </Select>
+                  options={[
+                    { value: 'all', label: 'All Statuses' },
+                    { value: 'paid', label: 'Paid' },
+                    { value: 'partial', label: 'Partial' },
+                    { value: 'pending', label: 'Pending' },
+                    { value: 'overdue', label: 'Overdue' },
+                  ]}
+                />
               </div>
 
               <div className="space-y-3">
@@ -589,8 +608,8 @@ export function FundAdmin() {
               </div>
             </Card>
           </div>
-        </Tab>
-      </Tabs>
+        )}
+      </div>
     </div>
   );
 }

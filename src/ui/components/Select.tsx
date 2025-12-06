@@ -1,5 +1,7 @@
-import { Select as NextUISelect, SelectItem, SelectProps as NextUISelectProps } from '@nextui-org/react';
+import { Select as NextUISelect, SelectItem as NextUISelectItem, SelectProps as NextUISelectProps } from '@nextui-org/react';
 import { forwardRef } from 'react';
+
+export const SelectItem = NextUISelectItem;
 
 export interface SelectOption {
   value: string;

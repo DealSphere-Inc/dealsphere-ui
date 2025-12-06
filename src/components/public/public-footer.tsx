@@ -1,0 +1,47 @@
+'use client';
+
+import Link from 'next/link';
+
+export function PublicFooter() {
+  return (
+    <footer className="border-t border-[var(--app-border)] bg-[var(--app-surface)]">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 mb-6 sm:mb-8">
+          <div className="col-span-2 md:col-span-1">
+            <h4 className="text-base sm:text-lg mb-3 sm:mb-4 text-[var(--app-primary)] font-bold">vestledger</h4>
+            <p className="text-xs sm:text-sm text-[var(--app-text-muted)]">
+              The next-generation VC workflow management platform.
+            </p>
+          </div>
+          <div>
+            <h5 className="mb-3 sm:mb-4 text-sm sm:text-base font-semibold">Product</h5>
+            <div className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-[var(--app-text-muted)]">
+              <div><Link href="/features" className="hover:text-[var(--app-text)] transition-colors">Features</Link></div>
+              <div><Link href="/security" className="hover:text-[var(--app-text)] transition-colors">Security</Link></div>
+              <div><Link href="/eoi" className="hover:text-[var(--app-text)] transition-colors">Early Access</Link></div>
+            </div>
+          </div>
+          <div>
+            <h5 className="mb-3 sm:mb-4 text-sm sm:text-base font-semibold">Company</h5>
+            <div className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-[var(--app-text-muted)]">
+              <div><Link href="/about" className="hover:text-[var(--app-text)] transition-colors">About</Link></div>
+              <div><Link href="#" className="hover:text-[var(--app-text)] transition-colors">Careers</Link></div>
+              <div><Link href="#" className="hover:text-[var(--app-text)] transition-colors">Contact</Link></div>
+            </div>
+          </div>
+          <div>
+            <h5 className="mb-3 sm:mb-4 text-sm sm:text-base font-semibold">Legal</h5>
+            <div className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-[var(--app-text-muted)]">
+              <div><Link href="#" className="hover:text-[var(--app-text)] transition-colors">Privacy</Link></div>
+              <div><Link href="#" className="hover:text-[var(--app-text)] transition-colors">Terms</Link></div>
+              <div><Link href="#" className="hover:text-[var(--app-text)] transition-colors">Compliance</Link></div>
+            </div>
+          </div>
+        </div>
+        <div className="pt-6 sm:pt-8 border-t border-[var(--app-border)] text-xs sm:text-sm text-[var(--app-text-muted)] text-center">
+          © {new Date().getFullYear()} vestledger. All rights reserved.
+        </div>
+      </div>
+    </footer>
+  );
+}

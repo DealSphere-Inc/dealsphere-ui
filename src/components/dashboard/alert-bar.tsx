@@ -1,0 +1,183 @@
+'use client'
+
+import { motion } from 'framer-motion';
+import { AlertTriangle, Clock, TrendingDown, Info, ChevronRight } from 'lucide-react';
+import { Button } from '@/ui';
+
+export interface Alert {
+  id: string;
+  type: 'critical' | 'warning' | 'info';
+  title: string;
+  description: string;
+  priority: number; // 0-100 (urgency × impact)
+  reasoning: string;
+  prediction?: {
+    label: string;
+    value: string;
+    confidence: number;
+  };
+  action?: {
+    label: string;
+    onClick: () => void;
+  };
+}
+
+interface AlertBarProps {
+  alerts: Alert[];
+  maxVisible?: number;
+}
+
+export function AlertBar({ alerts, maxVisible = 3 }: AlertBarProps) {
+  const sortedAlerts = [...alerts]
+    .sort((a, b) => b.priority - a.priority)
+    .slice(0, maxVisible);
+
+  if (sortedAlerts.length === 0) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="p-4 rounded-lg bg-[var(--app-success-bg)] border border-[var(--app-success)]/20 mb-6"
+      >
+        <div className="flex items-center gap-3">
+          <div className="p-2 rounded-lg bg-[var(--app-success)]/20">
+            <Info className="w-5 h-5 text-[var(--app-success)]" />
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-[var(--app-text)]">All Clear</p>
+            <p className="text-xs text-[var(--app-text-muted)]">
+              No urgent items detected. AI is monitoring your fund operations.
+            </p>
+          </div>
+        </div>
+      </motion.div>
+    );
+  }
+
+  const getAlertIcon = (type: string) => {
+    switch (type) {
+      case 'critical':
+        return <AlertTriangle className="w-5 h-5 text-[var(--app-danger)]" />;
+      case 'warning':
+        return <Clock className="w-5 h-5 text-[var(--app-warning)]" />;
+      default:
+        return <Info className="w-5 h-5 text-[var(--app-info)]" />;
+    }
+  };
+
+  const getAlertBg = (type: string) => {
+    switch (type) {
+      case 'critical':
+        return 'bg-[var(--app-danger-bg)] border-[var(--app-danger)]/30';
+      case 'warning':
+        return 'bg-[var(--app-warning-bg)] border-[var(--app-warning)]/30';
+      default:
+        return 'bg-[var(--app-info-bg)] border-[var(--app-info)]/30';
+    }
+  };
+
+  const getPriorityColor = (priority: number) => {
+    if (priority >= 80) return 'text-[var(--app-danger)]';
+    if (priority >= 50) return 'text-[var(--app-warning)]';
+    return 'text-[var(--app-info)]';
+  };
+
+  return (
+    <div className="space-y-3 mb-6">
+      <div className="flex items-center justify-between mb-2">
+        <h3 className="text-sm font-semibold text-[var(--app-text)] flex items-center gap-2">
+          <AlertTriangle className="w-4 h-4 text-[var(--app-warning)]" />
+          AI-Prioritized Alerts
+        </h3>
+        <span className="text-xs text-[var(--app-text-subtle)]">
+          Sorted by urgency × impact
+        </span>
+      </div>
+
+      {sortedAlerts.map((alert, index) => (
+        <motion.div
+          key={alert.id}
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.2, delay: index * 0.05 }}
+          className={`p-4 rounded-lg border ${getAlertBg(alert.type)}`}
+        >
+          <div className="flex items-start gap-3">
+            {/* Icon */}
+            <div className="flex-shrink-0 mt-0.5">
+              {getAlertIcon(alert.type)}
+            </div>
+
+            {/* Content */}
+            <div className="flex-1 min-w-0">
+              {/* Title + Priority Score */}
+              <div className="flex items-start justify-between mb-2">
+                <h4 className="text-sm font-semibold text-[var(--app-text)]">
+                  {alert.title}
+                </h4>
+                <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--app-surface)]/50">
+                  <TrendingDown className={`w-3 h-3 ${getPriorityColor(alert.priority)}`} />
+                  <span className={`text-xs font-bold ${getPriorityColor(alert.priority)}`}>
+                    {Math.round(alert.priority)}
+                  </span>
+                </div>
+              </div>
+
+              {/* Description */}
+              <p className="text-sm text-[var(--app-text-muted)] mb-3">
+                {alert.description}
+              </p>
+
+              {/* AI Reasoning */}
+              <div className="flex items-start gap-2 p-2 rounded bg-[var(--app-surface)]/50 mb-3">
+                <Info className="w-3 h-3 text-[var(--app-text-subtle)] mt-0.5 flex-shrink-0" />
+                <p className="text-xs text-[var(--app-text-subtle)]">
+                  <span className="font-semibold">Why critical: </span>
+                  {alert.reasoning}
+                </p>
+              </div>
+
+              {/* Prediction */}
+              {alert.prediction && (
+                <div className="flex items-center gap-2 mb-3 p-2 rounded bg-[var(--app-primary)]/5 border border-[var(--app-primary)]/10">
+                  <div className="flex-1">
+                    <p className="text-xs text-[var(--app-text-muted)] mb-0.5">
+                      {alert.prediction.label}
+                    </p>
+                    <p className="text-sm font-semibold text-[var(--app-text)]">
+                      {alert.prediction.value}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-xs text-[var(--app-text-subtle)]">Confidence</p>
+                    <p className="text-sm font-bold text-[var(--app-primary)]">
+                      {Math.round(alert.prediction.confidence * 100)}%
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Action Button */}
+              {alert.action && (
+                <Button
+                  size="sm"
+                  onClick={alert.action.onClick}
+                  className="text-xs"
+                >
+                  {alert.action.label}
+                  <ChevronRight className="w-3 h-3 ml-1" />
+                </Button>
+              )}
+            </div>
+          </div>
+        </motion.div>
+      ))}
+
+      {alerts.length > maxVisible && (
+        <p className="text-xs text-center text-[var(--app-text-subtle)] pt-2">
+          +{alerts.length - maxVisible} more alert{alerts.length - maxVisible > 1 ? 's' : ''} available
+        </p>
+      )}
+    </div>
+  );
+}

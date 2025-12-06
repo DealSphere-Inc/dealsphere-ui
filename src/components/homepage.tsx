@@ -1,51 +1,60 @@
 'use client'
 
 import { useState } from 'react';
-import { ArrowRight, BarChart3, Users, TrendingUp, Shield, Zap, Globe, CheckCircle2 } from 'lucide-react';
-import { useAuth } from '@/contexts/auth-context';
+import { ArrowRight, Link as LinkIcon, RefreshCw, Sparkles, Shield, CheckCircle2, Layers } from 'lucide-react';
+import { useAuth, PERSONA_CONFIG, UserRole } from '@/contexts/auth-context';
 import { Button, Input, Card, Modal } from '@/ui';
+import { Select, SelectItem } from "@nextui-org/react";
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export function Homepage() {
   const { login } = useAuth();
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const router = useRouter();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [role, setRole] = useState<UserRole>('gp');
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    login(email, password);
+    login(email, password, role);
+    setShowLoginModal(false);
+    router.push('/dashboard');
   };
 
+  // Triad OS Feature Cards
   const features = [
     {
-      icon: BarChart3,
-      title: 'Pipeline Management',
-      description: 'Visualize and track deals through every stage with intuitive kanban and list views.',
+      icon: LinkIcon,
+      title: 'Tokenized Trust Layer',
+      description: 'Real-time, on-chain ownership records with cryptographic proofs & programmable compliance.',
     },
     {
-      icon: Users,
-      title: 'Portfolio Tracking',
-      description: 'Monitor your investments with real-time performance metrics and insights.',
+      icon: RefreshCw,
+      title: 'Automated Operations',
+      description: 'Capital calls, distributions, and NAV calculations automated end-to-end. Zero spreadsheets.',
     },
     {
-      icon: TrendingUp,
-      title: 'Analytics & Reporting',
-      description: 'Make data-driven decisions with comprehensive analytics and visual reports.',
+      icon: Sparkles,
+      title: 'AI Advisor',
+      description: 'Synthesize diligence, detect anomalies, and generate LP narratives from live data.',
     },
     {
       icon: Shield,
-      title: 'Due Diligence Workflows',
-      description: 'Streamline DD processes with checklists, task management, and team collaboration.',
+      title: 'Immutable Audit Trails',
+      description: 'Verification in minutes instead of weeks. Compliance-native by design.',
     },
     {
-      icon: Zap,
-      title: 'Real-time Updates',
-      description: 'Stay informed with instant notifications and activity tracking across your portfolio.',
+      icon: Layers,
+      title: 'Unified Data Fabric',
+      description: 'Smart-contract events sync seamlessly with operational and analytical systems.',
     },
     {
-      icon: Globe,
-      title: 'Global Accessibility',
-      description: 'Access your deal flow from anywhere with our cloud-based platform.',
+      icon: CheckCircle2,
+      title: 'Secondary-Ready Assets',
+      description: 'Assets are digital and compliant-by-design, ready for secondary liquidity when regulation permits.',
     },
   ];
 
@@ -57,39 +66,18 @@ export function Homepage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[var(--app-bg)]">
-      {/* Navigation */}
-      <nav
-        className="sticky top-0 left-0 right-0 z-50 w-full border-b border-[var(--app-border)] bg-[var(--app-surface)]/90 backdrop-blur-md supports-[backdrop-filter]:bg-[var(--app-surface)]/75"
-        style={{ position: 'sticky', top: 0 }}
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4 sm:gap-8">
-            <h1 className="text-xl sm:text-2xl tracking-tight text-[var(--app-primary)]">VestLedger</h1>
-            <div className="hidden md:flex items-center gap-6">
-              <a href="#features" className="text-sm text-[var(--app-text-muted)] hover:text-[var(--app-text)] transition-colors">Features</a>
-              <a href="#about" className="text-sm text-[var(--app-text-muted)] hover:text-[var(--app-text)] transition-colors">About</a>
-              <a href="#pricing" className="text-sm text-[var(--app-text-muted)] hover:text-[var(--app-text)] transition-colors">Pricing</a>
-            </div>
-          </div>
-          <Button color="primary" onPress={() => setShowLoginModal(true)}>
-            Login
-          </Button>
-        </div>
-      </nav>
-
+    <div className="bg-[var(--app-bg)]">
       {/* Hero Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-20 md:py-32">
         <div className="max-w-4xl mx-auto text-center">
           <div className="inline-block px-3 sm:px-4 py-1.5 sm:py-2 bg-[var(--app-primary-bg)] text-[var(--app-primary)] rounded-full text-xs sm:text-sm mb-4 sm:mb-6">
-            The Future of Venture Capital Operations
+            Tokenized Trust • Automated Operations • AI Advisor
           </div>
           <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl mb-4 sm:mb-6 leading-tight">
-            Manage Your VC Portfolio with <span className="text-[var(--app-primary)]">Precision</span>
+            The <span className="text-[var(--app-primary)]">Triad OS</span> for Private Markets
           </h2>
           <p className="text-base sm:text-lg md:text-xl text-[var(--app-text-muted)] mb-6 sm:mb-8 leading-relaxed px-4">
-            vestledger is the next-generation workflow management system designed for venture capitalists.
-            Track deals, manage due diligence, and analyze portfolio performance—all in one place.
+            VestLedger is an institutional operating system for venture capital, private equity, and crypto funds. Tokenized ownership, automated operations, and AI-powered intelligence—unified on one platform.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 px-4">
             <Button size="lg" color="primary" onPress={() => setShowLoginModal(true)} className="w-full sm:w-auto" endContent={<ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />}>
@@ -176,8 +164,8 @@ export function Homepage() {
             </div>
             <div className="bg-gradient-to-br from-[var(--app-primary)] via-[var(--app-accent)] to-[var(--app-secondary)] rounded-2xl p-8 sm:p-12 flex items-center justify-center order-first md:order-last shadow-lg">
               <div className="text-white text-center">
-                <BarChart3 className="w-24 h-24 sm:w-32 sm:h-32 mx-auto mb-4 sm:mb-6 opacity-90" />
-                <p className="text-xl sm:text-2xl font-medium">Transform Your Deal Flow</p>
+                <Layers className="w-24 h-24 sm:w-32 sm:h-32 mx-auto mb-4 sm:mb-6 opacity-90" />
+                <p className="text-xl sm:text-2xl font-medium">The Triad OS Stack</p>
               </div>
             </div>
           </div>
@@ -198,47 +186,6 @@ export function Homepage() {
           </div>
         </Card>
       </section>
-
-      {/* Footer */}
-      <footer className="border-t border-[var(--app-border)] bg-[var(--app-surface)]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 mb-6 sm:mb-8">
-            <div className="col-span-2 md:col-span-1">
-              <h4 className="text-base sm:text-lg mb-3 sm:mb-4 text-[var(--app-primary)]">vestledger</h4>
-              <p className="text-xs sm:text-sm text-[var(--app-text-muted)]">
-                The next-generation VC workflow management platform.
-              </p>
-            </div>
-            <div>
-              <h5 className="mb-3 sm:mb-4 text-sm sm:text-base">Product</h5>
-              <div className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-[var(--app-text-muted)]">
-                <div><a href="#" className="hover:text-[var(--app-text)] transition-colors">Features</a></div>
-                <div><a href="#" className="hover:text-[var(--app-text)] transition-colors">Pricing</a></div>
-                <div><a href="#" className="hover:text-[var(--app-text)] transition-colors">Security</a></div>
-              </div>
-            </div>
-            <div>
-              <h5 className="mb-3 sm:mb-4 text-sm sm:text-base">Company</h5>
-              <div className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-[var(--app-text-muted)]">
-                <div><a href="#" className="hover:text-[var(--app-text)] transition-colors">About</a></div>
-                <div><a href="#" className="hover:text-[var(--app-text)] transition-colors">Careers</a></div>
-                <div><a href="#" className="hover:text-[var(--app-text)] transition-colors">Contact</a></div>
-              </div>
-            </div>
-            <div>
-              <h5 className="mb-3 sm:mb-4 text-sm sm:text-base">Legal</h5>
-              <div className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-[var(--app-text-muted)]">
-                <div><a href="#" className="hover:text-[var(--app-text)] transition-colors">Privacy</a></div>
-                <div><a href="#" className="hover:text-[var(--app-text)] transition-colors">Terms</a></div>
-                <div><a href="#" className="hover:text-[var(--app-text)] transition-colors">Compliance</a></div>
-              </div>
-            </div>
-          </div>
-          <div className="pt-6 sm:pt-8 border-t border-[var(--app-border)] text-xs sm:text-sm text-[var(--app-text-muted)] text-center">
-            © 2024 vestledger. All rights reserved.
-          </div>
-        </div>
-      </footer>
 
       {/* Login Modal */}
       <Modal
@@ -261,6 +208,26 @@ export function Homepage() {
             placeholder="you@company.com"
             isRequired
           />
+          <Select
+            label="Select Role (Demo)"
+            placeholder="Select a persona"
+            selectedKeys={[role]}
+            onChange={(e) => setRole(e.target.value as UserRole)}
+            disallowEmptySelection
+            variant="bordered"
+            classNames={{
+              trigger: "bg-[var(--app-surface-hover)] border border-[var(--app-border-subtle)]",
+            }}
+          >
+            {Object.values(PERSONA_CONFIG).map((persona) => (
+              <SelectItem key={persona.id} value={persona.id} textValue={persona.label}>
+                <div className="flex flex-col">
+                  <span className="text-small">{persona.label}</span>
+                  <span className="text-tiny text-[var(--app-text-muted)]">{persona.description}</span>
+                </div>
+              </SelectItem>
+            ))}
+          </Select>
           <Input
             label="Password"
             type="password"
@@ -274,7 +241,7 @@ export function Homepage() {
           </Button>
           <div className="text-center text-xs sm:text-sm text-[var(--app-text-muted)]">
             Don&apos;t have an account?{' '}
-            <a href="#" className="text-[var(--app-primary)] hover:underline">Sign up</a>
+            <Link href="/eoi" className="text-[var(--app-primary)] hover:underline">Sign up</Link>
           </div>
         </form>
       </Modal>
