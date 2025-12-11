@@ -2,8 +2,9 @@
 
 import { useState } from 'react';
 import { Card, Button, Badge, Progress, PageContainer, Breadcrumb, PageHeader, Tabs, Tab } from '@/ui';
-import { Receipt, Download, Send, Calendar, DollarSign, Building2, Users, CheckCircle, Clock, AlertTriangle, Mail, Upload, FileText } from 'lucide-react';
+import { Receipt, Download, Send, Calendar, DollarSign, Building2, Users, CheckCircle, Clock, AlertTriangle, Mail, Upload, FileText , Scale} from 'lucide-react';
 import { getRouteConfig } from '@/config/routes';
+import { K1Generator } from '../tax/k1-generator';
 
 interface TaxDocument {
   id: string;
@@ -241,8 +242,7 @@ export function TaxCenter() {
             aiSuggestion={routeConfig.aiSuggestion}
           />
         </div>
-      )}
-
+        )}
       {/* Page Header with AI Summary */}
       <PageHeader
         title="Tax Center"
@@ -268,6 +268,10 @@ export function TaxCenter() {
             id: 'overview',
             label: 'Tax Documents',
             count: mockTaxDocuments.length
+          },
+          {
+            id: 'k1-generator',
+            label: 'K-1 Generator'
           },
           {
             id: 'fund-summary',
@@ -448,6 +452,23 @@ export function TaxCenter() {
               </Card>
             ))}
           </div>
+      )}
+
+      {/* K-1 Generator Tab */}
+      {selectedTab === 'k1-generator' && (
+        <div className="mt-4">
+          <K1Generator
+            configurations={[]}
+            documents={[]}
+            onConfigureK1={(fundId) => console.log('Configure K1:', fundId)}
+            onGenerateK1s={(fundId, taxYear) => console.log('Generate K1s:', fundId, taxYear)}
+            onPreviewK1={(documentId) => console.log('Preview K1:', documentId)}
+            onApproveK1={(documentId) => console.log('Approve K1:', documentId)}
+            onSendK1={(documentId) => console.log('Send K1:', documentId)}
+            onAmendK1={(documentId) => console.log('Amend K1:', documentId)}
+            onExportAll={(fundId, taxYear, format) => console.log('Export all:', fundId, taxYear, format)}
+          />
+        </div>
       )}
 
       {/* Fund Summary Tab */}

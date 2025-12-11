@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Card, Button, Badge, Breadcrumb, PageHeader, PageContainer } from '@/ui';
 import { Shield, FileText, AlertTriangle, CheckCircle, Clock, Download, Calendar, Users, Building2, Scale, Bell } from 'lucide-react';
 import { getRouteConfig } from '@/config/routes';
+import { AMLKYCWorkflow } from '../compliance/aml-kyc-workflow';
 
 interface ComplianceItem {
   id: string;
@@ -281,6 +282,10 @@ export function Compliance() {
               count: mockAuditSchedule.filter(a => a.status === 'in-progress').length
             },
             {
+              id: 'aml-kyc',
+              label: 'AML/KYC'
+            },
+            {
               id: 'resources',
               label: 'Resources'
             }
@@ -553,6 +558,24 @@ export function Compliance() {
                 ))}
               </div>
             </Card>
+          </div>
+        )}
+
+        {/* AML/KYC Tab */}
+        {selectedTab === 'aml-kyc' && (
+          <div>
+            <AMLKYCWorkflow
+              workflows={[]}
+              onInitiateWorkflow={(entityId) => console.log('Initiate workflow:', entityId)}
+              onUpdateStep={(workflowId, stepId) => console.log('Update step:', workflowId, stepId)}
+              onUploadDocument={(workflowId, documentType) => console.log('Upload document:', workflowId, documentType)}
+              onRunScreening={(workflowId, screeningType) => console.log('Run screening:', workflowId, screeningType)}
+              onReviewMatch={(workflowId, matchId, decision) => console.log('Review match:', workflowId, matchId, decision)}
+              onApproveWorkflow={(workflowId) => console.log('Approve workflow:', workflowId)}
+              onRejectWorkflow={(workflowId, reason) => console.log('Reject workflow:', workflowId, reason)}
+              onRequestEDD={(workflowId) => console.log('Request EDD:', workflowId)}
+              onExportReport={(workflowId) => console.log('Export report:', workflowId)}
+            />
           </div>
         )}
 

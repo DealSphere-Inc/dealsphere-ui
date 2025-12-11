@@ -16,6 +16,9 @@ import {
   FileDown,
   Sparkles,
   Database,
+  FileText,
+  Plug,
+  Settings,
 } from 'lucide-react';
 import type { BreadcrumbItem, AISuggestion } from '@/ui';
 
@@ -248,6 +251,53 @@ export const routes: Record<string, RouteConfig> = {
       { label: 'Audit Trail' },
     ],
     description: 'Immutable, cryptographically verified transaction history',
+  },
+
+  accounting: {
+    path: '/accounting',
+    label: 'Accounting',
+    icon: Receipt,
+    breadcrumbs: [
+      { label: 'Home', href: '/dashboard' },
+      { label: 'Back Office', href: '/dashboard' },
+      { label: 'Accounting' },
+    ],
+    description: 'Financial accounting and ledger management',
+  },
+
+  documents: {
+    path: '/documents',
+    label: 'Documents',
+    icon: FileText,
+    breadcrumbs: [
+      { label: 'Home', href: '/dashboard' },
+      { label: 'Utilities', href: '/dashboard' },
+      { label: 'Documents' },
+    ],
+    description: 'Document management and storage',
+  },
+
+  integrations: {
+    path: '/integrations',
+    label: 'Integrations',
+    icon: Plug,
+    breadcrumbs: [
+      { label: 'Home', href: '/dashboard' },
+      { label: 'Utilities', href: '/dashboard' },
+      { label: 'Integrations' },
+    ],
+    description: 'Connect external tools and services',
+  },
+
+  settings: {
+    path: '/settings',
+    label: 'Settings',
+    icon: Settings,
+    breadcrumbs: [
+      { label: 'Home', href: '/dashboard' },
+      { label: 'Settings' },
+    ],
+    description: 'Manage your account settings and preferences',
   },
 };
 

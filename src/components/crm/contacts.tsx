@@ -2,13 +2,14 @@
 
 import { useState } from 'react';
 import { Card, Button, Input, Badge, PageContainer, Breadcrumb, PageHeader } from '@/ui';
-import { User, Mail, Phone, Building2, MapPin, Calendar, Tag, Search, Filter, Plus, Edit3, Trash2, Star, MessageSquare, Video, Send, ExternalLink, Briefcase, Users } from 'lucide-react';
+import { User, Mail, Phone, Building2, MapPin, Calendar, Tag, Search, Filter, Plus, Edit3, Trash2, Star, MessageSquare, Video, Send, ExternalLink, Briefcase, Users, Network } from 'lucide-react';
 import { getRouteConfig } from '@/config/routes';
 import { SideDrawer } from '@/components/side-drawer';
 import { RelationshipScore, calculateRelationshipScore, type RelationshipMetrics } from '@/components/crm/relationship-score';
 import { SmartLists, type SmartList, type FilterCondition } from '@/components/crm/smart-lists';
 import { EmailIntegration, type EmailAccount } from '@/components/crm/email-integration';
 import { InteractionTimeline, type TimelineInteraction } from '@/components/crm/interaction-timeline';
+import { NetworkGraph } from './network-graph';
 
 interface Contact {
   id: string;
@@ -229,6 +230,7 @@ export function Contacts() {
   const [activeSmartList, setActiveSmartList] = useState<SmartList | null>(null);
   const [emailAccounts, setEmailAccounts] = useState<EmailAccount[]>(mockEmailAccounts);
   const [activeTab, setActiveTab] = useState<'overview' | 'timeline' | 'email'>('overview');
+  const [showNetworkGraph, setShowNetworkGraph] = useState(false);
 
   // Helper to get relationship metrics for a contact
   const getRelationshipMetrics = (contact: Contact): RelationshipMetrics => {
@@ -347,6 +349,12 @@ export function Contacts() {
             label: 'Add Contact',
             onClick: () => console.log('Add contact clicked')
           }}
+          secondaryActions={[
+            {
+              label: 'Network View',
+              onClick: () => setShowNetworkGraph(true)
+            }
+          ]}
         />
 
       {/* Stats Overview */}
@@ -761,6 +769,32 @@ export function Contacts() {
             </div>
         )}
       </SideDrawer>
+
+      {/* Network Graph Modal */}
+      {showNetworkGraph && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="bg-[var(--app-background)] rounded-lg w-full max-w-6xl max-h-[90vh] overflow-hidden shadow-xl">
+            <div className="flex items-center justify-between p-4 border-b border-[var(--app-border)]">
+              <h2 className="text-xl font-semibold">Network Graph</h2>
+              <Button
+                variant="flat"
+                size="sm"
+                onClick={() => setShowNetworkGraph(false)}
+              >
+                Close
+              </Button>
+            </div>
+            <div className="p-4 overflow-auto max-h-[calc(90vh-80px)]">
+              <NetworkGraph
+                centralNode={{ id: '1', name: 'Your Network', type: 'contact' }}
+                nodes={[]}
+                connections={[]}
+                onNodeClick={(node) => console.log('Node clicked:', node)}
+              />
+            </div>
+          </div>
+        </div>
+      )}
       </div>
     </PageContainer>
   );

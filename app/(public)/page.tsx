@@ -6,6 +6,7 @@
 // For now, I will create this file to render the Homepage, and then refactor Homepage.
 
 import { Homepage } from '@/components/homepage';
+import { PageContainer } from '@/ui';
 
 export default function Page() {
   return <Homepage />;

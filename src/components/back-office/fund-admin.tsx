@@ -5,6 +5,10 @@ import { Card, Button, Badge, Progress, Input, Select, Breadcrumb, PageHeader, P
 import { DollarSign, Send, Download, Clock, CheckCircle, AlertTriangle, Users, FileText, Mail, ArrowUpRight, ArrowDownRight } from 'lucide-react'
 import { FundSelector } from '../fund-selector'
 import { getRouteConfig } from '@/config/routes'
+import { CarriedInterestTracker } from '../fund-admin/carried-interest-tracker'
+import { ExpenseTracker } from '../fund-admin/expense-tracker'
+import { NAVCalculator } from '../fund-admin/nav-calculator'
+import { TransferSecondary } from '../fund-admin/transfer-secondary'
 
 interface CapitalCall {
   id: string;
@@ -270,6 +274,22 @@ export function FundAdmin() {
             label: 'LP Responses',
             count: pendingLPs,
             priority: pendingLPs > 2 ? 'medium' : undefined
+          },
+          {
+            id: 'nav-calculator',
+            label: 'NAV Calculator'
+          },
+          {
+            id: 'carried-interest',
+            label: 'Carried Interest'
+          },
+          {
+            id: 'expenses',
+            label: 'Expenses'
+          },
+          {
+            id: 'secondary-transfers',
+            label: 'Secondary Transfers'
           }
         ]}
         activeTab={selectedTab}
@@ -608,6 +628,59 @@ export function FundAdmin() {
                 })}
               </div>
             </Card>
+          </div>
+        )}
+
+        {selectedTab === 'nav-calculator' && (
+          <div>
+            <NAVCalculator
+              calculations={[]}
+              onCalculate={() => console.log('Calculate NAV')}
+              onReview={(calculationId) => console.log('Review calculation:', calculationId)}
+              onPublish={(calculationId) => console.log('Publish calculation:', calculationId)}
+              onExport={(calculationId, format) => console.log('Export calculation:', calculationId, format)}
+            />
+          </div>
+        )}
+
+        {selectedTab === 'carried-interest' && (
+          <div>
+            <CarriedInterestTracker
+              accruals={[]}
+              onCalculateAccrual={(fundId) => console.log('Calculate accrual:', fundId)}
+              onEditTerms={(fundId) => console.log('Edit terms:', fundId)}
+              onApproveAccrual={(accrualId) => console.log('Approve accrual:', accrualId)}
+              onDistribute={(accrualId) => console.log('Distribute:', accrualId)}
+              onExport={(accrualId, format) => console.log('Export:', accrualId, format)}
+            />
+          </div>
+        )}
+
+        {selectedTab === 'expenses' && (
+          <div>
+            <ExpenseTracker
+              expenses={[]}
+              onAddExpense={() => console.log('Add expense')}
+              onApproveExpense={(expenseId) => console.log('Approve expense:', expenseId)}
+              onRejectExpense={(expenseId) => console.log('Reject expense:', expenseId)}
+              onMarkPaid={(expenseId) => console.log('Mark paid:', expenseId)}
+              onExport={(format) => console.log('Export:', format)}
+            />
+          </div>
+        )}
+
+        {selectedTab === 'secondary-transfers' && (
+          <div>
+            <TransferSecondary
+              transfers={[]}
+              onInitiateTransfer={() => console.log('Initiate transfer')}
+              onReviewTransfer={(transferId) => console.log('Review transfer:', transferId)}
+              onApproveTransfer={(transferId) => console.log('Approve transfer:', transferId)}
+              onRejectTransfer={(transferId, reason) => console.log('Reject transfer:', transferId, reason)}
+              onCompleteTransfer={(transferId) => console.log('Complete transfer:', transferId)}
+              onUploadDocument={(transferId) => console.log('Upload document:', transferId)}
+              onExerciseROFR={(transferId) => console.log('Exercise ROFR:', transferId)}
+            />
           </div>
         )}
       </div>

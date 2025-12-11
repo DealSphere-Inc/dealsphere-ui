@@ -53,7 +53,7 @@ export interface Document {
   type: DocumentType;
   category: DocumentCategory;
   size: number; // in bytes
-  folderId?: string;
+  folderId?: string | null;
   folderPath?: string;
 
   // Metadata
@@ -116,7 +116,7 @@ export interface SharedAccess {
 export interface DocumentFolder {
   id: string;
   name: string;
-  parentId?: string;
+  parentId?: string | null;
   path: string;
   color?: string;
   icon?: string;
@@ -131,15 +131,15 @@ export interface DocumentFolder {
 interface DocumentManagerProps {
   documents: Document[];
   folders: DocumentFolder[];
-  currentFolderId?: string;
-  onUpload?: (folderId?: string) => void;
-  onCreateFolder?: (parentId?: string) => void;
+  currentFolderId?: string | null;
+  onUpload?: (folderId?: string | null) => void;
+  onCreateFolder?: (parentId?: string | null) => void;
   onOpenDocument?: (documentId: string) => void;
   onDownloadDocument?: (documentId: string) => void;
   onShareDocument?: (documentId: string) => void;
   onDeleteDocument?: (documentId: string) => void;
   onToggleFavorite?: (documentId: string) => void;
-  onMoveDocument?: (documentId: string, folderId: string) => void;
+  onMoveDocument?: (documentId: string, folderId: string | null) => void;
   onUpdateAccess?: (documentId: string, accessLevel: AccessLevel) => void;
 }
 

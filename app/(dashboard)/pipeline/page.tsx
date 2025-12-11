@@ -1,3 +1,5 @@
+'use client'
+
 import { Pipeline } from '@/components/pipeline'
 
 export default function PipelinePage() {

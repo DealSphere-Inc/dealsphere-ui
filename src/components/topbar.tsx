@@ -348,7 +348,13 @@ export function Topbar() {
               <div className="absolute right-0 top-full mt-2 w-64 z-50">
                 <Card padding="sm" className="shadow-lg">
                   {/* User Info */}
-                  <div className="px-3 py-3 border-b border-[var(--app-border)] mb-2">
+                  <button
+                    onClick={() => {
+                      router.push('/settings');
+                      setIsProfileOpen(false);
+                    }}
+                    className="w-full text-left px-3 py-3 border-b border-[var(--app-border)] mb-2 hover:bg-[var(--app-surface-hover)] transition-colors rounded-lg"
+                  >
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-full bg-[var(--app-primary)] flex items-center justify-center text-white font-medium">
                         {user?.name?.charAt(0) || 'U'}
@@ -358,7 +364,7 @@ export function Topbar() {
                         <div className="text-xs text-[var(--app-text-muted)] truncate">{user?.email || 'user@example.com'}</div>
                       </div>
                     </div>
-                  </div>
+                  </button>
 
                   {/* Menu Items */}
                   <button

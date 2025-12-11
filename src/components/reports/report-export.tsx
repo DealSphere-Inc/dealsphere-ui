@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Card, Button, Badge, Progress, Select, PageContainer, Breadcrumb, PageHeader } from '@/ui';
-import { Download, FileText, File, Table, Image, Calendar, Filter, Check, Settings, Mail, Clock, Repeat } from 'lucide-react';
+import { Download, FileText, File, Table, Image, Calendar, Filter, Check, Settings, Mail, Clock, Repeat , FileDown} from 'lucide-react';
 import { getRouteConfig } from '@/config/routes';
 
 interface ReportTemplate {
@@ -194,7 +194,7 @@ export function ReportExport() {
           <PageHeader
             title={routeConfig.label}
             description={routeConfig.description}
-            icon={routeConfig.icon}
+            icon={FileDown}
             aiSummary={{
               text: `${reportTemplates.length} report templates available. ${exportJobs.filter(j => j.status === 'completed').length} reports completed, ${exportJobs.filter(j => j.status === 'processing').length} currently processing.`,
               confidence: 0.90

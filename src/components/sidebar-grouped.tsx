@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { useTheme } from 'next-themes';
 import { Switch } from '@/ui';
-import { LayoutDashboard, GitBranch, Briefcase, Search, Vote, PieChart, TrendingUp, Users, UserCheck, DollarSign, Shield, Scale, Receipt, FileDown, Sparkles, Activity, BarChart3, Sun, Moon, Settings } from 'lucide-react';
+import { LayoutDashboard, GitBranch, Briefcase, Search, Vote, PieChart, TrendingUp, Users, UserCheck, DollarSign, Shield, Scale, Receipt, FileDown, Sparkles, Activity, BarChart3, Sun, Moon, Settings, FileText, Plug } from 'lucide-react';
 import { NavigationGroup } from './navigation-group';
 import { NavigationItem } from './navigation-item';
 import { useNavigation } from '@/contexts/navigation-context';
@@ -53,6 +53,7 @@ const navigationStructure = {
     items: [
       { id: 'fund-admin', href: '/fund-admin', label: 'Fund Admin', icon: DollarSign },
       { id: 'lp-management', href: '/lp-management', label: 'LP Management', icon: UserCheck },
+      { id: 'accounting', href: '/accounting', label: 'Accounting', icon: Receipt },
       { id: 'audit-trail', href: '/audit-trail', label: 'Audit Trail', icon: Shield },
       { id: 'compliance', href: '/compliance', label: 'Compliance', icon: Shield },
       { id: '409a-valuations', href: '/409a-valuations', label: '409A Valuations', icon: Receipt },
@@ -76,7 +77,9 @@ const navigationStructure = {
     allowedRoles: ['gp', 'analyst', 'ops', 'ir', 'researcher', 'auditor', 'service_provider'] as UserRole[],
     items: [
       { id: 'contacts', href: '/contacts', label: 'Contacts', icon: Users },
+      { id: 'documents', href: '/documents', label: 'Documents', icon: FileText },
       { id: 'reports', href: '/reports', label: 'Reports', icon: FileDown },
+      { id: 'integrations', href: '/integrations', label: 'Integrations', icon: Plug },
       { id: 'ai-tools', href: '/ai-tools', label: 'AI Tools', icon: Sparkles },
     ],
   },
@@ -243,9 +246,6 @@ export function SidebarGrouped() {
           label="Settings"
           icon={Settings}
         />
-        <p className="text-xs text-center text-[var(--app-text-subtle)]">
-          AI-Powered Fund Management
-        </p>
       </div>
     </aside>
   );
