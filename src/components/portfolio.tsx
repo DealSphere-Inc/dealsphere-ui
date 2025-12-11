@@ -61,12 +61,8 @@ export function Portfolio() {
         ]}
         activeTab={selected}
         onTabChange={(tabId) => setSelected(tabId)}
-      >
-        {/* Fund Selector as child content */}
-        <div className="w-full sm:w-64">
-          <FundSelector />
-        </div>
-      </PageHeader>
+        actionContent={<FundSelector />}
+      />
 
       {/* Tab Content */}
       <div className="mt-6">

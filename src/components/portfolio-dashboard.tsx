@@ -21,6 +21,7 @@ import {
   performanceData,
   assetAllocation,
 } from '@/data/mock-portfolio-data';
+import { AdvancedTable, ColumnDef } from '@/components/data-table/advanced-table';
 
 interface MetricCardProps {
   title: string;
@@ -56,103 +57,24 @@ function MetricCard({ title, value, change, trend, icon, subtitle }: MetricCardP
   );
 }
 
-interface CompanyRowProps {
-  company: typeof portfolioCompanies[0];
-  onClick: () => void;
-}
+const getHealthColor = (score: number) => {
+  if (score >= 85) return 'var(--app-success)';
+  if (score >= 70) return 'var(--app-warning)';
+  return 'var(--app-danger)';
+};
 
-function CompanyRow({ company, onClick }: CompanyRowProps) {
-  const getHealthColor = (score: number) => {
-    if (score >= 85) return 'var(--app-success)';
-    if (score >= 70) return 'var(--app-warning)';
-    return 'var(--app-danger)';
+const getStatusBadge = (status: string) => {
+  const colors = {
+    active: 'bg-[var(--app-success-bg)] text-[var(--app-success)]',
+    'at-risk': 'bg-[var(--app-danger-bg)] text-[var(--app-danger)]',
+    'under-review': 'bg-[var(--app-warning-bg)] text-[var(--app-warning)]',
+    exited: 'bg-[var(--app-surface-hover)] text-[var(--app-text-muted)]',
   };
-
-  const getStatusBadge = (status: string) => {
-    const colors = {
-      active: 'bg-[var(--app-success-bg)] text-[var(--app-success)]',
-      'at-risk': 'bg-[var(--app-danger-bg)] text-[var(--app-danger)]',
-      'under-review': 'bg-[var(--app-warning-bg)] text-[var(--app-warning)]',
-      exited: 'bg-[var(--app-surface-hover)] text-[var(--app-text-muted)]',
-    };
-    return colors[status as keyof typeof colors] || colors.active;
-  };
-
-  return (
-    <Card
-      padding="md"
-      className="hover:bg-[var(--app-surface-hover)] transition-all cursor-pointer hover:border-[var(--app-primary)]"
-      isPressable
-      onPress={onClick}
-    >
-      <div className="grid grid-cols-12 gap-4 items-center">
-        {/* Company Info */}
-        <div className="col-span-12 sm:col-span-3 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[var(--app-primary)] to-[var(--app-accent)] flex items-center justify-center flex-shrink-0">
-            <span className="text-white font-semibold">{company.companyName.charAt(0)}</span>
-          </div>
-          <div className="min-w-0">
-            <p className="font-semibold truncate">{company.companyName}</p>
-            <p className="text-xs text-[var(--app-text-muted)]">{company.sector} • {company.stage}</p>
-          </div>
-        </div>
-
-        {/* Metrics */}
-        <div className="col-span-6 sm:col-span-2 text-center sm:text-left">
-          <p className="text-xs text-[var(--app-text-muted)] mb-1">ARR</p>
-          <p className="font-semibold">${(company.arr / 1000000).toFixed(1)}M</p>
-          <p className="text-xs text-[var(--app-success)]">+{company.arrGrowth}%</p>
-        </div>
-
-        <div className="col-span-6 sm:col-span-2 text-center sm:text-left">
-          <p className="text-xs text-[var(--app-text-muted)] mb-1">Valuation</p>
-          <p className="font-semibold">${(company.currentValuation / 1000000).toFixed(0)}M</p>
-          <p className="text-xs text-[var(--app-text-muted)]">{company.ownership.toFixed(1)}% ownership</p>
-        </div>
-
-        <div className="col-span-6 sm:col-span-2 text-center sm:text-left">
-          <p className="text-xs text-[var(--app-text-muted)] mb-1">MOIC / IRR</p>
-          <p className="font-semibold">{company.moic.toFixed(1)}x</p>
-          <p className="text-xs text-[var(--app-success)]">{company.irr.toFixed(1)}%</p>
-        </div>
-
-        <div className="col-span-6 sm:col-span-2 text-center sm:text-left">
-          <p className="text-xs text-[var(--app-text-muted)] mb-1">Runway</p>
-          <p className="font-semibold">{company.runway} months</p>
-          <p className="text-xs text-[var(--app-text-muted)]">${(company.burnRate / 1000).toFixed(0)}k/mo burn</p>
-        </div>
-
-        {/* Health & Status */}
-        <div className="col-span-12 sm:col-span-1 flex sm:flex-col gap-2 justify-center items-center">
-          <Badge
-            size="sm"
-            variant="flat"
-            className={getStatusBadge(company.status)}
-          >
-            {company.status}
-          </Badge>
-          <div className="flex items-center gap-1">
-            <div
-              className="w-2 h-2 rounded-full"
-              style={{ backgroundColor: getHealthColor(company.healthScore) }}
-            />
-            <span className="text-xs font-medium">{company.healthScore}</span>
-          </div>
-        </div>
-      </div>
-    </Card>
-  );
-}
+  return colors[status as keyof typeof colors] || colors.active;
+};
 
 export function PortfolioDashboard() {
-  const [selectedSector, setSelectedSector] = useState<string>('all');
-  const [selectedStage, setSelectedStage] = useState<string>('all');
-
-  const filteredCompanies = portfolioCompanies.filter(company => {
-    const sectorMatch = selectedSector === 'all' || company.sector === selectedSector;
-    const stageMatch = selectedStage === 'all' || company.stage === selectedStage;
-    return sectorMatch && stageMatch;
-  });
+  const filteredCompanies = portfolioCompanies;
 
   const formatCurrency = (value: number) => {
     if (value >= 1000000) {
@@ -296,40 +218,136 @@ export function PortfolioDashboard() {
         </Card>
       </div>
 
-      {/* Portfolio Companies List */}
+      {/* Portfolio Companies Table */}
       <div>
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-xl font-semibold">Portfolio Companies</h3>
-          <div className="flex gap-2">
-            <select
-              className="text-sm px-3 py-1.5 rounded-lg border border-[var(--app-border)] bg-[var(--app-surface)] text-[var(--app-text)]"
-              value={selectedStage}
-              onChange={(e) => setSelectedStage(e.target.value)}
-            >
-              <option value="all">All Stages</option>
-              <option value="Seed">Seed</option>
-              <option value="Series A">Series A</option>
-              <option value="Series B">Series B</option>
-            </select>
-          </div>
-        </div>
+        <h3 className="text-xl font-semibold mb-4">Portfolio Companies</h3>
 
-        <div className="space-y-3">
-          {filteredCompanies.map((company) => (
-            <CompanyRow
-              key={company.id}
-              company={company}
-              onClick={() => console.log('View company:', company.companyName)}
-            />
-          ))}
-        </div>
-
-        {filteredCompanies.length === 0 && (
-          <Card padding="lg" className="text-center">
-            <AlertCircle className="w-12 h-12 mx-auto mb-4 text-[var(--app-text-subtle)]" />
-            <p className="text-[var(--app-text-muted)]">No companies match your filters</p>
-          </Card>
-        )}
+        <AdvancedTable
+          data={filteredCompanies}
+          columns={[
+            {
+              key: 'companyName',
+              label: 'Company',
+              sortable: true,
+              render: (company) => (
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[var(--app-primary)] to-[var(--app-accent)] flex items-center justify-center flex-shrink-0">
+                    <span className="text-white text-xs font-semibold">{company.companyName.charAt(0)}</span>
+                  </div>
+                  <span className="font-medium">{company.companyName}</span>
+                </div>
+              ),
+            },
+            {
+              key: 'sector',
+              label: 'Sector',
+              sortable: true,
+            },
+            {
+              key: 'stage',
+              label: 'Stage',
+              sortable: true,
+            },
+            {
+              key: 'arr',
+              label: 'ARR',
+              sortable: true,
+              align: 'right',
+              render: (company) => (
+                <div>
+                  <div className="font-medium">${(company.arr / 1000000).toFixed(1)}M</div>
+                  <div className="text-xs text-[var(--app-success)]">+{company.arrGrowth}%</div>
+                </div>
+              ),
+            },
+            {
+              key: 'currentValuation',
+              label: 'Valuation',
+              sortable: true,
+              align: 'right',
+              render: (company) => (
+                <span className="font-medium">${(company.currentValuation / 1000000).toFixed(0)}M</span>
+              ),
+            },
+            {
+              key: 'ownership',
+              label: 'Ownership',
+              sortable: true,
+              align: 'right',
+              render: (company) => (
+                <span className="text-sm">{company.ownership.toFixed(1)}%</span>
+              ),
+            },
+            {
+              key: 'moic',
+              label: 'MOIC',
+              sortable: true,
+              align: 'right',
+              render: (company) => (
+                <span className="font-medium">{company.moic.toFixed(1)}x</span>
+              ),
+            },
+            {
+              key: 'irr',
+              label: 'IRR',
+              sortable: true,
+              align: 'right',
+              render: (company) => (
+                <span className="text-sm text-[var(--app-success)]">{company.irr.toFixed(1)}%</span>
+              ),
+            },
+            {
+              key: 'runway',
+              label: 'Runway',
+              sortable: true,
+              align: 'right',
+              render: (company) => (
+                <div>
+                  <div className="font-medium">{company.runway}mo</div>
+                  <div className="text-xs text-[var(--app-text-muted)]">${(company.burnRate / 1000).toFixed(0)}k/mo</div>
+                </div>
+              ),
+            },
+            {
+              key: 'healthScore',
+              label: 'Health',
+              sortable: true,
+              align: 'center',
+              render: (company) => (
+                <div className="flex items-center justify-center gap-1">
+                  <div
+                    className="w-2 h-2 rounded-full"
+                    style={{ backgroundColor: getHealthColor(company.healthScore) }}
+                  />
+                  <span className="text-sm font-medium">{company.healthScore}</span>
+                </div>
+              ),
+            },
+            {
+              key: 'status',
+              label: 'Status',
+              sortable: true,
+              align: 'center',
+              render: (company) => (
+                <Badge
+                  size="sm"
+                  variant="flat"
+                  className={getStatusBadge(company.status)}
+                >
+                  {company.status}
+                </Badge>
+              ),
+            },
+          ]}
+          onRowClick={(company) => console.log('View company:', company.companyName)}
+          searchable={true}
+          searchPlaceholder="Search companies..."
+          searchKeys={['companyName', 'sector', 'stage']}
+          exportable={true}
+          exportFilename="portfolio-companies.csv"
+          pageSize={10}
+          showColumnToggle={true}
+        />
       </div>
     </PageContainer>
   );
