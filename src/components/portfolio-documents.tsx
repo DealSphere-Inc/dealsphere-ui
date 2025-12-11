@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Plus, Filter, Search, Upload, Download, Eye, FileText, CheckCircle2, Clock, AlertCircle, Circle } from 'lucide-react';
 import { Button, Card, Badge, Input, PageContainer } from '@/ui';
+import { DocumentPreviewModal, useDocumentPreview, getMockDocumentUrl, inferDocumentType } from './documents/preview';
 
 type DocumentStatus = 'overdue' | 'due-soon' | 'pending-review' | 'current' | 'awaiting-upload' | 'optional';
 type DocumentCategory = 'board-materials' | 'financial-reports' | 'compliance' | 'investor-updates' | 'pre-investment-dd';
@@ -79,6 +80,7 @@ export function PortfolioDocuments() {
   const [selectedCompany, setSelectedCompany] = useState<PortfolioCompany | null>(portfolioCompanies[0]);
   const [selectedCategory, setSelectedCategory] = useState<DocumentCategory | 'all'>('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const preview = useDocumentPreview();
 
   const getStatusIcon = (status: DocumentStatus) => {
     switch (status) {
@@ -353,7 +355,23 @@ export function PortfolioDocuments() {
                         <div className="flex gap-1">
                           {doc.status !== 'awaiting-upload' && (
                             <>
-                              <Button variant="light" size="sm" isIconOnly>
+                              <Button
+                                variant="light"
+                                size="sm"
+                                isIconOnly
+                                onPress={() => {
+                                  preview.openPreview({
+                                    id: doc.id.toString(),
+                                    name: doc.name,
+                                    type: inferDocumentType(doc.name),
+                                    url: getMockDocumentUrl(inferDocumentType(doc.name)),
+                                    uploadedBy: doc.uploadedBy,
+                                    uploadedDate: doc.uploadedDate ? new Date(doc.uploadedDate) : undefined,
+                                    size: doc.size ? parseInt(doc.size.replace(/[^0-9]/g, '')) * 1024 : undefined,
+                                    category: doc.category,
+                                  });
+                                }}
+                              >
                                 <Eye className="w-4 h-4" />
                               </Button>
                               <Button variant="light" size="sm" isIconOnly>
@@ -376,6 +394,15 @@ export function PortfolioDocuments() {
           </div>
         </Card>
       </div>
+
+      {/* Document Preview Modal */}
+      {preview.isOpen && preview.previewDocument && (
+        <DocumentPreviewModal
+          document={preview.previewDocument}
+          isOpen={preview.isOpen}
+          onClose={preview.closePreview}
+        />
+      )}
     </PageContainer>
   );
 }

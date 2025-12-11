@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { PageContainer, PageHeader, Breadcrumb } from '@/ui';
 import { getRouteConfig } from '@/config/routes';
 import { DocumentManager, type Document, type DocumentFolder, type DocumentCategory, type AccessLevel } from './document-manager';
+import { DocumentPreviewModal, useDocumentPreview, getMockDocumentUrl, type PreviewDocument } from './preview';
 
 // Mock data
 const mockFolders: DocumentFolder[] = [
@@ -113,6 +114,7 @@ export function Documents() {
   const [documents, setDocuments] = useState<Document[]>(mockDocuments);
   const [folders, setFolders] = useState<DocumentFolder[]>(mockFolders);
   const [currentFolderId, setCurrentFolderId] = useState<string | null>(null);
+  const preview = useDocumentPreview();
 
   const handleUpload = (folderId?: string | null) => {
     console.log('Upload file to folder:', folderId);
@@ -125,8 +127,35 @@ export function Documents() {
   };
 
   const handleOpenDocument = (documentId: string) => {
-    console.log('Open document:', documentId);
-    // TODO: Implement document opening
+    const doc = documents.find((d) => d.id === documentId);
+    if (doc) {
+      const previewDoc: PreviewDocument = {
+        id: doc.id,
+        name: doc.name,
+        type: doc.type,
+        url: getMockDocumentUrl(doc.type),
+        size: doc.size,
+        uploadedBy: doc.uploadedBy,
+        uploadedDate: doc.uploadedDate,
+        category: doc.category,
+        tags: doc.tags,
+      };
+
+      // Map all documents for navigation
+      const allPreviewDocs: PreviewDocument[] = documents.map((d) => ({
+        id: d.id,
+        name: d.name,
+        type: d.type,
+        url: getMockDocumentUrl(d.type),
+        size: d.size,
+        uploadedBy: d.uploadedBy,
+        uploadedDate: d.uploadedDate,
+        category: d.category,
+        tags: d.tags,
+      }));
+
+      preview.openPreview(previewDoc, allPreviewDocs);
+    }
   };
 
   const handleDownloadDocument = (documentId: string) => {
@@ -186,6 +215,20 @@ export function Documents() {
         onMoveDocument={handleMoveDocument}
         onUpdateAccess={handleUpdateAccess}
       />
+
+      {/* Document Preview Modal */}
+      {preview.isOpen && preview.previewDocument && (
+        <DocumentPreviewModal
+          document={preview.previewDocument}
+          documents={preview.previewDocuments}
+          currentIndex={preview.currentIndex}
+          isOpen={preview.isOpen}
+          onClose={preview.closePreview}
+          onNavigate={preview.navigateToDocument}
+          onDownload={handleDownloadDocument}
+          onShare={handleShareDocument}
+        />
+      )}
     </PageContainer>
   );
 }

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Card, Button, Badge, Progress } from '@/ui';
 import { Upload, FileText, Sparkles, CheckCircle2, Clock, AlertCircle, Download, Eye } from 'lucide-react';
+import { DocumentPreviewModal, useDocumentPreview, getMockDocumentUrl } from '@/components/documents/preview';
 
 interface PitchDeckAnalysis {
   id: string;
@@ -170,6 +171,7 @@ export function PitchDeckReader() {
   const [analyses, setAnalyses] = useState<PitchDeckAnalysis[]>(mockAnalyses);
   const [selectedAnalysis, setSelectedAnalysis] = useState<PitchDeckAnalysis | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const preview = useDocumentPreview();
 
   const handleFileUpload = () => {
     setIsUploading(true);
@@ -229,7 +231,26 @@ export function PitchDeckReader() {
             </div>
           </div>
           <div className="flex gap-2">
-            <Button variant="flat" size="sm" startContent={<Eye className="w-4 h-4" />}>
+            <Button
+              variant="flat"
+              size="sm"
+              startContent={<Eye className="w-4 h-4" />}
+              onPress={() => {
+                if (selectedAnalysis) {
+                  preview.openPreview({
+                    id: selectedAnalysis.id,
+                    name: selectedAnalysis.fileName,
+                    type: 'pdf',
+                    url: getMockDocumentUrl('pdf'),
+                    metadata: {
+                      aiInsights: selectedAnalysis.aiInsights,
+                      summary: selectedAnalysis.summary,
+                      extractedData: selectedAnalysis.extractedData,
+                    },
+                  });
+                }
+              }}
+            >
               View Deck
             </Button>
             <Button variant="flat" size="sm" startContent={<Download className="w-4 h-4" />}>
@@ -501,6 +522,16 @@ export function PitchDeckReader() {
             Upload Your First Deck
           </Button>
         </div>
+      )}
+
+      {/* Document Preview Modal */}
+      {preview.isOpen && preview.previewDocument && (
+        <DocumentPreviewModal
+          document={preview.previewDocument}
+          isOpen={preview.isOpen}
+          onClose={preview.closePreview}
+          aiInsights={preview.previewDocument.metadata as any}
+        />
       )}
     </Card>
   );

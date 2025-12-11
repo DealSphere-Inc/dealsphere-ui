@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Card, Button, Input, Badge } from '@/ui';
 import { Send, Sparkles, User, Bot, Lightbulb, TrendingUp, AlertCircle, FileText } from 'lucide-react';
+import { DocumentPreviewModal, useDocumentPreview, getMockDocumentUrl } from '@/components/documents/preview';
 
 interface Message {
   id: string;
@@ -40,6 +41,7 @@ export function DDChatAssistant({ dealId, dealName }: { dealId?: number; dealNam
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const preview = useDocumentPreview();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -235,6 +237,15 @@ export function DDChatAssistant({ dealId, dealName }: { dealId?: number; dealNam
                           size="sm"
                           variant="flat"
                           className="bg-[var(--app-surface-hover)] cursor-pointer hover:bg-[var(--app-primary-bg)] hover:text-[var(--app-primary)]"
+                          onClick={() => {
+                            preview.openPreview({
+                              id: doc.name,
+                              name: doc.name,
+                              type: doc.category === 'Pitch Deck' ? 'pdf' : 'pdf',
+                              url: getMockDocumentUrl('pdf'),
+                              category: doc.category,
+                            });
+                          }}
                         >
                           <FileText className="w-3 h-3 mr-1" />
                           {doc.name}
@@ -315,6 +326,15 @@ export function DDChatAssistant({ dealId, dealName }: { dealId?: number; dealNam
           AI assistant analyzes uploaded documents, financial data, and market research
         </p>
       </div>
+
+      {/* Document Preview Modal */}
+      {preview.isOpen && preview.previewDocument && (
+        <DocumentPreviewModal
+          document={preview.previewDocument}
+          isOpen={preview.isOpen}
+          onClose={preview.closePreview}
+        />
+      )}
     </Card>
   );
 }
