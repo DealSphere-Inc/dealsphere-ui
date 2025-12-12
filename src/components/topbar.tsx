@@ -213,7 +213,13 @@ export function Topbar() {
   };
 
   return (
-    <div className="py-4 px-4 sm:px-6 border-b border-[var(--app-border)] bg-[var(--app-surface)] flex items-center justify-between sticky top-0 z-30" style={{ height: '69px' }}>
+    <div
+      className="py-4 px-4 sm:px-6 border-b border-[var(--app-border)] flex items-center justify-between sticky top-0 z-30"
+      style={{
+        height: '69px',
+        background: 'linear-gradient(to left, var(--app-primary-bg), transparent)'
+      }}
+    >
       {/* Left: AI-Powered Search */}
       <div className="flex items-center flex-1 max-w-xl relative" ref={searchRef}>
         <div className="relative w-full">

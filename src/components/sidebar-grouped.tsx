@@ -118,8 +118,11 @@ export function SidebarGrouped() {
         width: effectivelyCollapsed ? '64px' : '256px',
       }}
       transition={{ duration: 0.2, ease: 'easeInOut' }}
-      className="relative flex flex-col h-full bg-[var(--app-sidebar-bg)] border-r border-[var(--app-sidebar-border)]"
-      style={{ willChange: 'width' }}
+      className="relative flex flex-col h-full border-r border-[var(--app-sidebar-border)]"
+      style={{
+        willChange: 'width',
+        background: 'linear-gradient(to top, var(--app-primary-bg), var(--app-sidebar-bg))'
+      }}
     >
       {/* Toggle Button */}
       <div
