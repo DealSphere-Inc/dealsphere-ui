@@ -1,53 +1,11 @@
 'use client';
 
-import { Users, MessageSquare, FileText, TrendingUp, Mail, Calendar, Phone } from 'lucide-react';
+import { Mail, Calendar, Phone } from 'lucide-react';
 import { Card, Button, Badge, PageContainer } from '@/ui';
 import { MetricCard } from '@/components/metric-card';
+import { irDashboardMetrics, irRecentInteractions, irUpcomingTasks } from '@/data/mocks/dashboards/ir-dashboard';
 
 export function IRDashboard() {
-  const metrics = [
-    {
-      label: 'Active LPs',
-      value: '42',
-      change: '+3 new',
-      trend: 'up' as const,
-      icon: Users,
-    },
-    {
-      label: 'Pending Requests',
-      value: '7',
-      change: 'Action Req',
-      trend: 'down' as const,
-      icon: MessageSquare,
-    },
-    {
-      label: 'Quarterly Reports',
-      value: '4',
-      change: 'Draft',
-      trend: 'up' as const,
-      icon: FileText,
-    },
-    {
-      label: 'Fundraising Progress',
-      value: '68%',
-      change: '+12%',
-      trend: 'up' as const,
-      icon: TrendingUp,
-    },
-  ];
-
-  const recentInteractions = [
-    { lp: 'Sequoia Capital', type: 'Call', date: 'Today', notes: 'Discussed Fund IV commitment' },
-    { lp: 'Tiger Global', type: 'Email', date: 'Yesterday', notes: 'Sent Q3 performance update' },
-    { lp: 'Founders Fund', type: 'Meeting', date: '2 days ago', notes: 'Annual LP summit planning' },
-  ];
-
-  const upcomingTasks = [
-    { task: 'Quarterly LP Newsletter', due: 'Dec 15', priority: 'High' },
-    { task: 'Fund IV Pitch Deck', due: 'Dec 20', priority: 'High' },
-    { task: 'Annual Meeting Invites', due: 'Dec 22', priority: 'Medium' },
-  ];
-
   return (
     <PageContainer className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -66,7 +24,7 @@ export function IRDashboard() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {metrics.map((metric, index) => (
+        {irDashboardMetrics.map((metric, index) => (
           <MetricCard key={index} {...metric} />
         ))}
       </div>
@@ -78,7 +36,7 @@ export function IRDashboard() {
              <Button size="sm" variant="light">View All</Button>
            </div>
            <div className="space-y-4">
-             {recentInteractions.map((interaction, idx) => (
+             {irRecentInteractions.map((interaction, idx) => (
                <div key={idx} className="flex items-center justify-between p-3 rounded-lg border border-[var(--app-border-subtle)] hover:bg-[var(--app-surface-hover)] transition-colors">
                  <div className="flex items-center gap-3">
                    <div className="w-10 h-10 rounded-full bg-[var(--app-secondary-bg)] flex items-center justify-center text-[var(--app-secondary)] font-bold">
@@ -106,7 +64,7 @@ export function IRDashboard() {
             Upcoming Tasks
           </h3>
           <div className="space-y-3">
-            {upcomingTasks.map((item, i) => (
+            {irUpcomingTasks.map((item, i) => (
               <div key={i} className="flex items-center justify-between p-2 rounded border-l-2 border-[var(--app-primary)]">
                  <div>
                    <div className="text-sm font-medium">{item.task}</div>

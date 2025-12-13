@@ -5,20 +5,7 @@ import { Card, Button, Badge, Progress, PageContainer, Breadcrumb, PageHeader } 
 import { ThumbsUp, ThumbsDown, MinusCircle, MessageSquare, Users, Building2, TrendingUp, DollarSign, Target, Lightbulb, Share2, Download, Play, Pause, SkipForward, SkipBack, Maximize2, Plus, Edit3, FileSearch , Vote} from 'lucide-react';
 import { getRouteConfig } from '@/config/routes';
 import { CompanyScoring } from './company-scoring';
-
-interface Deal {
-  id: string;
-  companyName: string;
-  sector: string;
-  stage: string;
-  askAmount: number;
-  valuation: number;
-  arr: number;
-  growth: number;
-  founderName: string;
-  location: string;
-  oneLiner: string;
-}
+import { mockDeals, type Deal } from '@/data/mocks/dealflow/dealflow-review';
 
 interface SlideContent {
   id: string;
@@ -43,35 +30,6 @@ interface ReviewSession {
   votes: Vote[];
   decision?: 'proceed' | 'pass' | 'defer';
 }
-
-const mockDeals: Deal[] = [
-  {
-    id: '1',
-    companyName: 'Quantum AI',
-    sector: 'AI/ML',
-    stage: 'Series A',
-    askAmount: 15000000,
-    valuation: 75000000,
-    arr: 2500000,
-    growth: 300,
-    founderName: 'Sarah Chen',
-    location: 'San Francisco, CA',
-    oneLiner: 'Enterprise quantum computing platform accessible via API'
-  },
-  {
-    id: '2',
-    companyName: 'NeuroLink',
-    sector: 'HealthTech',
-    stage: 'Seed',
-    askAmount: 3000000,
-    valuation: 12000000,
-    arr: 500000,
-    growth: 450,
-    founderName: 'Michael Rodriguez',
-    location: 'Boston, MA',
-    oneLiner: 'AI-powered neural diagnostics for early disease detection'
-  }
-];
 
 const generateSlides = (deal: Deal): SlideContent[] => [
   {

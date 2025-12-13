@@ -1,47 +1,11 @@
 'use client';
 
-import { Search, FileText, TrendingUp, AlertCircle, CheckCircle2, Clock } from 'lucide-react';
+import { Search, CheckCircle2, Clock } from 'lucide-react';
 import { Card, Button, Badge, PageContainer } from '@/ui';
 import { MetricCard } from '@/components/metric-card';
+import { analystDashboardMetrics, analystRecentDeals, analystUrgentTasks } from '@/data/mocks/dashboards/analyst-dashboard';
 
 export function AnalystDashboard() {
-  const metrics = [
-    {
-      label: 'Deals in Pipeline',
-      value: '45',
-      change: '+5',
-      trend: 'up' as const,
-      icon: Search,
-    },
-    {
-      label: 'Due Diligence Active',
-      value: '8',
-      change: '+2',
-      trend: 'up' as const,
-      icon: FileText,
-    },
-    {
-      label: 'Market Signals',
-      value: '12',
-      change: 'High',
-      trend: 'up' as const, // Neutral not supported by MetricCard yet
-      icon: TrendingUp,
-    },
-    {
-      label: 'Pending Reviews',
-      value: '3',
-      change: 'Urgent',
-      trend: 'down' as const,
-      icon: AlertCircle,
-    },
-  ];
-
-  const recentDeals = [
-    { name: 'Nebula AI', stage: 'Due Diligence', score: 92, sector: 'Generative AI' },
-    { name: 'Quantum Leap', stage: 'Screening', score: 85, sector: 'Quantum Computing' },
-    { name: 'GreenEnergy Co', stage: 'Term Sheet', score: 88, sector: 'Clean Tech' },
-  ];
-
   return (
     <PageContainer className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -57,7 +21,7 @@ export function AnalystDashboard() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {metrics.map((metric, index) => (
+        {analystDashboardMetrics.map((metric, index) => (
           <MetricCard key={index} {...metric} />
         ))}
       </div>
@@ -69,7 +33,7 @@ export function AnalystDashboard() {
              <Button size="sm" variant="light">View All</Button>
            </div>
            <div className="space-y-4">
-             {recentDeals.map((deal, idx) => (
+             {analystRecentDeals.map((deal, idx) => (
                <div key={idx} className="flex items-center justify-between p-3 rounded-lg border border-[var(--app-border-subtle)] hover:bg-[var(--app-surface-hover)] transition-colors">
                  <div className="flex items-center gap-3">
                    <div className="w-10 h-10 rounded-full bg-[var(--app-primary-bg)] flex items-center justify-center text-[var(--app-primary)] font-bold">
@@ -97,11 +61,7 @@ export function AnalystDashboard() {
         <Card padding="md">
           <h3 className="text-lg font-medium mb-4">Urgent Tasks</h3>
           <div className="space-y-3">
-            {[
-              { task: 'Review Q3 Market Report', due: 'Today', priority: 'High' },
-              { task: 'Update Nebula AI Financials', due: 'Tomorrow', priority: 'Medium' },
-              { task: 'Prep IC Memo for GreenEnergy', due: 'In 2 days', priority: 'High' },
-            ].map((item, i) => (
+            {analystUrgentTasks.map((item, i) => (
               <div key={i} className="flex items-start gap-3 p-2">
                  <CheckCircle2 className="w-5 h-5 text-[var(--app-text-muted)] mt-0.5" />
                  <div>

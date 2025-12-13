@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Card, Button, Badge } from '@/ui';
 import { Layers, TrendingUp, ArrowUpRight, ArrowDownRight } from 'lucide-react';
-import { cohortsByVintage, cohortsBySector, cohortsByStage, type CohortPerformance } from '@/data/mock-fund-analytics-data';
+import { cohortsByVintage, cohortsBySector, cohortsByStage, type CohortPerformance } from '@/data/mocks/mock-fund-analytics-data';
 
 type CohortType = 'vintage' | 'sector' | 'stage';
 

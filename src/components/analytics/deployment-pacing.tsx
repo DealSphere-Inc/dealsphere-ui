@@ -1,7 +1,7 @@
 'use client'
 
 import { Card, Progress } from '@/ui';
-import { deploymentPacing, currentFund } from '@/data/mock-fund-analytics-data';
+import { deploymentPacing, currentFund } from '@/data/mocks/mock-fund-analytics-data';
 import { Activity, TrendingUp } from 'lucide-react';
 
 export function DeploymentPacing() {

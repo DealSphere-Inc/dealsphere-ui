@@ -20,7 +20,7 @@ import {
   portfolioSummary,
   performanceData,
   assetAllocation,
-} from '@/data/mock-portfolio-data';
+} from '@/data/mocks/mock-portfolio-data';
 import { AdvancedTable, ColumnDef } from '@/components/data-table/advanced-table';
 
 interface MetricCardProps {

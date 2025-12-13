@@ -1,7 +1,7 @@
 'use client'
 
 import { Card } from '@/ui';
-import { valuationTrends } from '@/data/mock-fund-analytics-data';
+import { valuationTrends } from '@/data/mocks/mock-fund-analytics-data';
 import { TrendingUp, DollarSign } from 'lucide-react';
 
 export function ValuationTrends() {

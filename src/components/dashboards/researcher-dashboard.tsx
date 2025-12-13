@@ -1,54 +1,11 @@
 'use client';
 
-import { BarChart3, TrendingUp, Database, FileText, Search, Layers, PieChart, Download } from 'lucide-react';
+import { TrendingUp, FileText, Search, Download } from 'lucide-react';
 import { Card, Button, Badge, PageContainer } from '@/ui';
 import { MetricCard } from '@/components/metric-card';
+import { researcherDashboardMetrics, researcherRecentReports, researcherTrendingTopics } from '@/data/mocks/dashboards/researcher-dashboard';
 
 export function ResearcherDashboard() {
-  const metrics = [
-    {
-      label: 'Reports Generated',
-      value: '24',
-      change: '+5 this week',
-      trend: 'up' as const,
-      icon: FileText,
-    },
-    {
-      label: 'Data Sources',
-      value: '12',
-      change: 'Active',
-      trend: 'up' as const,
-      icon: Database,
-    },
-    {
-      label: 'Market Trends',
-      value: '8',
-      change: 'New signals',
-      trend: 'up' as const,
-      icon: TrendingUp,
-    },
-    {
-      label: 'Benchmark Score',
-      value: '92',
-      change: 'Top Quartile',
-      trend: 'up' as const,
-      icon: BarChart3,
-    },
-  ];
-
-  const recentReports = [
-    { name: 'Q3 Market Analysis', type: 'Market', date: 'Today', status: 'Published' },
-    { name: 'AI Sector Deep Dive', type: 'Sector', date: 'Yesterday', status: 'Draft' },
-    { name: 'Fund III Benchmark', type: 'Internal', date: '3 days ago', status: 'Published' },
-  ];
-
-  const trendingTopics = [
-    { topic: 'Generative AI Valuations', sentiment: 'Hot', change: '+45%' },
-    { topic: 'Climate Tech Funding', sentiment: 'Rising', change: '+22%' },
-    { topic: 'Crypto VC Activity', sentiment: 'Mixed', change: '-8%' },
-    { topic: 'Healthcare SaaS', sentiment: 'Stable', change: '+5%' },
-  ];
-
   return (
     <PageContainer className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -67,7 +24,7 @@ export function ResearcherDashboard() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {metrics.map((metric, index) => (
+        {researcherDashboardMetrics.map((metric, index) => (
           <MetricCard key={index} {...metric} />
         ))}
       </div>
@@ -79,7 +36,7 @@ export function ResearcherDashboard() {
              <Button size="sm" variant="light">View All</Button>
            </div>
            <div className="space-y-4">
-             {recentReports.map((report, idx) => (
+             {researcherRecentReports.map((report, idx) => (
                <div key={idx} className="flex items-center justify-between p-3 rounded-lg border border-[var(--app-border-subtle)] hover:bg-[var(--app-surface-hover)] transition-colors">
                  <div className="flex items-center gap-3">
                    <div className="w-10 h-10 rounded-lg bg-[var(--app-primary-bg)] flex items-center justify-center text-[var(--app-primary)]">
@@ -109,7 +66,7 @@ export function ResearcherDashboard() {
             Trending Topics
           </h3>
           <div className="space-y-3">
-            {trendingTopics.map((item, i) => (
+            {researcherTrendingTopics.map((item, i) => (
               <div key={i} className="flex items-center justify-between p-2">
                  <div>
                    <div className="text-sm font-medium">{item.topic}</div>

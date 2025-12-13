@@ -4,37 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Card, Button, Input, Badge } from '@/ui';
 import { Send, Sparkles, User, Bot, Lightbulb, TrendingUp, AlertCircle, FileText } from 'lucide-react';
 import { DocumentPreviewModal, useDocumentPreview, getMockDocumentUrl } from '@/components/documents/preview';
-
-interface Message {
-  id: string;
-  role: 'user' | 'assistant';
-  content: string;
-  timestamp: Date;
-  suggestedQuestions?: string[];
-  relatedDocs?: { name: string; category: string }[];
-  insights?: { type: 'positive' | 'negative' | 'neutral'; text: string }[];
-}
-
-interface ChatSession {
-  dealId?: number;
-  dealName?: string;
-  messages: Message[];
-}
-
-const mockConversations: Message[] = [
-  {
-    id: '1',
-    role: 'assistant',
-    content: "Hi! I'm your AI Due Diligence Assistant. I can help you analyze deals, answer questions about companies in your pipeline, and provide insights from uploaded documents. What would you like to know?",
-    timestamp: new Date(),
-    suggestedQuestions: [
-      "What are the key risks for Quantum AI?",
-      "Compare unit economics across my active deals",
-      "What's the competitive landscape for NeuroLink?",
-      "Summarize financial metrics for CloudScale"
-    ]
-  }
-];
+import { mockConversations, type Message } from '@/data/mocks/ai/dd-chat-assistant';
 
 export function DDChatAssistant({ dealId, dealName }: { dealId?: number; dealName?: string }) {
   const [messages, setMessages] = useState<Message[]>(mockConversations);

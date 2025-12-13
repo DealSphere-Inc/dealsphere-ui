@@ -1,33 +1,20 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { Search, Bell, Settings, User, ChevronDown, LogOut, HelpCircle, Sparkles, TrendingUp, FileText, Building2, Users, DollarSign, Clock, Moon, Sun } from 'lucide-react';
+import { Search, ChevronDown, LogOut, Sparkles, Moon, Sun } from 'lucide-react';
 import { useAuth } from '@/contexts/auth-context';
-import { useFund } from '@/contexts/fund-context';
 import { Button, Badge, Card, Input } from '@/ui';
 import { useRouter } from 'next/navigation';
 import { useAICopilot } from './ai-copilot-sidebar';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { fetchAlerts, markAlertRead } from '@/store/slices/alertsSlice';
-import { NotificationCenter, Notification } from '@/components/notification-center';
+import { NotificationCenter } from '@/components/notification-center';
+import type { Notification } from '@/types/notification';
 import { useTheme } from 'next-themes';
-
-type SearchResultType = 'deal' | 'company' | 'document' | 'contact' | 'action' | 'ai-suggestion';
-
-interface SearchResult {
-  id: string;
-  type: SearchResultType;
-  title: string;
-  description?: string;
-  category?: string;
-  confidence?: number;
-  icon?: any;
-  action?: () => void;
-}
+import { getMockTopbarSearchResults, type TopbarSearchResult } from '@/data/mocks/topbar/search';
 
 export function Topbar() {
   const { user, logout } = useAuth();
-  const { selectedFund } = useFund();
   const router = useRouter();
   const { openWithQuery } = useAICopilot();
   const dispatch = useAppDispatch();
@@ -36,7 +23,7 @@ export function Topbar() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchFocused, setIsSearchFocused] = useState(false);
-  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+  const [searchResults, setSearchResults] = useState<TopbarSearchResult[]>([]);
   const searchRef = useRef<HTMLDivElement>(null);
 
   const handleLogout = () => {
@@ -78,114 +65,8 @@ export function Topbar() {
       return;
     }
 
-    // Simulate AI-powered search with smart suggestions
-    const query = searchQuery.toLowerCase();
-    const results: SearchResult[] = [];
-
-    // Natural language detection
-    if (query.includes('show') || query.includes('find') || query.includes('get')) {
-      // AI understands intent
-      if (query.includes('deal') || query.includes('pipeline')) {
-        results.push({
-          id: 'ai-1',
-          type: 'ai-suggestion',
-          title: 'Navigate to Deal Pipeline',
-          description: 'AI detected: You want to view deals',
-          confidence: 0.95,
-          icon: Sparkles,
-          action: () => router.push('/pipeline')
-        });
-      }
-      if (query.includes('portfolio') || query.includes('companies')) {
-        results.push({
-          id: 'ai-2',
-          type: 'ai-suggestion',
-          title: 'Navigate to Portfolio',
-          description: 'AI detected: You want to view portfolio companies',
-          confidence: 0.92,
-          icon: Sparkles,
-          action: () => router.push('/portfolio')
-        });
-      }
-      if (query.includes('report') || query.includes('analytics')) {
-        results.push({
-          id: 'ai-3',
-          type: 'ai-suggestion',
-          title: 'Navigate to Analytics',
-          description: 'AI detected: You want to view reports or analytics',
-          confidence: 0.88,
-          icon: Sparkles,
-          action: () => router.push('/analytics')
-        });
-      }
-    }
-
-    // Mock deal results
-    if (query.includes('quantum') || query.includes('ai') || query.includes('series')) {
-      results.push({
-        id: 'deal-1',
-        type: 'deal',
-        title: 'Quantum AI - Series A',
-        description: '$5M • SaaS • 85% probability',
-        category: 'Active Deal',
-        icon: TrendingUp
-      });
-    }
-
-    // Mock company results
-    if (query.includes('data') || query.includes('sync')) {
-      results.push({
-        id: 'company-1',
-        type: 'company',
-        title: 'DataSync Pro',
-        description: 'Series B • Portfolio Company',
-        category: 'Portfolio',
-        icon: Building2
-      });
-    }
-
-    // Mock document results
-    if (query.includes('dd') || query.includes('due diligence') || query.includes('doc')) {
-      results.push({
-        id: 'doc-1',
-        type: 'document',
-        title: 'Due Diligence Checklist - Quantum AI',
-        description: 'Updated 2 days ago',
-        category: 'Document',
-        icon: FileText
-      });
-    }
-
-    // AI quick actions
-    if (query.includes('create') || query.includes('new') || query.includes('add')) {
-      results.push({
-        id: 'action-1',
-        type: 'action',
-        title: 'Create New Deal',
-        description: 'Quick action',
-        icon: DollarSign,
-        action: () => {
-          // Navigate to create deal
-          router.push('/pipeline?action=create');
-        }
-      });
-    }
-
-    // Time-based queries
-    if (query.includes('today') || query.includes('this week') || query.includes('recent')) {
-      results.push({
-        id: 'ai-4',
-        type: 'ai-suggestion',
-        title: 'Recent Activity',
-        description: 'Show deals and updates from the past week',
-        confidence: 0.90,
-        icon: Clock,
-        action: () => router.push('/dashboard')
-      });
-    }
-
-    setSearchResults(results.slice(0, 6)); // Limit to top 6 results
-  }, [searchQuery, router]);
+    setSearchResults(getMockTopbarSearchResults(searchQuery));
+  }, [searchQuery]);
 
   // Close search dropdown when clicking outside
   useEffect(() => {
@@ -199,14 +80,14 @@ export function Topbar() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const getResultIcon = (result: SearchResult) => {
+  const getResultIcon = (result: TopbarSearchResult) => {
     const Icon = result.icon || Search;
     return <Icon className="w-4 h-4" />;
   };
 
-  const handleResultClick = (result: SearchResult) => {
-    if (result.action) {
-      result.action();
+  const handleResultClick = (result: TopbarSearchResult) => {
+    if (result.href) {
+      router.push(result.href);
     }
     setSearchQuery('');
     setIsSearchFocused(false);

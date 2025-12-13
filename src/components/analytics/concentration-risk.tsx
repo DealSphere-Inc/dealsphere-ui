@@ -8,7 +8,7 @@ import {
   concentrationBySector,
   concentrationByStage,
   type ConcentrationMetric
-} from '@/data/mock-fund-analytics-data';
+} from '@/data/mocks/mock-fund-analytics-data';
 
 type ConcentrationView = 'company' | 'sector' | 'stage';
 

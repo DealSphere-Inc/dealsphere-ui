@@ -8,6 +8,7 @@ import { PortfolioDocuments } from './portfolio-documents';
 import { PortfolioUpdates } from './portfolio-updates';
 import { FundSelector } from './fund-selector';
 import { getRouteConfig } from '@/config/routes';
+import { portfolioPageMetrics, portfolioPageHealthyCompanies } from '@/data/mocks/portfolio/page-metrics';
 
 export function Portfolio() {
   const [selected, setSelected] = useState<string>('overview');
@@ -15,11 +16,10 @@ export function Portfolio() {
   // Get route config for breadcrumbs and AI suggestions
   const routeConfig = getRouteConfig('/portfolio');
 
-  // Mock portfolio metrics for AI summary
-  const totalCompanies = 24;
-  const healthyCompanies = 18;
-  const atRiskCompanies = 3;
-  const pendingUpdates = 5;
+  const totalCompanies = portfolioPageMetrics.totalCompanies;
+  const healthyCompanies = portfolioPageHealthyCompanies;
+  const atRiskCompanies = portfolioPageMetrics.atRiskCompanies;
+  const pendingUpdates = portfolioPageMetrics.pendingUpdates;
 
   return (
     <PageContainer>

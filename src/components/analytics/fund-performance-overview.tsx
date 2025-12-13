@@ -2,7 +2,7 @@
 
 import { Card, Progress } from '@/ui';
 import { TrendingUp, DollarSign, PieChart, Target, Calendar, Activity } from 'lucide-react';
-import { currentFund, benchmarkData } from '@/data/mock-fund-analytics-data';
+import { currentFund, benchmarkData } from '@/data/mocks/mock-fund-analytics-data';
 
 interface MetricCardProps {
   title: string;

@@ -12,7 +12,7 @@ import {
   Filter,
   Calendar,
 } from 'lucide-react';
-import { portfolioUpdates, portfolioCompanies } from '@/data/mock-portfolio-data';
+import { portfolioUpdates, portfolioCompanies } from '@/data/mocks/mock-portfolio-data';
 
 const updateIcons = {
   financial: <DollarSign className="w-5 h-5" />,

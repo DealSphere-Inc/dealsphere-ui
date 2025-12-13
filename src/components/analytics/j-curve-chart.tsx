@@ -1,7 +1,7 @@
 'use client'
 
 import { Card } from '@/ui';
-import { jCurveData } from '@/data/mock-fund-analytics-data';
+import { jCurveData } from '@/data/mocks/mock-fund-analytics-data';
 import { TrendingUp, Info } from 'lucide-react';
 
 export function JCurveChart() {

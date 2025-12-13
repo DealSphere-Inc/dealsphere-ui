@@ -4,100 +4,16 @@ import { useState } from 'react';
 import { BarChart3, TrendingUp, FileText, DollarSign, Download, Calendar, CheckCircle2, AlertCircle, Clock, CreditCard, Pen, Shield, ChevronRight, Wallet } from 'lucide-react';
 import { Card, Button, Badge, Progress, PageContainer } from '@/ui';
 import { MetricCard } from '@/components/metric-card';
-
-interface PendingCapitalCall {
-  id: string;
-  fundName: string;
-  callNumber: number;
-  amount: number;
-  dueDate: Date;
-  status: 'pending' | 'overdue' | 'partial';
-  paidAmount: number;
-}
-
-interface PendingSignature {
-  id: string;
-  documentName: string;
-  documentType: string;
-  requestedDate: Date;
-  urgency: 'high' | 'medium' | 'low';
-}
-
-const pendingCalls: PendingCapitalCall[] = [
-  {
-    id: '1',
-    fundName: 'Quantum Ventures Fund III',
-    callNumber: 3,
-    amount: 750000,
-    dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-    status: 'pending',
-    paidAmount: 0,
-  },
-];
-
-const pendingSignatures: PendingSignature[] = [
-  {
-    id: '1',
-    documentName: 'Side Letter Amendment',
-    documentType: 'Legal Amendment',
-    requestedDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
-    urgency: 'high',
-  },
-  {
-    id: '2',
-    documentName: 'Q4 Consent Form',
-    documentType: 'Consent',
-    requestedDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
-    urgency: 'medium',
-  },
-];
+import { lpDashboardCapitalActivity, lpDashboardDocuments, lpDashboardMetrics, pendingCalls, pendingSignatures } from '@/data/mocks/dashboards/lp-dashboard';
 
 export function LPDashboard() {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
 
-  const metrics = [
-    {
-      label: 'Capital Account',
-      value: '$4.2M',
-      change: '+12.4%',
-      trend: 'up' as const,
-      icon: DollarSign,
-    },
-    {
-      label: 'Total Distributions',
-      value: '$1.8M',
-      change: 'YTD',
-      trend: 'up' as const,
-      icon: TrendingUp,
-    },
-    {
-      label: 'NAV',
-      value: '$5.6M',
-      change: 'Q3 2024',
-      trend: 'up' as const,
-      icon: BarChart3,
-    },
-    {
-      label: 'IRR',
-      value: '24.3%',
-      change: 'Net',
-      trend: 'up' as const,
-      icon: TrendingUp,
-    },
-  ];
+  const metrics = lpDashboardMetrics;
 
-  const documents = [
-    { name: 'Q3 2024 LP Report', type: 'Report', date: 'Oct 15, 2024' },
-    { name: 'Capital Call Notice #12', type: 'Notice', date: 'Sep 30, 2024' },
-    { name: 'Distribution Notice #8', type: 'Notice', date: 'Aug 15, 2024' },
-    { name: 'Fund III LPA Amendment', type: 'Legal', date: 'Jul 01, 2024' },
-  ];
+  const documents = lpDashboardDocuments;
 
-  const capitalActivity = [
-    { type: 'Capital Call', amount: '$500K', date: 'Oct 01, 2024', status: 'Paid' },
-    { type: 'Distribution', amount: '$125K', date: 'Sep 15, 2024', status: 'Received' },
-    { type: 'Capital Call', amount: '$500K', date: 'Jul 01, 2024', status: 'Paid' },
-  ];
+  const capitalActivity = lpDashboardCapitalActivity;
 
   const formatCurrency = (amount: number) => {
     if (amount >= 1_000_000) return `$${(amount / 1_000_000).toFixed(1)}M`;

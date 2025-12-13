@@ -1,6 +1,7 @@
 'use client'
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createMockUser } from '@/data/mocks/auth';
 
 // Define User Roles based on Personas
 // Primary (Internal) + Secondary (External Stakeholders)
@@ -126,17 +127,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = (email: string, password: string, role: UserRole = 'gp') => {
     // Mock authentication - default to provided role or GP
     // In a real app, this would come from the backend response
-    const mockUser: User = {
-      name: 'Alex Morgan',
-      email,
-      role: role,
-      avatar: 'https://i.pravatar.cc/150?u=alex'
-    };
+    const nextUser: User = createMockUser(email, role);
 
     setIsAuthenticated(true);
-    setUser(mockUser);
+    setUser(nextUser);
     localStorage.setItem('isAuthenticated', 'true');
-    localStorage.setItem('user', JSON.stringify(mockUser));
+    localStorage.setItem('user', JSON.stringify(nextUser));
   };
 
   const logout = () => {
