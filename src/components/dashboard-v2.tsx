@@ -1,9 +1,8 @@
 'use client'
 
 import { useEffect } from 'react';
-import { Layers, DollarSign, TrendingUp, Users, BarChart, Target, Clock, LayoutDashboard } from 'lucide-react';
+import { DollarSign, TrendingUp, Users, BarChart, Target, Clock, LayoutDashboard } from 'lucide-react';
 import { AIInsightsBanner } from './dashboard/ai-insights-banner';
-import { AlertBar } from './dashboard/alert-bar';
 import { ActiveCapitalCalls } from './dashboard/active-capital-calls';
 import { PortfolioHealth } from './dashboard/portfolio-health';
 import { AITaskPrioritizer } from './dashboard/ai-task-prioritizer';
@@ -18,7 +17,7 @@ import { ResearcherDashboard } from '@/components/dashboards/researcher-dashboar
 import { LPDashboard } from '@/components/dashboards/lp-dashboard';
 import { AuditorDashboard } from '@/components/dashboards/auditor-dashboard';
 import { MetricCard } from '@/components/metric-card';
-import { Card, Badge, Button, PageContainer, Breadcrumb, PageHeader } from '@/ui';
+import { Card, Badge, PageContainer, Breadcrumb, PageHeader, Tabs, Tab } from '@/ui';
 import { FundSelector } from '@/components/fund-selector';
 import { getRouteConfig } from '@/config/routes';
 import { Fund } from '@/types/fund';
@@ -59,7 +58,6 @@ export function DashboardV2() {
   const {
     capitalCalls,
     portfolioCompanies,
-    alerts,
     quickActions,
     tasks,
     metrics,
@@ -140,7 +138,6 @@ export function DashboardV2() {
             text: `Managing ${summary.totalFunds} funds with ${formatCurrency(summary.totalCommitment)} total AUM. Portfolio of ${summary.totalPortfolioCompanies} companies valued at ${formatCurrency(summary.totalPortfolioValue)}. Average fund IRR: ${(funds.reduce((sum, f) => sum + f.irr, 0) / funds.length).toFixed(1)}%`,
             confidence: 0.94
           }}
-          actionContent={<FundSelector />}
         >
             <div className="flex flex-wrap items-center gap-3 mt-4">
               <Badge size="md" variant="flat" className="bg-[var(--app-primary-bg)] text-[var(--app-primary)]">
@@ -149,89 +146,88 @@ export function DashboardV2() {
               <Badge size="md" variant="bordered" className="text-[var(--app-text-muted)] border-[var(--app-border)]">
                 Portfolio: {summary.totalPortfolioCompanies} companies
               </Badge>
+            <Badge size="md" variant="bordered" className="text-[var(--app-text-muted)] border-[var(--app-border)]">
+              Total Commitment: {formatCurrency(summary.totalCommitment, true)}
+            </Badge>
+            <Badge size="md" variant="bordered" className="text-[var(--app-text-muted)] border-[var(--app-border)]">
+              Portfolio Value: {formatCurrency(summary.totalPortfolioValue, true)}
+            </Badge>
+            <Badge size="md" variant="bordered" className="text-[var(--app-text-muted)] border-[var(--app-border)]">
+              Average IRR: {(funds.reduce((sum, f) => sum + f.irr, 0) / funds.length).toFixed(1)}%
+            </Badge>
             </div>
           </PageHeader>
 
-        {/* Consolidated Performance Summary */}
-        <Card padding="md" className="bg-gradient-to-br from-[var(--app-primary-bg)] to-[var(--app-surface)] mb-6">
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            <div>
-              <div className="text-xs text-[var(--app-text-muted)] mb-1">Total Commitment</div>
-              <div className="text-xl sm:text-2xl font-medium">{formatCurrency(summary.totalCommitment, true)}</div>
-            </div>
-            <div>
-              <div className="text-xs text-[var(--app-text-muted)] mb-1">Portfolio Value</div>
-              <div className="text-xl sm:text-2xl font-medium">{formatCurrency(summary.totalPortfolioValue, true)}</div>
-            </div>
-            <div>
-              <div className="text-xs text-[var(--app-text-muted)] mb-1">Average IRR</div>
-              <div className="text-xl sm:text-2xl font-medium text-[var(--app-success)]">
-                {(funds.reduce((sum, f) => sum + f.irr, 0) / funds.length).toFixed(1)}%
-              </div>
-            </div>
-            <div>
-              <div className="text-xs text-[var(--app-text-muted)] mb-1">Portfolio Companies</div>
-              <div className="text-xl sm:text-2xl font-medium">{summary.totalPortfolioCompanies}</div>
-            </div>
-          </div>
-        </Card>
+        <Tabs
+          aria-label="Consolidated dashboard sections"
+          variant="underlined"
+          defaultSelectedKey="overview"
+          classNames={{ tabList: 'px-0 sm:px-0 lg:px-0' }}
+        >
+          <Tab key="overview" title="Overview">
+            <div className="mt-4 space-y-6">
+              {/* Fund Summary Table */}
+              <div className="overflow-x-auto rounded-lg border border-[var(--app-border)]" data-fund-selector-target>
+                {/* AI Insights Banner */}
+                <AIInsightsBanner insight={insight} />
 
-        {/* AI Insights Banner */}
-        <AIInsightsBanner insight={insight} />
-
-        {/* Fund Summary Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6" data-fund-selector-target>
-          {funds.map((fund) => (
-            <Card
-              key={fund.id}
-              padding="md"
-              className="hover:border-[var(--app-primary)] transition-colors cursor-pointer"
-              onClick={() => handleFundSelect(fund)}
-            >
-              <div className="flex items-start justify-between mb-3">
-                <div>
-                  <h3 className="text-base font-medium mb-1">{fund.displayName}</h3>
-                  <Badge
-                    size="sm"
-                    variant="bordered"
-                    className={fund.status === 'active' ? 'text-[var(--app-success)] border-[var(--app-success)]' : 'text-[var(--app-text-muted)] border-[var(--app-border)]'}
-                  >
-                    {fund.status}
-                  </Badge>
-                </div>
-                <div className="text-right">
-                  <div className="text-sm text-[var(--app-text-muted)]">IRR</div>
-                  <div className="text-lg text-[var(--app-success)]">{fund.irr.toFixed(1)}%</div>
-                </div>
+                <table className="min-w-full text-sm">
+                  <thead className="bg-[var(--app-surface-hover)] text-[var(--app-text-muted)]">
+                    <tr>
+                      <th className="py-3 px-4 text-left font-medium">Fund</th>
+                      <th className="py-3 px-4 text-left font-medium">Status</th>
+                      <th className="py-3 px-4 text-right font-medium">AUM</th>
+                      <th className="py-3 px-4 text-right font-medium">Portfolio</th>
+                      <th className="py-3 px-4 text-right font-medium">IRR</th>
+                      <th className="py-3 px-4 text-right font-medium">TVPI</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[var(--app-border)]">
+                    {funds.map((fund) => (
+                      <tr
+                        key={fund.id}
+                        onClick={() => handleFundSelect(fund)}
+                        className="cursor-pointer hover:bg-[var(--app-surface-hover)] transition-colors"
+                      >
+                        <td className="py-3 px-4">
+                          <div className="font-medium text-[var(--app-text)]">{fund.displayName}</div>
+                          <div className="text-xs text-[var(--app-text-subtle)]">Vintage {fund.vintage}</div>
+                        </td>
+                        <td className="py-3 px-4">
+                          <Badge
+                            size="sm"
+                            variant="bordered"
+                            className={fund.status === 'active' ? 'text-[var(--app-success)] border-[var(--app-success)]' : 'text-[var(--app-text-muted)] border-[var(--app-border)]'}
+                          >
+                            {fund.status}
+                          </Badge>
+                        </td>
+                        <td className="py-3 px-4 text-right text-[var(--app-text)]">{formatCurrency(fund.totalCommitment)}</td>
+                        <td className="py-3 px-4 text-right text-[var(--app-text)]">{fund.portfolioCount} companies</td>
+                        <td className="py-3 px-4 text-right text-[var(--app-success)]">{fund.irr.toFixed(1)}%</td>
+                        <td className="py-3 px-4 text-right text-[var(--app-success)]">{fund.tvpi.toFixed(2)}x</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-[var(--app-text-muted)]">AUM</span>
-                  <span>{formatCurrency(fund.totalCommitment)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-[var(--app-text-muted)]">Portfolio</span>
-                  <span>{fund.portfolioCount} companies</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-[var(--app-text-muted)]">TVPI</span>
-                  <span className="text-[var(--app-success)]">{fund.tvpi.toFixed(2)}x</span>
-                </div>
-              </div>
-            </Card>
-          ))}
-        </div>
 
-        {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 space-y-6">
-            <ActiveCapitalCalls calls={capitalCalls} />
-            <PortfolioHealth companies={portfolioCompanies} />
-          </div>
-          <div className="space-y-6">
-            <AITaskPrioritizer tasks={tasks} onTaskClick={(task) => console.log('Task clicked:', task)} />
-          </div>
-        </div>
+              <AITaskPrioritizer tasks={tasks} onTaskClick={(task) => console.log('Task clicked:', task)} />
+            </div>
+          </Tab>
+
+          <Tab key="capital-calls" title="Active Capital Calls">
+            <div className="mt-4">
+              <ActiveCapitalCalls calls={capitalCalls} />
+            </div>
+          </Tab>
+
+          <Tab key="portfolio-health" title="Portfolio Health">
+            <div className="mt-4">
+              <PortfolioHealth companies={portfolioCompanies} />
+            </div>
+          </Tab>
+        </Tabs>
 
         <div className="h-8" />
       </PageContainer>
@@ -336,17 +332,6 @@ export function DashboardV2() {
         {fundMetrics.map((metric, index) => (
           <MetricCard key={index} {...metric} />
         ))}
-      </div>
-
-      {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 space-y-6">
-          <ActiveCapitalCalls calls={capitalCalls} />
-          <PortfolioHealth companies={portfolioCompanies} />
-        </div>
-        <div className="space-y-6">
-          <AITaskPrioritizer tasks={tasks} onTaskClick={(task) => console.log('Task clicked:', task)} />
-        </div>
       </div>
 
       <div className="h-8" />

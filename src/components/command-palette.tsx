@@ -125,15 +125,6 @@ export function CommandPalette() {
       keywords: ['regulatory', 'filing', 'audit'],
     },
     {
-      id: 'cap-table',
-      title: 'Cap Table',
-      subtitle: 'Shareholder management',
-      category: 'Pages',
-      icon: Users,
-      action: () => navigate('/cap-table'),
-      keywords: ['shareholders', 'equity', 'ownership'],
-    },
-    {
       id: 'waterfall',
       title: 'Waterfall',
       subtitle: 'Exit scenario modeling',

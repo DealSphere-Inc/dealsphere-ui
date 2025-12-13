@@ -109,18 +109,6 @@ export const routes: Record<string, RouteConfig> = {
     description: 'Team consensus and voting on deals',
   },
 
-  capTable: {
-    path: '/cap-table',
-    label: 'Cap Table',
-    icon: PieChart,
-    breadcrumbs: [
-      { label: 'Home', href: '/dashboard' },
-      { label: 'Portfolio Management', href: '/dashboard' },
-      { label: 'Cap Table' },
-    ],
-    description: 'Capitalization tables and ownership tracking',
-  },
-
   analytics: {
     path: '/analytics',
     label: 'Analytics',

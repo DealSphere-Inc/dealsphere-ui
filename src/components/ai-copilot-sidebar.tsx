@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect, createContext, useContext } from 'react';
 import { usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { Sparkles, Lightbulb, Zap, Bot, ChevronRight, Send } from 'lucide-react';
+import { Sparkles, Lightbulb, Zap, Bot, ChevronRight, ChevronDown, Send } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { Button, Input } from '@/ui';
 import { AICopilotBubble } from './ai-copilot-bubble';
@@ -55,6 +55,13 @@ interface Message {
   timestamp: Date;
   confidence?: number;
 }
+
+// Allows external components to inject messages into the Copilot chat
+export type ExternalMessage = {
+  content: string;
+  type?: 'user' | 'ai';
+  confidence?: number;
+};
 
 interface QuickAction {
   id: string;
@@ -205,9 +212,13 @@ const getQuickActions = (pathname: string): QuickAction[] => {
   ];
 };
 
-// Shared quick action channel for dashboard to populate the Copilot bar
+// Shared channels so other components can control Copilot UI
 let globalQuickActions: QuickAction[] | null = null;
 let globalQuickActionsCallback: ((actions: QuickAction[]) => void) | null = null;
+let globalPushMessageCallback: ((message: ExternalMessage) => void) | null = null;
+let pendingMessages: ExternalMessage[] = [];
+let globalSuggestions: Suggestion[] | null = null;
+let globalSuggestionsCallback: ((suggestions: Suggestion[]) => void) | null = null;
 
 export function setGlobalQuickActions(actions: QuickAction[]) {
   globalQuickActions = actions;
@@ -223,6 +234,28 @@ export function clearGlobalQuickActions() {
   }
 }
 
+export function pushCopilotMessage(message: ExternalMessage) {
+  if (globalPushMessageCallback) {
+    globalPushMessageCallback(message);
+  } else {
+    pendingMessages.push(message);
+  }
+}
+
+export function setGlobalSuggestions(suggestions: Suggestion[]) {
+  globalSuggestions = suggestions;
+  if (globalSuggestionsCallback) {
+    globalSuggestionsCallback(suggestions);
+  }
+}
+
+export function clearGlobalSuggestions() {
+  globalSuggestions = null;
+  if (globalSuggestionsCallback) {
+    globalSuggestionsCallback([]);
+  }
+}
+
 function AICopilotSidebarInner() {
   const pathname = usePathname();
   const { sidebarState, toggleRightSidebar } = useNavigation();
@@ -230,9 +263,15 @@ function AICopilotSidebarInner() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [showSuggestions, setShowSuggestions] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const suggestions = getPageSuggestions(pathname);
+  const [suggestions, setSuggestions] = useState<Suggestion[]>(
+    () => [
+    ...(globalSuggestions ?? []),
+    ...(getPageSuggestions(pathname) ?? []),
+    ]
+  );
   const [quickActions, setQuickActions] = useState<QuickAction[]>(
     () => globalQuickActions ?? getQuickActions(pathname)
   );
@@ -277,6 +316,7 @@ function AICopilotSidebarInner() {
   useEffect(() => {
     const fallback = getQuickActions(pathname);
     setQuickActions(globalQuickActions ?? fallback);
+    setShowSuggestions(true); // keep sidebar structure consistent across pages
 
     globalQuickActionsCallback = (actions: QuickAction[]) => {
       if (actions.length > 0) {
@@ -291,10 +331,56 @@ function AICopilotSidebarInner() {
     };
   }, [pathname]);
 
+  // Keep Copilot suggestions in sync with global overrides or path defaults
+  useEffect(() => {
+    const fallback = getPageSuggestions(pathname);
+    setSuggestions(globalSuggestions ?? fallback);
+    setShowSuggestions(true);
+
+    globalSuggestionsCallback = (s: Suggestion[]) => {
+      if (s.length > 0) {
+        setSuggestions(s);
+      } else {
+        setSuggestions(getPageSuggestions(pathname));
+      }
+    };
+
+    return () => {
+      globalSuggestionsCallback = null;
+    };
+  }, [pathname]);
+
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  // Allow external components to push messages into the copilot chat
+  useEffect(() => {
+    globalPushMessageCallback = (message: ExternalMessage) => {
+      setMessages(prev => [
+        ...prev,
+        {
+          id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+          type: message.type || 'ai',
+          content: message.content,
+          timestamp: new Date(),
+          confidence: message.confidence,
+        },
+      ]);
+    };
+
+    // Flush any messages queued before the sidebar mounted
+    if (pendingMessages.length > 0) {
+      const queued = [...pendingMessages];
+      pendingMessages = [];
+      queued.forEach(msg => globalPushMessageCallback?.(msg));
+    }
+
+    return () => {
+      globalPushMessageCallback = null;
+    };
+  }, []);
 
   // Welcome message on mount
   useEffect(() => {
@@ -418,15 +504,26 @@ function AICopilotSidebarInner() {
       </div>
 
       {/* Suggestions Section */}
-      {suggestions.length > 0 && messages.length <= 1 && (
+      {suggestions.length > 0 && (
         <div className="p-4 border-b border-[var(--app-border)] space-y-2">
-          <div className="flex items-center gap-2 mb-2">
-            <Lightbulb className="w-4 h-4 text-[var(--app-warning)]" />
-            <span className="text-xs font-semibold text-[var(--app-text-muted)]">
-              SUGGESTIONS
-            </span>
+          <div className="flex items-center justify-between gap-2 mb-2">
+            <div className="flex items-center gap-2">
+              <Lightbulb className="w-4 h-4 text-[var(--app-warning)]" />
+              <span className="text-xs font-semibold text-[var(--app-text-muted)]">
+                SUGGESTIONS
+              </span>
+            </div>
+            <button
+              onClick={() => setShowSuggestions(prev => !prev)}
+              className="p-1 rounded-lg hover:bg-[var(--app-surface-hover)] transition-colors"
+              aria-label="Toggle suggestions visibility"
+            >
+              <ChevronDown
+                className={`w-4 h-4 text-[var(--app-text-muted)] transition-transform ${showSuggestions ? '' : '-rotate-90'}`}
+              />
+            </button>
           </div>
-          {suggestions.map(suggestion => (
+          {showSuggestions && suggestions.map(suggestion => (
             <button
               key={suggestion.id}
               onClick={() => handleSuggestionClick(suggestion)}

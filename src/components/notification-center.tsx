@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button, Badge } from '@/ui';
 import {
@@ -143,6 +144,7 @@ export function NotificationCenter({
   onClearAll,
   maxHeight = '32rem',
 }: NotificationCenterProps) {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -340,7 +342,7 @@ export function NotificationCenter({
                 <button
                   onClick={() => {
                     setIsOpen(false);
-                    // Navigate to full notifications page
+                    router.push('/notifications');
                   }}
                   className="w-full text-center text-sm font-medium text-[var(--app-primary)] hover:underline"
                 >

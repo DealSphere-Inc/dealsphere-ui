@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useTheme } from 'next-themes';
 import { motion } from 'framer-motion';
 import { Switch } from '@/ui';
-import { LayoutDashboard, GitBranch, Briefcase, Search, Vote, PieChart, TrendingUp, Users, UserCheck, DollarSign, Shield, Scale, Receipt, FileDown, Sparkles, Activity, BarChart3, Sun, Moon, Settings, FileText, Plug } from 'lucide-react';
+import { LayoutDashboard, GitBranch, Briefcase, Search, Vote, TrendingUp, Users, UserCheck, DollarSign, Shield, Scale, Receipt, FileDown, Sparkles, Activity, BarChart3, Sun, Moon, Settings, FileText, Plug } from 'lucide-react';
 import { NavigationGroup } from './navigation-group';
 import { NavigationItem } from './navigation-item';
 import { SidebarToggleButton } from './sidebar-toggle-button';
@@ -42,7 +42,6 @@ const navigationStructure = {
     icon: TrendingUp,
     allowedRoles: ['gp', 'analyst', 'researcher', 'lp'] as UserRole[],
     items: [
-      { id: 'cap-table', href: '/cap-table', label: 'Cap Table', icon: PieChart },
       { id: 'waterfall', href: '/waterfall', label: 'Waterfall', icon: TrendingUp },
       { id: 'analytics', href: '/analytics', label: 'Analytics', icon: TrendingUp },
     ],

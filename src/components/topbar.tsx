@@ -217,7 +217,7 @@ export function Topbar() {
       className="py-4 px-4 sm:px-6 border-b border-[var(--app-border)] flex items-center justify-between sticky top-0 z-30"
       style={{
         height: '69px',
-        background: 'linear-gradient(to left, var(--app-primary-bg), transparent)'
+        background: 'linear-gradient(90deg, transparent 0%, var(--app-primary-bg) 55%, var(--app-primary-bg) 100%)'
       }}
     >
       {/* Left: AI-Powered Search */}
