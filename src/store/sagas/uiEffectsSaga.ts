@@ -1,7 +1,8 @@
-import { all, call, delay, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
+import { all, call, delay, put, select, take, takeEvery, takeLatest } from 'redux-saga/effects';
 import type { RootState } from '@/store/rootReducer';
 import { patchUIState, setUIState } from '@/store/slices/uiSlice';
 import {
+  clientMounted,
   ddChatSendRequested,
   decisionWriterCopyRequested,
   decisionWriterGenerateRequested,
@@ -216,6 +217,9 @@ function* aiBadgesLoop(): SagaGenerator {
 }
 
 export function* uiEffectsSaga(): SagaGenerator {
+  if (typeof window !== 'undefined') {
+    yield take(clientMounted.type);
+  }
   yield all([
     call(aiBadgesLoop),
     takeLatest(eoiSubmitRequested.type, eoiSubmitWorker),

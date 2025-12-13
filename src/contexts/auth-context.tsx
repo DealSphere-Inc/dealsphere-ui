@@ -15,6 +15,7 @@ export type { User, UserRole };
 export { PERSONA_CONFIG };
 
 interface AuthContextType {
+  hydrated: boolean;
   isAuthenticated: boolean;
   login: (email: string, password: string, role?: UserRole) => void;
   logout: () => void;
@@ -28,6 +29,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 export function useAuth() {
   const dispatch = useAppDispatch();
+  const hydrated = useAppSelector((state) => state.auth.hydrated);
   const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
   const user = useAppSelector((state) => state.auth.user);
 
@@ -49,5 +51,5 @@ export function useAuth() {
     [dispatch]
   );
 
-  return { isAuthenticated, login, logout, switchRole, user };
+  return { hydrated, isAuthenticated, login, logout, switchRole, user };
 }

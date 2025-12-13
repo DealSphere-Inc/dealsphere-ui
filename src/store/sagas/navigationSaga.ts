@@ -10,6 +10,7 @@ import {
   toggleRightSidebar,
   type SidebarState,
 } from '@/store/slices/navigationSlice';
+import { clientMounted } from '@/store/slices/uiEffectsSlice';
 
 const STORAGE_KEY = 'vestledger-nav-expanded-groups';
 const SIDEBAR_LEFT_KEY = 'vestledger-sidebar-left-collapsed';
@@ -106,6 +107,9 @@ function* watchResizeWorker() {
 }
 
 export function* navigationSaga() {
+  if (typeof window !== 'undefined') {
+    yield take(clientMounted.type);
+  }
   yield all([
     call(hydrateNavigationWorker),
     call(watchResizeWorker),

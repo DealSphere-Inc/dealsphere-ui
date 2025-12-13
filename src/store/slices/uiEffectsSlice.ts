@@ -8,6 +8,9 @@ const uiEffectsSlice = createSlice({
   name: 'uiEffects',
   initialState,
   reducers: {
+    clientMounted: (state) => {
+      void state;
+    },
     eoiSubmitRequested: (state) => {
       void state;
     },
@@ -36,6 +39,7 @@ const uiEffectsSlice = createSlice({
 });
 
 export const {
+  clientMounted,
   eoiSubmitRequested,
   startupApplicationSubmitRequested,
   decisionWriterGenerateRequested,
@@ -46,4 +50,3 @@ export const {
 } = uiEffectsSlice.actions;
 
 export const uiEffectsReducer = uiEffectsSlice.reducer;
-

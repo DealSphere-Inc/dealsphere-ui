@@ -1,4 +1,4 @@
-import { call, put, select, takeLatest } from 'redux-saga/effects';
+import { call, put, select, take, takeLatest } from 'redux-saga/effects';
 import { createMockUser } from '@/data/mocks/auth';
 import type { RootState } from '@/store/rootReducer';
 import type { User, UserRole } from '@/types/auth';
@@ -11,6 +11,7 @@ import {
   switchRoleRequested,
   userUpdated,
 } from '@/store/slices/authSlice';
+import { clientMounted } from '@/store/slices/uiEffectsSlice';
 
 const STORAGE_AUTH_KEY = 'isAuthenticated';
 const STORAGE_USER_KEY = 'user';
@@ -82,6 +83,9 @@ function* switchRoleWorker(action: ReturnType<typeof switchRoleRequested>) {
 }
 
 export function* authSaga() {
+  if (typeof window !== 'undefined') {
+    yield take(clientMounted.type);
+  }
   yield call(hydrateAuthWorker);
   yield takeLatest(loginRequested.type, loginWorker);
   yield takeLatest(logoutRequested.type, logoutWorker);

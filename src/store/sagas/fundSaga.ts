@@ -1,7 +1,8 @@
-import { call, put, select, takeLatest } from 'redux-saga/effects';
+import { call, put, select, take, takeLatest } from 'redux-saga/effects';
 import type { RootState } from '@/store/rootReducer';
 import type { FundViewMode } from '@/types/fund';
 import { fundHydrated, setSelectedFundId, setViewMode } from '@/store/slices/fundSlice';
+import { clientMounted } from '@/store/slices/uiEffectsSlice';
 
 const STORAGE_SELECTED_FUND_ID = 'vestledger-selected-fund-id';
 const STORAGE_FUND_VIEW_MODE = 'vestledger-fund-view-mode';
@@ -50,6 +51,9 @@ function* persistViewModeWorker() {
 }
 
 export function* fundSaga() {
+  if (typeof window !== 'undefined') {
+    yield take(clientMounted.type);
+  }
   yield call(hydrateFundWorker);
   yield takeLatest(setSelectedFundId.type, persistSelectedFundIdWorker);
   yield takeLatest(setViewMode.type, persistViewModeWorker);

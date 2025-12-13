@@ -1,4 +1,4 @@
-import { useCallback, useLayoutEffect } from 'react';
+import { useCallback, useLayoutEffect, useRef } from 'react';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { patchUIState, setUIState } from '@/store/slices/uiSlice';
 
@@ -7,11 +7,17 @@ export function useUIKey<T>(key: string, fallback: T) {
   const storedValue = useAppSelector((state) => state.ui.byKey[key] as T | undefined);
   const value = storedValue ?? fallback;
 
+  const storedValueRef = useRef<T | undefined>(storedValue);
+  storedValueRef.current = storedValue;
+
+  const fallbackRef = useRef<T>(fallback);
+  fallbackRef.current = fallback;
+
   useLayoutEffect(() => {
     if (storedValue === undefined) {
-      dispatch(setUIState({ key, value: fallback }));
+      dispatch(setUIState({ key, value: fallbackRef.current }));
     }
-  }, [dispatch, fallback, key, storedValue]);
+  }, [dispatch, key, storedValue]);
 
   const set = useCallback(
     (next: T) => {
@@ -22,8 +28,9 @@ export function useUIKey<T>(key: string, fallback: T) {
 
   const patch = useCallback(
     (nextPatch: Partial<T>) => {
-      if (storedValue === undefined) {
-        const base = fallback;
+      const current = storedValueRef.current;
+      if (current === undefined) {
+        const base = fallbackRef.current;
         if (base && typeof base === 'object' && !Array.isArray(base)) {
           dispatch(
             setUIState({
@@ -41,7 +48,7 @@ export function useUIKey<T>(key: string, fallback: T) {
       }
       dispatch(patchUIState({ key, patch: nextPatch as Record<string, unknown> }));
     },
-    [dispatch, fallback, key, storedValue]
+    [dispatch, key]
   );
 
   return { value, set, patch };
