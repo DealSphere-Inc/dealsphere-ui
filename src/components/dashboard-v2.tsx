@@ -166,53 +166,59 @@ export function DashboardV2() {
         >
           <Tab key="overview" title="Overview">
             <div className="mt-4 space-y-6">
-              {/* Fund Summary Table */}
-              <div className="overflow-x-auto rounded-lg border border-[var(--app-border)]" data-fund-selector-target>
-                {/* AI Insights Banner */}
+              {/* AI Insights Banner */}
                 <AIInsightsBanner insight={insight} />
 
-                <table className="min-w-full text-sm">
-                  <thead className="bg-[var(--app-surface-hover)] text-[var(--app-text-muted)]">
-                    <tr>
-                      <th className="py-3 px-4 text-left font-medium">Fund</th>
-                      <th className="py-3 px-4 text-left font-medium">Status</th>
-                      <th className="py-3 px-4 text-right font-medium">AUM</th>
-                      <th className="py-3 px-4 text-right font-medium">Portfolio</th>
-                      <th className="py-3 px-4 text-right font-medium">IRR</th>
-                      <th className="py-3 px-4 text-right font-medium">TVPI</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-[var(--app-border)]">
-                    {funds.map((fund) => (
-                      <tr
-                        key={fund.id}
-                        onClick={() => handleFundSelect(fund)}
-                        className="cursor-pointer hover:bg-[var(--app-surface-hover)] transition-colors"
-                      >
-                        <td className="py-3 px-4">
-                          <div className="font-medium text-[var(--app-text)]">{fund.displayName}</div>
-                          <div className="text-xs text-[var(--app-text-subtle)]">Vintage {fund.vintage}</div>
-                        </td>
-                        <td className="py-3 px-4">
-                          <Badge
-                            size="sm"
-                            variant="bordered"
-                            className={fund.status === 'active' ? 'text-[var(--app-success)] border-[var(--app-success)]' : 'text-[var(--app-text-muted)] border-[var(--app-border)]'}
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* Fund Summary Table */}
+                <div className="lg:col-span-2">
+                  <div className="overflow-x-auto rounded-lg border border-[var(--app-border)]" data-fund-selector-target>
+                    <table className="min-w-full text-sm">
+                      <thead className="bg-[var(--app-surface-hover)] text-[var(--app-text-muted)]">
+                        <tr>
+                          <th className="py-3 px-4 text-left font-medium">Fund</th>
+                          <th className="py-3 px-4 text-left font-medium">Status</th>
+                          <th className="py-3 px-4 text-right font-medium">AUM</th>
+                          <th className="py-3 px-4 text-right font-medium">Portfolio</th>
+                          <th className="py-3 px-4 text-right font-medium">IRR</th>
+                          <th className="py-3 px-4 text-right font-medium">TVPI</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-[var(--app-border)]">
+                        {funds.map((fund) => (
+                          <tr
+                            key={fund.id}
+                            onClick={() => handleFundSelect(fund)}
+                            className="cursor-pointer hover:bg-[var(--app-surface-hover)] transition-colors"
                           >
-                            {fund.status}
-                          </Badge>
-                        </td>
-                        <td className="py-3 px-4 text-right text-[var(--app-text)]">{formatCurrency(fund.totalCommitment)}</td>
-                        <td className="py-3 px-4 text-right text-[var(--app-text)]">{fund.portfolioCount} companies</td>
-                        <td className="py-3 px-4 text-right text-[var(--app-success)]">{fund.irr.toFixed(1)}%</td>
-                        <td className="py-3 px-4 text-right text-[var(--app-success)]">{fund.tvpi.toFixed(2)}x</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                            <td className="py-3 px-4">
+                              <div className="font-medium text-[var(--app-text)]">{fund.displayName}</div>
+                              <div className="text-xs text-[var(--app-text-subtle)]">Vintage {fund.vintage}</div>
+                            </td>
+                            <td className="py-3 px-4">
+                              <Badge
+                                size="sm"
+                                variant="bordered"
+                                className={fund.status === 'active' ? 'text-[var(--app-success)] border-[var(--app-success)]' : 'text-[var(--app-text-muted)] border-[var(--app-border)]'}
+                              >
+                                {fund.status}
+                              </Badge>
+                            </td>
+                            <td className="py-3 px-4 text-right text-[var(--app-text)]">{formatCurrency(fund.totalCommitment)}</td>
+                            <td className="py-3 px-4 text-right text-[var(--app-text)]">{fund.portfolioCount} companies</td>
+                            <td className="py-3 px-4 text-right text-[var(--app-success)]">{fund.irr.toFixed(1)}%</td>
+                            <td className="py-3 px-4 text-right text-[var(--app-success)]">{fund.tvpi.toFixed(2)}x</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
 
-              <AITaskPrioritizer tasks={tasks} onTaskClick={(task) => console.log('Task clicked:', task)} />
+                <div>
+                  <AITaskPrioritizer tasks={tasks} onTaskClick={(task) => console.log('Task clicked:', task)} />
+                </div>
+              </div>
             </div>
           </Tab>
 
@@ -323,9 +329,6 @@ export function DashboardV2() {
           </div>
         </div>
       </Card>
-
-      {/* AI Insights Banner */}
-      <AIInsightsBanner insight={insight} />
 
       {/* Fund Metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">

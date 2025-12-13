@@ -21,7 +21,6 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Card, Badge } from '@/ui';
-import { GripVertical } from 'lucide-react';
 
 interface KanbanItem {
   id: UniqueIdentifier;
@@ -63,15 +62,14 @@ function SortableItem({
   };
 
   return (
-    <div ref={setNodeRef} style={style} className="relative">
-      <div
-        {...attributes}
-        {...listeners}
-        className="absolute left-2 top-2 cursor-grab active:cursor-grabbing z-10 p-1 hover:bg-[var(--app-surface-hover)] rounded"
-      >
-        <GripVertical className="w-4 h-4 text-[var(--app-text-subtle)]" />
-      </div>
-      <div className="pl-8">{children}</div>
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+      className="cursor-grab active:cursor-grabbing"
+    >
+      {children}
     </div>
   );
 }

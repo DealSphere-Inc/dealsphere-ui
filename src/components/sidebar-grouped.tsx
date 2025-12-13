@@ -54,7 +54,6 @@ const navigationStructure = {
     items: [
       { id: 'fund-admin', href: '/fund-admin', label: 'Fund Admin', icon: DollarSign },
       { id: 'lp-management', href: '/lp-management', label: 'LP Management', icon: UserCheck },
-      { id: 'accounting', href: '/accounting', label: 'Accounting', icon: Receipt },
       { id: 'audit-trail', href: '/audit-trail', label: 'Audit Trail', icon: Shield },
       { id: 'compliance', href: '/compliance', label: 'Compliance', icon: Shield },
       { id: '409a-valuations', href: '/409a-valuations', label: '409A Valuations', icon: Receipt },
