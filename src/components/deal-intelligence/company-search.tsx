@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { Card, Button, Badge, Input, Progress } from '@/ui';
 import { 
   Search, 
@@ -21,12 +20,16 @@ import {
   Briefcase
 } from 'lucide-react';
 import { industries, mockCompanies, stages } from '@/data/mocks/deal-intelligence/company-search';
+import { useUIKey } from '@/store/ui';
 
 export function CompanySearch() {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedIndustry, setSelectedIndustry] = useState('All Industries');
-  const [selectedStage, setSelectedStage] = useState('All Stages');
-  const [showAIOnly, setShowAIOnly] = useState(true);
+  const { value: ui, patch: patchUI } = useUIKey('company-search', {
+    searchQuery: '',
+    selectedIndustry: 'All Industries',
+    selectedStage: 'All Stages',
+    showAIOnly: true,
+  });
+  const { searchQuery, selectedIndustry, selectedStage, showAIOnly } = ui;
 
   const formatCurrency = (amount: number) => {
     if (amount >= 1_000_000_000) return `$${(amount / 1_000_000_000).toFixed(1)}B`;
@@ -78,7 +81,7 @@ export function CompanySearch() {
             <Input
               placeholder="Search companies, industries, or keywords..."
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => patchUI({ searchQuery: e.target.value })}
               startContent={<Search className="w-4 h-4 text-[var(--app-text-muted)]" />}
               className="w-full"
             />
@@ -86,7 +89,7 @@ export function CompanySearch() {
           <div className="flex flex-wrap gap-2">
             <select
               value={selectedIndustry}
-              onChange={(e) => setSelectedIndustry(e.target.value)}
+              onChange={(e) => patchUI({ selectedIndustry: e.target.value })}
               className="px-3 py-2 rounded-lg border border-[var(--app-border)] bg-[var(--app-surface)] text-sm"
             >
               {industries.map((ind) => (
@@ -95,7 +98,7 @@ export function CompanySearch() {
             </select>
             <select
               value={selectedStage}
-              onChange={(e) => setSelectedStage(e.target.value)}
+              onChange={(e) => patchUI({ selectedStage: e.target.value })}
               className="px-3 py-2 rounded-lg border border-[var(--app-border)] bg-[var(--app-surface)] text-sm"
             >
               {stages.map((stage) => (
@@ -107,7 +110,7 @@ export function CompanySearch() {
               color={showAIOnly ? 'primary' : 'default'}
               size="sm"
               startContent={<Sparkles className="w-4 h-4" />}
-              onPress={() => setShowAIOnly(!showAIOnly)}
+              onPress={() => patchUI({ showAIOnly: !showAIOnly })}
             >
               AI Recommended
             </Button>

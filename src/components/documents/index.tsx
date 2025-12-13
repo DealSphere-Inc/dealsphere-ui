@@ -1,17 +1,24 @@
 'use client';
 
-import { useState } from 'react';
 import { PageContainer, PageHeader, Breadcrumb } from '@/ui';
 import { getRouteConfig } from '@/config/routes';
 import { DocumentManager, type Document, type DocumentFolder, type DocumentCategory, type AccessLevel } from './document-manager';
 import { DocumentPreviewModal, useDocumentPreview, getMockDocumentUrl, type PreviewDocument } from './preview';
 import { mockDocuments, mockFolders } from '@/data/mocks/documents';
+import { useUIKey } from '@/store/ui';
 
 export function Documents() {
   const routeConfig = getRouteConfig('/documents');
-  const [documents, setDocuments] = useState<Document[]>(mockDocuments);
-  const [folders, setFolders] = useState<DocumentFolder[]>(mockFolders);
-  const [currentFolderId, setCurrentFolderId] = useState<string | null>(null);
+  const { value: ui, patch: patchUI } = useUIKey<{
+    documents: Document[];
+    folders: DocumentFolder[];
+    currentFolderId: string | null;
+  }>('documents-page', {
+    documents: mockDocuments,
+    folders: mockFolders,
+    currentFolderId: null,
+  });
+  const { documents, folders, currentFolderId } = ui;
   const preview = useDocumentPreview();
 
   const handleUpload = (folderId?: string | null) => {
@@ -68,27 +75,33 @@ export function Documents() {
 
   const handleDeleteDocument = (documentId: string) => {
     console.log('Delete document:', documentId);
-    setDocuments(documents.filter(d => d.id !== documentId));
+    patchUI({ documents: documents.filter((doc) => doc.id !== documentId) });
   };
 
   const handleToggleFavorite = (documentId: string) => {
-    setDocuments(documents.map(d =>
-      d.id === documentId ? { ...d, isFavorite: !d.isFavorite } : d
-    ));
+    patchUI({
+      documents: documents.map((doc) =>
+        doc.id === documentId ? { ...doc, isFavorite: !doc.isFavorite } : doc
+      ),
+    });
   };
 
   const handleMoveDocument = (documentId: string, newFolderId: string | null) => {
     console.log('Move document:', documentId, newFolderId);
-    setDocuments(documents.map(d =>
-      d.id === documentId ? { ...d, folderId: newFolderId } : d
-    ));
+    patchUI({
+      documents: documents.map((doc) =>
+        doc.id === documentId ? { ...doc, folderId: newFolderId } : doc
+      ),
+    });
   };
 
   const handleUpdateAccess = (documentId: string, accessLevel: AccessLevel) => {
     console.log('Update access:', documentId, accessLevel);
-    setDocuments(documents.map(d =>
-      d.id === documentId ? { ...d, accessLevel } : d
-    ));
+    patchUI({
+      documents: documents.map((doc) =>
+        doc.id === documentId ? { ...doc, accessLevel } : doc
+      ),
+    });
   };
 
   return (

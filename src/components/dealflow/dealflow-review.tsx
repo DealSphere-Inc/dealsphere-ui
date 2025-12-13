@@ -1,11 +1,11 @@
 'use client'
 
-import { useState } from 'react';
 import { Card, Button, Badge, Progress, PageContainer, Breadcrumb, PageHeader } from '@/ui';
 import { ThumbsUp, ThumbsDown, MinusCircle, MessageSquare, Users, Building2, TrendingUp, DollarSign, Target, Lightbulb, Share2, Download, Play, Pause, SkipForward, SkipBack, Maximize2, Plus, Edit3, FileSearch , Vote} from 'lucide-react';
 import { getRouteConfig } from '@/config/routes';
 import { CompanyScoring } from './company-scoring';
 import { mockDeals, type Deal } from '@/data/mocks/dealflow/dealflow-review';
+import { useUIKey } from '@/store/ui';
 
 interface SlideContent {
   id: string;
@@ -113,13 +113,22 @@ const generateSlides = (deal: Deal): SlideContent[] => [
 ];
 
 export function DealflowReview() {
-  const [selectedDeal, setSelectedDeal] = useState<Deal>(mockDeals[0]);
-  const [slides, setSlides] = useState<SlideContent[]>(generateSlides(mockDeals[0]));
-  const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
-  const [isPresenting, setIsPresenting] = useState(false);
-  const [votes, setVotes] = useState<Vote[]>([]);
-  const [myVote, setMyVote] = useState<'yes' | 'no' | 'maybe' | null>(null);
-  const [voteComment, setVoteComment] = useState('');
+  const selectedDeal = mockDeals[0];
+  const slides = generateSlides(selectedDeal);
+  const { value: ui, patch: patchUI } = useUIKey<{
+    currentSlideIndex: number;
+    isPresenting: boolean;
+    votes: Vote[];
+    myVote: 'yes' | 'no' | 'maybe' | null;
+    voteComment: string;
+  }>('dealflow-review', {
+    currentSlideIndex: 0,
+    isPresenting: false,
+    votes: [],
+    myVote: null,
+    voteComment: '',
+  });
+  const { currentSlideIndex, isPresenting, votes, myVote, voteComment } = ui;
 
   // Get route config for breadcrumbs and AI suggestions
   const routeConfig = getRouteConfig('/dealflow-review');
@@ -134,7 +143,6 @@ export function DealflowReview() {
   const consensusPercentage = totalVotes > 0 ? Math.round((yesVotes / totalVotes) * 100) : 0;
 
   const handleVote = (vote: 'yes' | 'no' | 'maybe') => {
-    setMyVote(vote);
     const newVote: Vote = {
       partnerId: 'current-user',
       partnerName: 'Current User',
@@ -142,7 +150,7 @@ export function DealflowReview() {
       comments: voteComment,
       timestamp: new Date().toISOString()
     };
-    setVotes([...votes, newVote]);
+    patchUI({ myVote: vote, votes: [...votes, newVote] });
   };
 
   const formatCurrency = (amount: number) => {
@@ -154,13 +162,13 @@ export function DealflowReview() {
 
   const nextSlide = () => {
     if (currentSlideIndex < slides.length - 1) {
-      setCurrentSlideIndex(currentSlideIndex + 1);
+      patchUI({ currentSlideIndex: currentSlideIndex + 1 });
     }
   };
 
   const prevSlide = () => {
     if (currentSlideIndex > 0) {
-      setCurrentSlideIndex(currentSlideIndex - 1);
+      patchUI({ currentSlideIndex: currentSlideIndex - 1 });
     }
   };
 
@@ -388,7 +396,7 @@ export function DealflowReview() {
           }}
           primaryAction={{
             label: isPresenting ? 'Stop Presenting' : 'Start Presentation',
-            onClick: () => setIsPresenting(!isPresenting),
+            onClick: () => patchUI({ isPresenting: !isPresenting }),
             aiSuggested: false
           }}
           secondaryActions={[
@@ -415,7 +423,7 @@ export function DealflowReview() {
               {slides.map((slide, idx) => (
                 <button
                   key={slide.id}
-                  onClick={() => setCurrentSlideIndex(idx)}
+                  onClick={() => patchUI({ currentSlideIndex: idx })}
                   className={`w-full text-left p-3 rounded-lg transition-colors ${
                     idx === currentSlideIndex
                       ? 'bg-[var(--app-primary)] text-white'
@@ -535,7 +543,7 @@ export function DealflowReview() {
                 {slides.map((_, idx) => (
                   <button
                     key={idx}
-                    onClick={() => setCurrentSlideIndex(idx)}
+                    onClick={() => patchUI({ currentSlideIndex: idx })}
                     className={`w-2 h-2 rounded-full transition-colors ${
                       idx === currentSlideIndex ? 'bg-[var(--app-primary)]' : 'bg-[var(--app-border)]'
                     }`}
@@ -564,7 +572,7 @@ export function DealflowReview() {
               className="w-full px-3 py-2 rounded-lg border border-[var(--app-border)] bg-[var(--app-surface)] text-[var(--app-text)] min-h-[80px]"
               placeholder="Add your thoughts, questions, or concerns..."
               value={voteComment}
-              onChange={(e) => setVoteComment(e.target.value)}
+              onChange={(e) => patchUI({ voteComment: e.target.value })}
             />
           </Card>
 

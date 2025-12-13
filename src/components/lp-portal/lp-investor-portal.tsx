@@ -1,13 +1,14 @@
 'use client'
 
-import { useState } from 'react';
 import { Card, Button, Badge, Progress } from '@/ui';
 import { Tabs, Tab } from '@/ui';
 import { TrendingUp, DollarSign, Download, FileText, Calendar, Activity, BarChart3, PieChart, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import { mockInvestorData, mockReports, mockTransactions } from '@/data/mocks/lp-portal/lp-investor-portal';
+import { useUIKey } from '@/store/ui';
 
 export function LPInvestorPortal() {
-  const [selectedTab, setSelectedTab] = useState<string>('overview');
+  const { value: ui, patch: patchUI } = useUIKey('lp-investor-portal', { selectedTab: 'overview' });
+  const { selectedTab } = ui;
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -103,7 +104,7 @@ export function LPInvestorPortal() {
           </div>
         </Card>
 
-        <Tabs selectedKey={selectedTab} onSelectionChange={(key) => setSelectedTab(key as string)}>
+        <Tabs selectedKey={selectedTab} onSelectionChange={(key) => patchUI({ selectedTab: key as string })}>
           {/* Reports Tab */}
           <Tab
             key="reports"

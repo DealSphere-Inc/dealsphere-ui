@@ -3,12 +3,13 @@
 import { Check, ChevronDown, BarChart3, Layers } from 'lucide-react';
 import { useFund } from '@/contexts/fund-context';
 import { Button, Badge, Card } from '@/ui';
-import { useState } from 'react';
 import { Fund } from '@/types/fund';
+import { useUIKey } from '@/store/ui';
 
 export function FundSelector() {
   const { funds, selectedFund, viewMode, setSelectedFund, setViewMode, getFundSummary } = useFund();
-  const [isOpen, setIsOpen] = useState(false);
+  const { value: ui, patch: patchUI } = useUIKey('fund-selector', { isOpen: false });
+  const { isOpen } = ui;
 
   const formatCurrency = (amount: number) => {
     return `$${(amount / 1_000_000).toFixed(0)}M`;
@@ -27,7 +28,7 @@ export function FundSelector() {
 
   const handleFundSelect = (fund: Fund | null) => {
     setSelectedFund(fund);
-    setIsOpen(false);
+    patchUI({ isOpen: false });
     if (fund) {
       setViewMode('individual');
     }
@@ -36,7 +37,7 @@ export function FundSelector() {
   const handleConsolidatedView = () => {
     setSelectedFund(null);
     setViewMode('consolidated');
-    setIsOpen(false);
+    patchUI({ isOpen: false });
   };
 
   return (
@@ -46,7 +47,7 @@ export function FundSelector() {
         variant="flat"
         className="w-full justify-between bg-[var(--app-surface-hover)] hover:bg-[var(--app-border-subtle)] text-left"
         endContent={<ChevronDown className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />}
-        onPress={() => setIsOpen(!isOpen)}
+        onPress={() => patchUI({ isOpen: !isOpen })}
       >
         <div className="flex items-center gap-2 flex-1 min-w-0">
           {viewMode === 'consolidated' ? (
@@ -138,7 +139,7 @@ export function FundSelector() {
       {isOpen && (
         <div
           className="fixed inset-0 z-40"
-          onClick={() => setIsOpen(false)}
+          onClick={() => patchUI({ isOpen: false })}
         />
       )}
     </div>

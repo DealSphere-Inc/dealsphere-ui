@@ -1,14 +1,15 @@
 'use client'
 
-import { useState } from 'react';
 import { Card, Button, Badge, Progress, PageContainer, Breadcrumb, PageHeader, Tabs, Tab } from '@/ui';
 import { Receipt, Download, Send, Calendar, DollarSign, Building2, Users, CheckCircle, Clock, AlertTriangle, Mail, Upload, FileText , Scale} from 'lucide-react';
 import { getRouteConfig } from '@/config/routes';
 import { K1Generator } from '../tax/k1-generator';
 import { mockPortfolioTax, mockTaxDocuments, mockTaxSummaries } from '@/data/mocks/back-office/tax-center';
+import { useUIKey } from '@/store/ui';
 
 export function TaxCenter() {
-  const [selectedTab, setSelectedTab] = useState<string>('overview');
+  const { value: ui, patch: patchUI } = useUIKey('back-office-tax-center', { selectedTab: 'overview' });
+  const { selectedTab } = ui;
 
   // Get route config for breadcrumbs and AI suggestions
   const routeConfig = getRouteConfig('/tax-center');
@@ -115,7 +116,7 @@ export function TaxCenter() {
           }
         ]}
         activeTab={selectedTab}
-        onTabChange={(tabId) => setSelectedTab(tabId)}
+        onTabChange={(tabId) => patchUI({ selectedTab: tabId })}
       />
 
       {/* Summary Cards */}

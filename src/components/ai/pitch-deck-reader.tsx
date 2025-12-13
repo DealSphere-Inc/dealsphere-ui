@@ -1,24 +1,31 @@
 'use client'
 
-import { useState } from 'react';
 import { Card, Button, Badge, Progress } from '@/ui';
 import { Upload, FileText, Sparkles, CheckCircle2, Clock, AlertCircle, Download, Eye } from 'lucide-react';
 import { DocumentPreviewModal, useDocumentPreview, getMockDocumentUrl } from '@/components/documents/preview';
 import { mockAnalyses, type PitchDeckAnalysis } from '@/data/mocks/ai/pitch-deck-reader';
+import { useUIKey } from '@/store/ui';
+import { useAppDispatch } from '@/store/hooks';
+import { pitchDeckUploadRequested } from '@/store/slices/uiEffectsSlice';
+
+const defaultPitchDeckReaderState = {
+  selectedAnalysisId: null as string | null,
+  isUploading: false,
+};
 
 export function PitchDeckReader() {
-  const [analyses, setAnalyses] = useState<PitchDeckAnalysis[]>(mockAnalyses);
-  const [selectedAnalysis, setSelectedAnalysis] = useState<PitchDeckAnalysis | null>(null);
-  const [isUploading, setIsUploading] = useState(false);
+  const dispatch = useAppDispatch();
+  const analyses: PitchDeckAnalysis[] = mockAnalyses;
+  const { value: ui, patch: patchUI } = useUIKey<{ selectedAnalysisId: string | null; isUploading: boolean }>(
+    'pitch-deck-reader',
+    defaultPitchDeckReaderState
+  );
+  const { selectedAnalysisId, isUploading } = ui;
+  const selectedAnalysis = analyses.find((analysis) => analysis.id === selectedAnalysisId) ?? null;
   const preview = useDocumentPreview();
 
   const handleFileUpload = () => {
-    setIsUploading(true);
-    // Simulate upload
-    setTimeout(() => {
-      setIsUploading(false);
-      // In real implementation, this would trigger file upload and AI analysis
-    }, 2000);
+    dispatch(pitchDeckUploadRequested());
   };
 
   const getStatusIcon = (status: PitchDeckAnalysis['status']) => {
@@ -52,7 +59,7 @@ export function PitchDeckReader() {
             <Button
               variant="flat"
               size="sm"
-              onPress={() => setSelectedAnalysis(null)}
+              onPress={() => patchUI({ selectedAnalysisId: null })}
               className="mb-4"
             >
               ← Back to All Decks
@@ -301,7 +308,7 @@ export function PitchDeckReader() {
             key={analysis.id}
             padding="md"
             isPressable
-            onPress={() => analysis.status === 'completed' && setSelectedAnalysis(analysis)}
+            onPress={() => analysis.status === 'completed' && patchUI({ selectedAnalysisId: analysis.id })}
             className={`cursor-pointer transition-all ${
               analysis.status === 'completed' ? 'hover:border-[var(--app-primary)]' : ''
             }`}

@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
 import { Card, Button, Badge, Input } from '@/ui';
 import { TrendingUp, DollarSign, Calendar, ChevronRight, ChevronDown, Info, Download, RefreshCw } from 'lucide-react';
+import { useUIKey } from '@/store/ui';
 
 export interface CarriedInterestTerm {
   id: string;
@@ -86,10 +86,21 @@ export function CarriedInterestTracker({
   onDistribute,
   onExport,
 }: CarriedInterestTrackerProps) {
-  const [selectedAccrual, setSelectedAccrual] = useState<CarryAccrual | null>(
-    accruals[0] || null
-  );
-  const [expandedWaterfall, setExpandedWaterfall] = useState(false);
+  const filteredAccruals = accruals.filter((accrual) => !fundId || accrual.fundId === fundId);
+
+  const { value: ui, patch: patchUI } = useUIKey<{
+    selectedAccrualId: string | null;
+    expandedWaterfall: boolean;
+  }>(`carried-interest-tracker:${fundId ?? 'all'}`, {
+    selectedAccrualId: filteredAccruals[0]?.id ?? null,
+    expandedWaterfall: false,
+  });
+  const { selectedAccrualId, expandedWaterfall } = ui;
+
+  const selectedAccrual =
+    filteredAccruals.find((accrual) => accrual.id === selectedAccrualId) ??
+    filteredAccruals[0] ??
+    null;
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -136,10 +147,6 @@ export function CarriedInterestTracker({
         );
     }
   };
-
-  const filteredAccruals = accruals.filter(accrual =>
-    !fundId || accrual.fundId === fundId
-  );
 
   const activeTerm = terms.find(t => (!fundId || t.fundId === fundId) && t.status === 'active');
 
@@ -232,7 +239,7 @@ export function CarriedInterestTracker({
                 {filteredAccruals.map(accrual => (
                   <button
                     key={accrual.id}
-                    onClick={() => setSelectedAccrual(accrual)}
+                    onClick={() => patchUI({ selectedAccrualId: accrual.id })}
                     className={`w-full p-3 rounded-lg text-left transition-colors border ${
                       selectedAccrual?.id === accrual.id
                         ? 'bg-[var(--app-primary-bg)] border-[var(--app-primary)]'
@@ -468,7 +475,7 @@ export function CarriedInterestTracker({
               <Card padding="md">
                 <div
                   className="flex items-center justify-between cursor-pointer"
-                  onClick={() => setExpandedWaterfall(!expandedWaterfall)}
+                  onClick={() => patchUI({ expandedWaterfall: !expandedWaterfall })}
                 >
                   <div className="flex items-center gap-2">
                     <h4 className="text-sm font-semibold">Distribution Waterfall</h4>

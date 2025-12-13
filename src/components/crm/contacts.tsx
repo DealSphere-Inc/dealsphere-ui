@@ -1,6 +1,5 @@
 'use client'
 
-import { useState } from 'react';
 import { Card, Button, Input, Badge, PageContainer, Breadcrumb, PageHeader } from '@/ui';
 import { User, Mail, Phone, Building2, MapPin, Calendar, Tag, Search, Filter, Plus, Edit3, Trash2, Star, MessageSquare, Video, Send, ExternalLink, Briefcase, Users, Network } from 'lucide-react';
 import { getRouteConfig } from '@/config/routes';
@@ -10,6 +9,7 @@ import { SmartLists, type SmartList, type FilterCondition } from '@/components/c
 import { EmailIntegration, type EmailAccount } from '@/components/crm/email-integration';
 import { InteractionTimeline, type TimelineInteraction } from '@/components/crm/interaction-timeline';
 import { NetworkGraph } from './network-graph';
+import { useUIKey } from '@/store/ui';
 import {
   mockContacts,
   mockEmailAccounts,
@@ -19,18 +19,46 @@ import {
   type Interaction,
 } from '@/data/mocks/crm/contacts';
 
+interface ContactsUIState {
+  contacts: Contact[];
+  selectedContact: Contact | null;
+  searchQuery: string;
+  filterRole: string;
+  isDrawerOpen: boolean;
+  smartLists: SmartList[];
+  activeSmartList: SmartList | null;
+  emailAccounts: EmailAccount[];
+  activeTab: 'overview' | 'timeline' | 'email';
+  showNetworkGraph: boolean;
+}
+
 export function Contacts() {
   const routeConfig = getRouteConfig('/contacts');
-  const [contacts, setContacts] = useState<Contact[]>(mockContacts);
-  const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [filterRole, setFilterRole] = useState<string>('all');
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [smartLists, setSmartLists] = useState<SmartList[]>([]);
-  const [activeSmartList, setActiveSmartList] = useState<SmartList | null>(null);
-  const [emailAccounts, setEmailAccounts] = useState<EmailAccount[]>(mockEmailAccounts);
-  const [activeTab, setActiveTab] = useState<'overview' | 'timeline' | 'email'>('overview');
-  const [showNetworkGraph, setShowNetworkGraph] = useState(false);
+  const { value: ui, patch: patchUI } = useUIKey<ContactsUIState>('crm-contacts', {
+    contacts: mockContacts,
+    selectedContact: null,
+    searchQuery: '',
+    filterRole: 'all',
+    isDrawerOpen: false,
+    smartLists: [],
+    activeSmartList: null,
+    emailAccounts: mockEmailAccounts,
+    activeTab: 'overview',
+    showNetworkGraph: false,
+  });
+
+  const {
+    contacts,
+    selectedContact,
+    searchQuery,
+    filterRole,
+    isDrawerOpen,
+    smartLists,
+    activeSmartList,
+    emailAccounts,
+    activeTab,
+    showNetworkGraph,
+  } = ui;
 
   // Helper to get relationship metrics for a contact
   const getRelationshipMetrics = (contact: Contact): RelationshipMetrics => {
@@ -93,30 +121,31 @@ export function Contacts() {
   });
 
   const handleListSave = (list: SmartList) => {
-    setSmartLists(prev => {
-      const exists = prev.find(l => l.id === list.id);
-      if (exists) {
-        return prev.map(l => l.id === list.id ? list : l);
-      }
-      return [...prev, { ...list, id: `list-${Date.now()}` }];
+    const exists = smartLists.find((storedList) => storedList.id === list.id);
+    patchUI({
+      smartLists: exists
+        ? smartLists.map((storedList) => (storedList.id === list.id ? list : storedList))
+        : [...smartLists, { ...list, id: `list-${Date.now()}` }],
     });
   };
 
   const handleListDelete = (listId: string) => {
-    setSmartLists(prev => prev.filter(l => l.id !== listId));
-    if (activeSmartList?.id === listId) {
-      setActiveSmartList(null);
-    }
+    patchUI({
+      smartLists: smartLists.filter((list) => list.id !== listId),
+      activeSmartList: activeSmartList?.id === listId ? null : activeSmartList,
+    });
   };
 
   const handleListSelect = (list: SmartList) => {
-    setActiveSmartList(list);
+    patchUI({ activeSmartList: list });
   };
 
   const toggleStar = (contactId: string) => {
-    setContacts(prev => prev.map(c =>
-      c.id === contactId ? { ...c, starred: !c.starred } : c
-    ));
+    patchUI({
+      contacts: contacts.map((contact) =>
+        contact.id === contactId ? { ...contact, starred: !contact.starred } : contact
+      ),
+    });
   };
 
   const getRoleBadgeColor = (role: string) => {
@@ -152,7 +181,7 @@ export function Contacts() {
           secondaryActions={[
             {
               label: 'Network View',
-              onClick: () => setShowNetworkGraph(true)
+              onClick: () => patchUI({ showNetworkGraph: true })
             }
           ]}
         />
@@ -235,7 +264,7 @@ export function Contacts() {
                   <Button
                     size="sm"
                     variant="light"
-                    onPress={() => setActiveSmartList(null)}
+                    onPress={() => patchUI({ activeSmartList: null })}
                   >
                     Clear
                   </Button>
@@ -244,7 +273,7 @@ export function Contacts() {
               <Input
                 placeholder="Search contacts..."
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) => patchUI({ searchQuery: e.target.value })}
                 startContent={<Search className="w-4 h-4 text-[var(--app-text-subtle)]" />}
                 className="mb-3"
               />
@@ -252,7 +281,7 @@ export function Contacts() {
                 <select
                   className="flex-1 px-3 py-2 text-sm rounded-lg border border-[var(--app-border)] bg-[var(--app-surface)] text-[var(--app-text)]"
                   value={filterRole}
-                  onChange={(e) => setFilterRole(e.target.value)}
+                  onChange={(e) => patchUI({ filterRole: e.target.value })}
                 >
                   <option value="all">All Roles</option>
                   <option value="founder">Founders</option>
@@ -268,8 +297,7 @@ export function Contacts() {
                 <div
                   key={contact.id}
                   onClick={() => {
-                    setSelectedContact(contact);
-                    setIsDrawerOpen(true);
+                    patchUI({ selectedContact: contact, isDrawerOpen: true });
                   }}
                   className={`p-4 border-b border-[var(--app-border)] cursor-pointer transition-colors hover:bg-[var(--app-surface-hover)] ${
                     selectedContact?.id === contact.id ? 'bg-[var(--app-primary-bg)]' : ''
@@ -314,7 +342,7 @@ export function Contacts() {
       {/* Contact Detail SideDrawer */}
       <SideDrawer
         isOpen={isDrawerOpen}
-        onClose={() => setIsDrawerOpen(false)}
+        onClose={() => patchUI({ isDrawerOpen: false })}
         title={selectedContact?.name}
         subtitle={selectedContact?.company}
         width="lg"
@@ -324,7 +352,7 @@ export function Contacts() {
               {/* Tabs */}
               <div className="flex gap-2 mb-6 border-b border-[var(--app-border)]">
                 <button
-                  onClick={() => setActiveTab('overview')}
+                  onClick={() => patchUI({ activeTab: 'overview' })}
                   className={`px-4 py-2 text-sm font-medium transition-colors border-b-2 ${
                     activeTab === 'overview'
                       ? 'border-[var(--app-primary)] text-[var(--app-primary)]'
@@ -334,7 +362,7 @@ export function Contacts() {
                   Overview
                 </button>
                 <button
-                  onClick={() => setActiveTab('timeline')}
+                  onClick={() => patchUI({ activeTab: 'timeline' })}
                   className={`px-4 py-2 text-sm font-medium transition-colors border-b-2 ${
                     activeTab === 'timeline'
                       ? 'border-[var(--app-primary)] text-[var(--app-primary)]'
@@ -344,7 +372,7 @@ export function Contacts() {
                   Timeline
                 </button>
                 <button
-                  onClick={() => setActiveTab('email')}
+                  onClick={() => patchUI({ activeTab: 'email' })}
                   className={`px-4 py-2 text-sm font-medium transition-colors border-b-2 ${
                     activeTab === 'email'
                       ? 'border-[var(--app-primary)] text-[var(--app-primary)]'
@@ -560,9 +588,11 @@ export function Contacts() {
                   onDisconnect={(id) => console.log('Disconnect:', id)}
                   onSync={(id) => console.log('Sync:', id)}
                   onToggleAutoCapture={(id, enabled) => {
-                    setEmailAccounts(prev => prev.map(acc =>
-                      acc.id === id ? { ...acc, autoCapture: enabled } : acc
-                    ));
+                    patchUI({
+                      emailAccounts: emailAccounts.map((account) =>
+                        account.id === id ? { ...account, autoCapture: enabled } : account
+                      ),
+                    });
                   }}
                 />
               )}
@@ -579,7 +609,7 @@ export function Contacts() {
               <Button
                 variant="flat"
                 size="sm"
-                onClick={() => setShowNetworkGraph(false)}
+                onClick={() => patchUI({ showNetworkGraph: false })}
               >
                 Close
               </Button>

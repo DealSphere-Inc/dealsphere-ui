@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useUIKey } from '@/store/ui';
 import { Card, Button, Badge, Input } from '@/ui';
 import { DollarSign, Plus, Calendar, TrendingUp, TrendingDown, PieChart, Filter, Download } from 'lucide-react';
 
@@ -53,10 +53,18 @@ export function ExpenseTracker({
   onMarkPaid,
   onExport,
 }: ExpenseTrackerProps) {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [filterType, setFilterType] = useState<ExpenseType | 'all'>('all');
-  const [filterStatus, setFilterStatus] = useState<string>('all');
-  const [dateRange, setDateRange] = useState<'month' | 'quarter' | 'year'>('month');
+  const { value: ui, patch: patchUI } = useUIKey<{
+    searchQuery: string;
+    filterType: ExpenseType | 'all';
+    filterStatus: string;
+    dateRange: 'month' | 'quarter' | 'year';
+  }>(`expense-tracker:${fundId ?? 'all'}`, {
+    searchQuery: '',
+    filterType: 'all',
+    filterStatus: 'all',
+    dateRange: 'month',
+  });
+  const { searchQuery, filterType, filterStatus, dateRange } = ui;
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -280,7 +288,7 @@ export function ExpenseTracker({
           <Input
             placeholder="Search expenses..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => patchUI({ searchQuery: e.target.value })}
             startContent={<Filter className="w-4 h-4" />}
             size="sm"
             className="flex-1"
@@ -288,7 +296,7 @@ export function ExpenseTracker({
           <select
             className="px-3 py-2 text-sm rounded-lg border border-[var(--app-border)] bg-[var(--app-surface)] text-[var(--app-text)]"
             value={filterType}
-            onChange={(e) => setFilterType(e.target.value as ExpenseType | 'all')}
+            onChange={(e) => patchUI({ filterType: e.target.value as ExpenseType | 'all' })}
           >
             <option value="all">All Types</option>
             {expenseTypes.map(type => (
@@ -300,7 +308,7 @@ export function ExpenseTracker({
           <select
             className="px-3 py-2 text-sm rounded-lg border border-[var(--app-border)] bg-[var(--app-surface)] text-[var(--app-text)]"
             value={filterStatus}
-            onChange={(e) => setFilterStatus(e.target.value)}
+            onChange={(e) => patchUI({ filterStatus: e.target.value })}
           >
             <option value="all">All Status</option>
             <option value="pending">Pending</option>
@@ -311,7 +319,7 @@ export function ExpenseTracker({
           <select
             className="px-3 py-2 text-sm rounded-lg border border-[var(--app-border)] bg-[var(--app-surface)] text-[var(--app-text)]"
             value={dateRange}
-            onChange={(e) => setDateRange(e.target.value as typeof dateRange)}
+            onChange={(e) => patchUI({ dateRange: e.target.value as typeof dateRange })}
           >
             <option value="month">This Month</option>
             <option value="quarter">This Quarter</option>

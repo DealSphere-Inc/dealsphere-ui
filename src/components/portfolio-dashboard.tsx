@@ -1,6 +1,5 @@
 'use client'
 
-import { useState } from 'react';
 import { Card, Badge, Button, Progress, PageContainer } from '@/ui';
 import {
   TrendingUp,
@@ -223,6 +222,7 @@ export function PortfolioDashboard() {
         <h3 className="text-xl font-semibold mb-4">Portfolio Companies</h3>
 
         <AdvancedTable
+          stateKey="portfolio-dashboard:companies"
           data={filteredCompanies}
           columns={[
             {

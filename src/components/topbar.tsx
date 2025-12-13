@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { Search, ChevronDown, LogOut, Sparkles, Moon, Sun } from 'lucide-react';
 import { useAuth } from '@/contexts/auth-context';
 import { Button, Badge, Card, Input } from '@/ui';
@@ -12,6 +12,7 @@ import { NotificationCenter } from '@/components/notification-center';
 import type { Notification } from '@/types/notification';
 import { useTheme } from 'next-themes';
 import { getMockTopbarSearchResults, type TopbarSearchResult } from '@/data/mocks/topbar/search';
+import { useUIKey } from '@/store/ui';
 
 export function Topbar() {
   const { user, logout } = useAuth();
@@ -20,10 +21,11 @@ export function Topbar() {
   const dispatch = useAppDispatch();
   const { items: reduxNotifications } = useAppSelector((state) => state.alerts);
   const { theme, setTheme } = useTheme();
-  const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [isSearchFocused, setIsSearchFocused] = useState(false);
-  const [searchResults, setSearchResults] = useState<TopbarSearchResult[]>([]);
+  const { value: topbarUI, patch: patchTopbarUI } = useUIKey('topbar', {
+    isProfileOpen: false,
+    searchQuery: '',
+    isSearchFocused: false,
+  });
   const searchRef = useRef<HTMLDivElement>(null);
 
   const handleLogout = () => {
@@ -58,27 +60,22 @@ export function Topbar() {
     });
   };
 
-  // AI-powered search logic
-  useEffect(() => {
-    if (!searchQuery.trim()) {
-      setSearchResults([]);
-      return;
-    }
-
-    setSearchResults(getMockTopbarSearchResults(searchQuery));
-  }, [searchQuery]);
+  const searchResults = useMemo(
+    () => getMockTopbarSearchResults(topbarUI.searchQuery),
+    [topbarUI.searchQuery]
+  );
 
   // Close search dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
-        setIsSearchFocused(false);
+        patchTopbarUI({ isSearchFocused: false });
       }
     };
 
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  }, [patchTopbarUI]);
 
   const getResultIcon = (result: TopbarSearchResult) => {
     const Icon = result.icon || Search;
@@ -89,8 +86,7 @@ export function Topbar() {
     if (result.href) {
       router.push(result.href);
     }
-    setSearchQuery('');
-    setIsSearchFocused(false);
+    patchTopbarUI({ searchQuery: '', isSearchFocused: false });
   };
 
   return (
@@ -107,18 +103,17 @@ export function Topbar() {
           <Input
             type="text"
             placeholder="Ask Vesta anything... (e.g., 'show me active deals', 'find Quantum AI')"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            onFocus={() => setIsSearchFocused(true)}
+            value={topbarUI.searchQuery}
+            onChange={(e) => patchTopbarUI({ searchQuery: e.target.value })}
+            onFocus={() => patchTopbarUI({ isSearchFocused: true })}
             onKeyDown={(e) => {
-              if (e.key === 'Enter' && searchQuery.trim()) {
-                openWithQuery(searchQuery);
-                setSearchQuery('');
-                setIsSearchFocused(false);
+              if (e.key === 'Enter' && topbarUI.searchQuery.trim()) {
+                openWithQuery(topbarUI.searchQuery);
+                patchTopbarUI({ searchQuery: '', isSearchFocused: false });
               }
             }}
             startContent={
-              searchQuery && searchResults.some(r => r.type === 'ai-suggestion') ? (
+              topbarUI.searchQuery && searchResults.some(r => r.type === 'ai-suggestion') ? (
                 <Sparkles className="w-4 h-4 text-[var(--app-primary)]" />
               ) : (
                 <Search className="w-4 h-4 text-[var(--app-text-subtle)]" />
@@ -126,14 +121,14 @@ export function Topbar() {
             }
             className="w-full"
             classNames={{
-              inputWrapper: searchResults.length > 0 && isSearchFocused
+              inputWrapper: searchResults.length > 0 && topbarUI.isSearchFocused
                 ? "bg-[var(--app-surface-hover)] ring-2 ring-[var(--app-primary)]"
                 : "bg-[var(--app-surface-hover)]"
             }}
           />
 
           {/* AI Search Results Dropdown */}
-          {isSearchFocused && searchResults.length > 0 && (
+          {topbarUI.isSearchFocused && searchResults.length > 0 && (
             <div className="absolute top-full left-0 right-0 mt-2 z-50">
               <Card padding="none" className="shadow-lg overflow-hidden">
                 <div className="max-h-96 overflow-y-auto">
@@ -176,7 +171,7 @@ export function Topbar() {
           )}
 
           {/* No results message */}
-          {isSearchFocused && searchQuery && searchResults.length === 0 && (
+          {topbarUI.isSearchFocused && topbarUI.searchQuery && searchResults.length === 0 && (
             <div className="absolute top-full left-0 right-0 mt-2 z-50">
               <Card padding="md" className="shadow-lg">
                 <div className="text-center py-4 text-[var(--app-text-muted)]">
@@ -218,8 +213,8 @@ export function Topbar() {
           <Button
             variant="flat"
             className="gap-2"
-            endContent={<ChevronDown className={`w-4 h-4 transition-transform ${isProfileOpen ? 'rotate-180' : ''}`} />}
-            onPress={() => setIsProfileOpen(!isProfileOpen)}
+            endContent={<ChevronDown className={`w-4 h-4 transition-transform ${topbarUI.isProfileOpen ? 'rotate-180' : ''}`} />}
+            onPress={() => patchTopbarUI({ isProfileOpen: !topbarUI.isProfileOpen })}
           >
             <div className="w-7 h-7 rounded-full bg-[var(--app-primary)] flex items-center justify-center text-white text-sm font-medium">
               {user?.name?.charAt(0) || 'U'}
@@ -230,7 +225,7 @@ export function Topbar() {
           </Button>
 
           {/* Profile Dropdown */}
-          {isProfileOpen && (
+          {topbarUI.isProfileOpen && (
             <>
               <div className="absolute right-0 top-full mt-2 w-64 z-50">
                 <Card padding="sm" className="shadow-lg">
@@ -238,7 +233,7 @@ export function Topbar() {
                   <button
                     onClick={() => {
                       router.push('/settings');
-                      setIsProfileOpen(false);
+                      patchTopbarUI({ isProfileOpen: false });
                     }}
                     className="w-full text-left px-3 py-3 border-b border-[var(--app-border)] mb-2 hover:bg-[var(--app-surface-hover)] transition-colors rounded-lg"
                   >
@@ -263,7 +258,7 @@ export function Topbar() {
                   </button>
                 </Card>
               </div>
-              <div className="fixed inset-0 z-40" onClick={() => setIsProfileOpen(false)} />
+              <div className="fixed inset-0 z-40" onClick={() => patchTopbarUI({ isProfileOpen: false })} />
             </>
           )}
         </div>

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useUIKey } from '@/store/ui'
 import { Card, Button, Badge, Progress, Input, Select, Breadcrumb, PageHeader, PageContainer } from '@/ui'
 import { DollarSign, Send, Download, Clock, CheckCircle, AlertTriangle, Users, FileText, Mail, ArrowUpRight, ArrowDownRight } from 'lucide-react'
 import { FundSelector } from '../fund-selector'
@@ -12,7 +12,8 @@ import { TransferSecondary } from '../fund-admin/transfer-secondary'
 import { mockCapitalCalls, mockDistributions, mockLPResponses } from '@/data/mocks/back-office/fund-admin'
 
 export function FundAdmin() {
-  const [selectedTab, setSelectedTab] = useState<string>('capital-calls');
+  const { value: ui, patch: patchUI } = useUIKey('back-office-fund-admin', { selectedTab: 'capital-calls' });
+  const { selectedTab } = ui;
 
   // Get route config for breadcrumbs and AI suggestions
   const routeConfig = getRouteConfig('/fund-admin');
@@ -136,7 +137,7 @@ export function FundAdmin() {
           }
         ]}
         activeTab={selectedTab}
-        onTabChange={(tabId) => setSelectedTab(tabId)}
+        onTabChange={(tabId) => patchUI({ selectedTab: tabId })}
       >
         {/* Fund Selector as child content */}
         <div className="w-full sm:w-64">

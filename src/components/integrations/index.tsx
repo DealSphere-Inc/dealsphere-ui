@@ -1,11 +1,11 @@
 'use client';
 
-import { useState } from 'react';
 import { PageContainer, PageHeader, Breadcrumb, Card, Button, Badge } from '@/ui';
 import { Plug, Calendar, Mail, Slack, Github, CheckCircle2, AlertCircle, Settings } from 'lucide-react';
 import { getRouteConfig } from '@/config/routes';
 import { CalendarIntegration, type CalendarAccount, type CalendarEvent } from './calendar-integration';
 import { mockCalendarAccounts, mockCalendarEvents } from '@/data/mocks/integrations';
+import { useUIKey } from '@/store/ui';
 
 interface Integration {
   id: string;
@@ -53,9 +53,10 @@ const availableIntegrations: Integration[] = [
 
 export function Integrations() {
   const routeConfig = getRouteConfig('/integrations');
-  const [calendarAccounts] = useState<CalendarAccount[]>(mockCalendarAccounts);
-  const [calendarEvents] = useState<CalendarEvent[]>(mockCalendarEvents);
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const calendarAccounts: CalendarAccount[] = mockCalendarAccounts;
+  const calendarEvents: CalendarEvent[] = mockCalendarEvents;
+  const { value: ui, patch: patchUI } = useUIKey('integrations', { selectedCategory: 'all' });
+  const { selectedCategory } = ui;
 
   const filteredIntegrations = selectedCategory === 'all'
     ? availableIntegrations
@@ -90,7 +91,7 @@ export function Integrations() {
               variant={selectedCategory === category ? 'solid' : 'bordered'}
               color={selectedCategory === category ? 'primary' : 'default'}
               size="sm"
-              onClick={() => setSelectedCategory(category)}
+              onClick={() => patchUI({ selectedCategory: category })}
             >
               {category.charAt(0).toUpperCase() + category.slice(1)}
             </Button>

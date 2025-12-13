@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button, Badge } from '@/ui';
@@ -14,7 +14,6 @@ import {
   Info,
   CheckCircle,
   AlertTriangle,
-  DollarSign,
   Users,
   FileText,
   Calendar,
@@ -22,6 +21,7 @@ import {
 } from 'lucide-react';
 import type { Notification, NotificationCategory, NotificationType } from '@/types/notification';
 import { mockNotifications } from '@/data/mocks/notifications';
+import { useUIKey } from '@/store/ui';
 
 export interface NotificationCenterProps {
   notifications?: Notification[];
@@ -89,7 +89,8 @@ export function NotificationCenter({
   maxHeight = '32rem',
 }: NotificationCenterProps) {
   const router = useRouter();
-  const [isOpen, setIsOpen] = useState(false);
+  const { value: ui, patch: patchUI } = useUIKey('notification-center', { isOpen: false });
+  const { isOpen } = ui;
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const unreadCount = notifications.filter((n) => !n.read).length;
@@ -98,7 +99,7 @@ export function NotificationCenter({
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
+        patchUI({ isOpen: false });
       }
     };
 
@@ -109,7 +110,7 @@ export function NotificationCenter({
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isOpen]);
+  }, [isOpen, patchUI]);
 
   const handleNotificationClick = (notification: Notification) => {
     if (!notification.read && onMarkAsRead) {
@@ -127,7 +128,7 @@ export function NotificationCenter({
     <div className="relative" ref={dropdownRef}>
       {/* Notification Bell Button */}
       <button
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => patchUI({ isOpen: !isOpen })}
         className="relative p-2 rounded-lg hover:bg-[var(--app-surface-hover)] transition-colors"
         aria-label="Notifications"
       >
@@ -285,7 +286,7 @@ export function NotificationCenter({
               <div className="p-3 border-t border-[var(--app-border)] bg-[var(--app-surface-hover)]">
                 <button
                   onClick={() => {
-                    setIsOpen(false);
+                    patchUI({ isOpen: false });
                     router.push('/notifications');
                   }}
                   className="w-full text-center text-sm font-medium text-[var(--app-primary)] hover:underline"

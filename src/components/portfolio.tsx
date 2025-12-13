@@ -1,6 +1,5 @@
 'use client'
 
-import { useState } from 'react';
 import { Breadcrumb, PageHeader, PageContainer } from '@/ui';
 import { Briefcase, LayoutGrid, FileText, MessageSquare } from 'lucide-react';
 import { PortfolioDashboard } from './portfolio-dashboard';
@@ -9,9 +8,11 @@ import { PortfolioUpdates } from './portfolio-updates';
 import { FundSelector } from './fund-selector';
 import { getRouteConfig } from '@/config/routes';
 import { portfolioPageMetrics, portfolioPageHealthyCompanies } from '@/data/mocks/portfolio/page-metrics';
+import { useUIKey } from '@/store/ui';
 
 export function Portfolio() {
-  const [selected, setSelected] = useState<string>('overview');
+  const { value: ui, patch: patchUI } = useUIKey('portfolio', { selected: 'overview' });
+  const { selected } = ui;
 
   // Get route config for breadcrumbs and AI suggestions
   const routeConfig = getRouteConfig('/portfolio');
@@ -60,7 +61,7 @@ export function Portfolio() {
           }
         ]}
         activeTab={selected}
-        onTabChange={(tabId) => setSelected(tabId)}
+        onTabChange={(tabId) => patchUI({ selected: tabId })}
         actionContent={<FundSelector />}
       />
 

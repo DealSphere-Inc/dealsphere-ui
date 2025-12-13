@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { Card, Button, Badge, Input, Progress, PageContainer, Breadcrumb, PageHeader } from '@/ui';
 import {
   Shield,
@@ -20,11 +19,19 @@ import {
 } from 'lucide-react';
 import { getRouteConfig } from '@/config/routes';
 import { mockAuditEvents, type AuditEvent } from '@/data/mocks/blockchain/audit-trail';
+import { useUIKey } from '@/store/ui';
 
 export function BlockchainAuditTrail() {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedEvent, setSelectedEvent] = useState<AuditEvent | null>(null);
-  const [filter, setFilter] = useState<string>('all');
+  const { value: ui, patch: patchUI } = useUIKey<{
+    searchQuery: string;
+    selectedEvent: AuditEvent | null;
+    filter: string;
+  }>('blockchain-audit-trail', {
+    searchQuery: '',
+    selectedEvent: null,
+    filter: 'all',
+  });
+  const { searchQuery, selectedEvent, filter } = ui;
 
   const routeConfig = getRouteConfig('/audit-trail');
 
@@ -151,7 +158,7 @@ export function BlockchainAuditTrail() {
           <Input
             placeholder="Search by description or transaction hash..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => patchUI({ searchQuery: e.target.value })}
             startContent={<Search className="w-4 h-4 text-[var(--app-text-muted)]" />}
           />
         </div>
@@ -162,7 +169,7 @@ export function BlockchainAuditTrail() {
               size="sm"
               variant={filter === f ? 'solid' : 'flat'}
               color={filter === f ? 'primary' : 'default'}
-              onPress={() => setFilter(f)}
+              onPress={() => patchUI({ filter: f })}
             >
               {f === 'all' ? 'All' : getEventLabel(f)}
             </Button>
@@ -188,7 +195,7 @@ export function BlockchainAuditTrail() {
               {/* Event Card */}
               <div
                 className="p-4 rounded-lg border border-[var(--app-border)] hover:border-[var(--app-primary)] transition-colors cursor-pointer"
-                onClick={() => setSelectedEvent(event)}
+                onClick={() => patchUI({ selectedEvent: event })}
               >
                 <div className="flex items-start justify-between gap-4 mb-2">
                   <div className="flex items-center gap-2">
@@ -264,7 +271,7 @@ export function BlockchainAuditTrail() {
               <Eye className="w-5 h-5 text-[var(--app-primary)]" />
               Cryptographic Proof Details
             </h3>
-            <Button size="sm" variant="flat" onPress={() => setSelectedEvent(null)}>
+            <Button size="sm" variant="flat" onPress={() => patchUI({ selectedEvent: null })}>
               Close
             </Button>
           </div>

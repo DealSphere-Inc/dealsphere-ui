@@ -1,0 +1,56 @@
+import { call, put, select, takeLatest } from 'redux-saga/effects';
+import type { RootState } from '@/store/rootReducer';
+import type { FundViewMode } from '@/types/fund';
+import { fundHydrated, setSelectedFundId, setViewMode } from '@/store/slices/fundSlice';
+
+const STORAGE_SELECTED_FUND_ID = 'vestledger-selected-fund-id';
+const STORAGE_FUND_VIEW_MODE = 'vestledger-fund-view-mode';
+
+function* hydrateFundWorker() {
+  if (typeof window === 'undefined' || typeof localStorage === 'undefined') {
+    yield put(fundHydrated({ selectedFundId: null, viewMode: 'individual' }));
+    return;
+  }
+
+  try {
+    const rawFundId = localStorage.getItem(STORAGE_SELECTED_FUND_ID);
+    const rawViewMode = localStorage.getItem(STORAGE_FUND_VIEW_MODE) as FundViewMode | null;
+
+    const selectedFundId = rawFundId && rawFundId !== 'null' ? rawFundId : null;
+    const viewMode: FundViewMode =
+      rawViewMode === 'individual' || rawViewMode === 'consolidated' || rawViewMode === 'comparison'
+        ? rawViewMode
+        : 'individual';
+
+    yield put(fundHydrated({ selectedFundId, viewMode }));
+  } catch (error) {
+    console.error('Failed to hydrate fund preferences from localStorage', error);
+    yield put(fundHydrated({ selectedFundId: null, viewMode: 'individual' }));
+  }
+}
+
+function* persistSelectedFundIdWorker() {
+  const selectedFundId: string | null = yield select((state: RootState) => state.fund.selectedFundId);
+  if (typeof window === 'undefined' || typeof localStorage === 'undefined') return;
+  try {
+    localStorage.setItem(STORAGE_SELECTED_FUND_ID, selectedFundId === null ? 'null' : selectedFundId);
+  } catch (error) {
+    console.error('Failed to persist selected fund id', error);
+  }
+}
+
+function* persistViewModeWorker() {
+  const viewMode: FundViewMode = yield select((state: RootState) => state.fund.viewMode);
+  if (typeof window === 'undefined' || typeof localStorage === 'undefined') return;
+  try {
+    localStorage.setItem(STORAGE_FUND_VIEW_MODE, viewMode);
+  } catch (error) {
+    console.error('Failed to persist fund view mode', error);
+  }
+}
+
+export function* fundSaga() {
+  yield call(hydrateFundWorker);
+  yield takeLatest(setSelectedFundId.type, persistSelectedFundIdWorker);
+  yield takeLatest(setViewMode.type, persistViewModeWorker);
+}

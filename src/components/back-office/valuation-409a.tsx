@@ -1,14 +1,15 @@
 'use client'
 
-import { useState } from 'react';
 import { Card, Button, Badge, Progress, Input, PageContainer, Breadcrumb, PageHeader } from '@/ui';
 import { Tabs, Tab } from '@/ui';
 import { getRouteConfig } from '@/config/routes';
 import { TrendingUp, FileText, Download, Calendar, DollarSign, AlertCircle, CheckCircle, Clock, Building2, ChevronRight, Calculator , Receipt} from 'lucide-react';
 import { mockHistory, mockStrikePrices, mockValuations } from '@/data/mocks/back-office/valuation-409a';
+import { useUIKey } from '@/store/ui';
 
 export function Valuation409A() {
-  const [selectedTab, setSelectedTab] = useState<string>('valuations');
+  const { value: ui, patch: patchUI } = useUIKey('back-office-valuation-409a', { selectedTab: 'valuations' });
+  const { selectedTab } = ui;
   const routeConfig = getRouteConfig('/409a-valuations');
 
   const formatCurrency = (amount: number) => {
@@ -98,7 +99,7 @@ export function Valuation409A() {
             },
           ]}
           activeTab={selectedTab}
-          onTabChange={setSelectedTab}
+          onTabChange={(tabId) => patchUI({ selectedTab: tabId })}
         />
 
         {/* Summary Cards */}

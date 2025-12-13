@@ -1,14 +1,11 @@
 'use client';
 
-import { useState } from 'react';
 import { BarChart3, TrendingUp, FileText, DollarSign, Download, Calendar, CheckCircle2, AlertCircle, Clock, CreditCard, Pen, Shield, ChevronRight, Wallet } from 'lucide-react';
 import { Card, Button, Badge, Progress, PageContainer } from '@/ui';
 import { MetricCard } from '@/components/metric-card';
 import { lpDashboardCapitalActivity, lpDashboardDocuments, lpDashboardMetrics, pendingCalls, pendingSignatures } from '@/data/mocks/dashboards/lp-dashboard';
 
 export function LPDashboard() {
-  const [showPaymentModal, setShowPaymentModal] = useState(false);
-
   const metrics = lpDashboardMetrics;
 
   const documents = lpDashboardDocuments;

@@ -1,14 +1,15 @@
 'use client'
 
-import { useState } from 'react';
 import { Card, Button, Badge, Breadcrumb, PageHeader, PageContainer } from '@/ui';
 import { Shield, FileText, AlertTriangle, CheckCircle, Clock, Download, Calendar, Users, Building2, Scale, Bell } from 'lucide-react';
 import { getRouteConfig } from '@/config/routes';
 import { AMLKYCWorkflow } from '../compliance/aml-kyc-workflow';
 import { mockAuditSchedule, mockComplianceItems, mockRegulatoryFilings } from '@/data/mocks/back-office/compliance';
+import { useUIKey } from '@/store/ui';
 
 export function Compliance() {
-  const [selectedTab, setSelectedTab] = useState<string>('overview');
+  const { value: ui, patch: patchUI } = useUIKey('back-office-compliance', { selectedTab: 'overview' });
+  const { selectedTab } = ui;
 
   // Get route config for breadcrumbs and AI suggestions
   const routeConfig = getRouteConfig('/compliance');
@@ -124,7 +125,7 @@ export function Compliance() {
             }
           ]}
           activeTab={selectedTab}
-          onTabChange={(tabId) => setSelectedTab(tabId)}
+          onTabChange={(tabId) => patchUI({ selectedTab: tabId })}
         />
 
         {/* Summary Cards */}

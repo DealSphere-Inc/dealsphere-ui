@@ -1,9 +1,9 @@
 'use client'
 
-import { useState } from 'react';
 import { Card, Button, Badge, Progress } from '@/ui';
 import { Star, User, TrendingUp, Target, Users, Lightbulb, CheckCircle2, Edit3 } from 'lucide-react';
 import { mockScoreData, type CompanyScoreData } from '@/data/mocks/dealflow/company-scoring';
+import { useUIKey } from '@/store/ui';
 
 interface ScoringCriteria {
   id: string;
@@ -52,15 +52,21 @@ const defaultCriteria: ScoringCriteria[] = [
 ];
 
 export function CompanyScoring({ companyId, companyName }: { companyId: number; companyName: string }) {
-  const [scoreData, setScoreData] = useState<CompanyScoreData>(mockScoreData);
-  const [isEditingScores, setIsEditingScores] = useState(false);
-  const [currentUserScore, setCurrentUserScore] = useState<{ [key: string]: number }>({
-    team: 0,
-    market: 0,
-    product: 0,
-    traction: 0,
-    financials: 0
+  const scoreData = mockScoreData;
+  const { value: ui, patch: patchUI } = useUIKey<{
+    isEditingScores: boolean;
+    currentUserScore: Record<string, number>;
+  }>(`company-scoring:${companyId}`, {
+    isEditingScores: false,
+    currentUserScore: {
+      team: 0,
+      market: 0,
+      product: 0,
+      traction: 0,
+      financials: 0,
+    },
   });
+  const { isEditingScores, currentUserScore } = ui;
 
   const calculateWeightedScore = (scores: { [key: string]: number }) => {
     let totalScore = 0;
@@ -125,7 +131,7 @@ export function CompanyScoring({ companyId, companyName }: { companyId: number; 
           <Button
             variant="flat"
             startContent={<Edit3 className="w-4 h-4" />}
-            onPress={() => setIsEditingScores(!isEditingScores)}
+            onPress={() => patchUI({ isEditingScores: !isEditingScores })}
           >
             {isEditingScores ? 'Cancel' : 'Add My Score'}
           </Button>
@@ -273,7 +279,11 @@ export function CompanyScoring({ companyId, companyName }: { companyId: number; 
                   {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(value => (
                     <button
                       key={value}
-                      onClick={() => setCurrentUserScore(prev => ({ ...prev, [criteria.id]: value }))}
+                      onClick={() =>
+                        patchUI({
+                          currentUserScore: { ...currentUserScore, [criteria.id]: value },
+                        })
+                      }
                       className={`flex-1 h-10 rounded-lg border-2 transition-all ${
                         currentUserScore[criteria.id] === value
                           ? 'border-[var(--app-primary)] bg-[var(--app-primary)] text-white font-semibold'

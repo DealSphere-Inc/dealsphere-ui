@@ -1,9 +1,9 @@
 'use client'
 
-import { useState } from 'react';
 import { Plus, Filter, Search, Upload, Download, Eye, FileText, CheckCircle2, Clock, AlertCircle, Circle } from 'lucide-react';
 import { Button, Card, Badge, Input, PageContainer } from '@/ui';
 import { DocumentPreviewModal, useDocumentPreview, getMockDocumentUrl, inferDocumentType } from './documents/preview';
+import { useUIKey } from '@/store/ui';
 import {
   portfolioDocumentCompanies as portfolioCompanies,
   portfolioDocuments as documents,
@@ -15,9 +15,16 @@ import {
 } from '@/data/mocks/portfolio/documents';
 
 export function PortfolioDocuments() {
-  const [selectedCompany, setSelectedCompany] = useState<PortfolioCompany | null>(portfolioCompanies[0]);
-  const [selectedCategory, setSelectedCategory] = useState<DocumentCategory | 'all'>('all');
-  const [searchQuery, setSearchQuery] = useState('');
+  const { value: ui, patch: patchUI } = useUIKey<{
+    selectedCompany: PortfolioCompany | null;
+    selectedCategory: DocumentCategory | 'all';
+    searchQuery: string;
+  }>('portfolio-documents', {
+    selectedCompany: portfolioCompanies[0] ?? null,
+    selectedCategory: 'all',
+    searchQuery: '',
+  });
+  const { selectedCompany, selectedCategory, searchQuery } = ui;
   const preview = useDocumentPreview();
 
   const getStatusIcon = (status: DocumentStatus) => {
@@ -123,7 +130,7 @@ export function PortfolioDocuments() {
           <div className="space-y-2">
             <Card
               isPressable
-              onPress={() => setSelectedCompany(null)}
+              onPress={() => patchUI({ selectedCompany: null })}
               padding="sm"
               className={`cursor-pointer transition-all ${
                 !selectedCompany
@@ -140,7 +147,7 @@ export function PortfolioDocuments() {
               <Card
                 key={company.id}
                 isPressable
-                onPress={() => setSelectedCompany(company)}
+                onPress={() => patchUI({ selectedCompany: company })}
                 padding="sm"
                 className={`cursor-pointer transition-all ${
                   selectedCompany?.id === company.id
@@ -185,7 +192,7 @@ export function PortfolioDocuments() {
                 type="text"
                 placeholder="Search documents..."
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) => patchUI({ searchQuery: e.target.value })}
                 startContent={<Search className="w-4 h-4 text-[var(--app-text-subtle)]" />}
                 size="md"
               />

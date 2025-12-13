@@ -1,59 +1,46 @@
 'use client'
 
-import { useState } from 'react';
 import { Card, Button, Badge, Progress, Select, PageContainer, Breadcrumb, PageHeader } from '@/ui';
 import { Download, FileText, File, Table, Image, Calendar, Filter, Check, Settings, Mail, Clock, Repeat , FileDown} from 'lucide-react';
 import { getRouteConfig } from '@/config/routes';
 import { mockExportJobs, reportTemplates, type ExportJob, type ReportTemplate } from '@/data/mocks/reports/report-export';
+import { useUIKey } from '@/store/ui';
+import { useAppDispatch } from '@/store/hooks';
+import { reportExportRequested } from '@/store/slices/uiEffectsSlice';
+
+const defaultReportExportState: {
+  selectedTemplate: ReportTemplate | null;
+  exportFormat: 'pdf' | 'excel' | 'csv' | 'ppt';
+  dateRange: { start: string; end: string };
+  selectedSections: string[];
+  exportJobs: ExportJob[];
+  scheduleEnabled: boolean;
+} = {
+  selectedTemplate: null,
+  exportFormat: 'pdf',
+  dateRange: { start: '2024-01-01', end: '2024-12-31' },
+  selectedSections: [],
+  exportJobs: mockExportJobs,
+  scheduleEnabled: false,
+};
 
 export function ReportExport() {
+  const dispatch = useAppDispatch();
   const routeConfig = getRouteConfig('/reports');
-  const [selectedTemplate, setSelectedTemplate] = useState<ReportTemplate | null>(null);
-  const [exportFormat, setExportFormat] = useState<'pdf' | 'excel' | 'csv' | 'ppt'>('pdf');
-  const [dateRange, setDateRange] = useState({ start: '2024-01-01', end: '2024-12-31' });
-  const [selectedSections, setSelectedSections] = useState<string[]>([]);
-  const [exportJobs, setExportJobs] = useState<ExportJob[]>(mockExportJobs);
-  const [scheduleEnabled, setScheduleEnabled] = useState(false);
+  const { value: ui, patch: patchUI } = useUIKey('report-export', defaultReportExportState);
+  const { selectedTemplate, exportFormat, dateRange, selectedSections, exportJobs, scheduleEnabled } = ui;
 
   const handleExport = () => {
     if (!selectedTemplate) return;
-
-    const newJob: ExportJob = {
-      id: Date.now().toString(),
-      reportName: selectedTemplate.name,
-      format: exportFormat.toUpperCase(),
-      status: 'processing',
-      progress: 0,
-      createdAt: new Date().toISOString()
-    };
-
-    setExportJobs([newJob, ...exportJobs]);
-
-    // Simulate progress
-    let progress = 0;
-    const interval = setInterval(() => {
-      progress += 20;
-      if (progress >= 100) {
-        clearInterval(interval);
-        setExportJobs(prev => prev.map(job =>
-          job.id === newJob.id
-            ? { ...job, status: 'completed', progress: 100, downloadUrl: '#' }
-            : job
-        ));
-      } else {
-        setExportJobs(prev => prev.map(job =>
-          job.id === newJob.id ? { ...job, progress } : job
-        ));
-      }
-    }, 500);
+    dispatch(reportExportRequested());
   };
 
   const toggleSection = (section: string) => {
-    setSelectedSections(prev =>
-      prev.includes(section)
-        ? prev.filter(s => s !== section)
-        : [...prev, section]
-    );
+    patchUI({
+      selectedSections: selectedSections.includes(section)
+        ? selectedSections.filter((s) => s !== section)
+        : [...selectedSections, section],
+    });
   };
 
   const getFormatIcon = (format: string) => {
@@ -122,9 +109,11 @@ export function ReportExport() {
                     : 'hover:border-[var(--app-primary)]'
                 }`}
                 onClick={() => {
-                  setSelectedTemplate(template);
-                  setExportFormat(template.format);
-                  setSelectedSections(template.sections);
+                  patchUI({
+                    selectedTemplate: template,
+                    exportFormat: template.format,
+                    selectedSections: template.sections,
+                  });
                 }}
               >
                 <div className="flex items-start justify-between mb-3">
@@ -216,7 +205,7 @@ export function ReportExport() {
                     {['pdf', 'excel', 'csv', 'ppt'].map((format) => (
                       <button
                         key={format}
-                        onClick={() => setExportFormat(format as any)}
+                        onClick={() => patchUI({ exportFormat: format as any })}
                         className={`p-3 rounded-lg border-2 transition-all ${
                           exportFormat === format
                             ? 'border-[var(--app-primary)] bg-[var(--app-primary-bg)]'
@@ -244,7 +233,7 @@ export function ReportExport() {
                       <input
                         type="date"
                         value={dateRange.start}
-                        onChange={(e) => setDateRange({ ...dateRange, start: e.target.value })}
+                        onChange={(e) => patchUI({ dateRange: { ...dateRange, start: e.target.value } })}
                         className="w-full px-3 py-2 text-sm rounded-lg border border-[var(--app-border)] bg-[var(--app-surface)] text-[var(--app-text)]"
                       />
                     </div>
@@ -253,7 +242,7 @@ export function ReportExport() {
                       <input
                         type="date"
                         value={dateRange.end}
-                        onChange={(e) => setDateRange({ ...dateRange, end: e.target.value })}
+                        onChange={(e) => patchUI({ dateRange: { ...dateRange, end: e.target.value } })}
                         className="w-full px-3 py-2 text-sm rounded-lg border border-[var(--app-border)] bg-[var(--app-surface)] text-[var(--app-text)]"
                       />
                     </div>
@@ -296,7 +285,7 @@ export function ReportExport() {
                       Schedule Report
                     </label>
                     <button
-                      onClick={() => setScheduleEnabled(!scheduleEnabled)}
+                      onClick={() => patchUI({ scheduleEnabled: !scheduleEnabled })}
                       className={`w-12 h-6 rounded-full transition-colors ${
                         scheduleEnabled ? 'bg-[var(--app-primary)]' : 'bg-[var(--app-border)]'
                       }`}

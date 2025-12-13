@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useUIKey } from '@/store/ui';
 import { Card, Button, Badge } from '@/ui';
 import { Calculator, TrendingUp, TrendingDown, Calendar, Download, RefreshCw, CheckCircle, AlertCircle } from 'lucide-react';
 
@@ -62,9 +62,19 @@ export function NAVCalculator({
   onPublish,
   onExport,
 }: NAVCalculatorProps) {
-  const [selectedCalculation, setSelectedCalculation] = useState<NAVCalculation | null>(
-    calculations[0] || null
-  );
+  const filteredCalculations = calculations.filter((calc) => !fundId || calc.fundId === fundId);
+
+  const { value: ui, patch: patchUI } = useUIKey<{
+    selectedCalculationId: string | null;
+  }>(`nav-calculator:${fundId ?? 'all'}`, {
+    selectedCalculationId: filteredCalculations[0]?.id ?? null,
+  });
+  const { selectedCalculationId } = ui;
+
+  const selectedCalculation =
+    filteredCalculations.find((calc) => calc.id === selectedCalculationId) ??
+    filteredCalculations[0] ??
+    null;
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -128,10 +138,6 @@ export function NAVCalculator({
     );
   };
 
-  const filteredCalculations = calculations.filter(calc =>
-    !fundId || calc.fundId === fundId
-  );
-
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
       {/* Calculation List */}
@@ -159,7 +165,7 @@ export function NAVCalculator({
               {filteredCalculations.map(calc => (
                 <button
                   key={calc.id}
-                  onClick={() => setSelectedCalculation(calc)}
+                  onClick={() => patchUI({ selectedCalculationId: calc.id })}
                   className={`w-full p-3 rounded-lg text-left transition-colors border ${
                     selectedCalculation?.id === calc.id
                       ? 'bg-[var(--app-primary-bg)] border-[var(--app-primary)]'

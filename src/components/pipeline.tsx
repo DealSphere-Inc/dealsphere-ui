@@ -1,13 +1,15 @@
 'use client'
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Filter, Grid, List, GitBranch } from 'lucide-react';
 import { DealCard } from '@/components/deal-card';
 import { Button, Card, Badge, Progress, Breadcrumb, PageHeader, PageContainer } from '@/ui';
 import { ButtonGroup, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from '@nextui-org/react';
 import { getRouteConfig } from '@/config/routes';
 import { KanbanBoard } from '@/components/kanban-board';
-import { setGlobalSuggestions, clearGlobalSuggestions } from './ai-copilot-sidebar';
+import { useAppDispatch } from '@/store/hooks';
+import { setSuggestionsOverride } from '@/store/slices/copilotSlice';
+import { useUIKey } from '@/store/ui';
 import {
   pipelineCopilotSuggestions,
   pipelineDeals,
@@ -17,9 +19,15 @@ import {
 } from '@/data/mocks/pipeline';
 
 export function Pipeline() {
-  const [viewMode, setViewMode] = useState<'kanban' | 'list'>('kanban');
-  const [showClosedDeals, setShowClosedDeals] = useState(false);
-  const [localDeals, setLocalDeals] = useState(pipelineDeals);
+  const dispatch = useAppDispatch();
+  const { value: pipelineUI, patch: patchPipelineUI } = useUIKey('pipeline', {
+    viewMode: 'kanban' as 'kanban' | 'list',
+    showClosedDeals: false,
+    localDeals: pipelineDeals,
+  });
+  const viewMode = pipelineUI.viewMode;
+  const showClosedDeals = pipelineUI.showClosedDeals;
+  const localDeals = pipelineUI.localDeals as Deal[];
 
   const getOutcomeBadgeClass = (outcome: DealOutcome) => {
     switch (outcome) {
@@ -41,13 +49,11 @@ export function Pipeline() {
   const closedDealsCount = localDeals.filter(d => d.outcome !== 'active').length;
 
   const handleItemMove = (itemId: number | string, newStage: string) => {
-    setLocalDeals(prevDeals =>
-      prevDeals.map(deal =>
-        deal.id === itemId
-          ? { ...deal, stage: newStage }
-          : deal
-      )
-    );
+    patchPipelineUI({
+      localDeals: localDeals.map((deal) =>
+        deal.id === itemId ? { ...deal, stage: newStage } : deal
+      ),
+    });
   };
 
   // Get route config for breadcrumbs and AI suggestions
@@ -62,12 +68,11 @@ export function Pipeline() {
 
   // Surface the inbound deal-flow suggestion inside the Copilot suggestions panel when on this page
   useEffect(() => {
-    setGlobalSuggestions(pipelineCopilotSuggestions);
-
+    dispatch(setSuggestionsOverride(pipelineCopilotSuggestions));
     return () => {
-      clearGlobalSuggestions();
+      dispatch(setSuggestionsOverride(null));
     };
-  }, []);
+  }, [dispatch]);
 
   return (
     <PageContainer>
@@ -116,7 +121,7 @@ export function Pipeline() {
           <Button
             isIconOnly
             variant={viewMode === 'kanban' ? 'solid' : 'bordered'}
-            onPress={() => setViewMode('kanban')}
+            onPress={() => patchPipelineUI({ viewMode: 'kanban' })}
             aria-label="Kanban view"
           >
             <Grid className="w-4 h-4" />
@@ -124,7 +129,7 @@ export function Pipeline() {
           <Button
             isIconOnly
             variant={viewMode === 'list' ? 'solid' : 'bordered'}
-            onPress={() => setViewMode('list')}
+            onPress={() => patchPipelineUI({ viewMode: 'list' })}
             aria-label="List view"
           >
             <List className="w-4 h-4" />

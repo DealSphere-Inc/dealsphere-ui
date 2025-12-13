@@ -1,9 +1,9 @@
 'use client';
 
-import { useState } from 'react';
 import { Card, Button, Badge, Input, Progress, PageContainer, Breadcrumb, PageHeader } from '@/ui';
 import { TrendingDown, DollarSign, TrendingUp, PieChart, Plus, Trash2, Play, Download, Layers, ArrowRight, Globe, Flag, Info, Calculator } from 'lucide-react';
 import { getRouteConfig } from '@/config/routes';
+import { useUIKey } from '@/store/ui';
 
 type WaterfallModel = 'european' | 'american';
 
@@ -68,13 +68,24 @@ const defaultInvestorClasses: InvestorClass[] = [
 ];
 
 export function WaterfallModeling() {
-  const [investorClasses, setInvestorClasses] = useState<InvestorClass[]>(defaultInvestorClasses);
-  const [exitValue, setExitValue] = useState<number>(100_000_000);
-  const [scenarios, setScenarios] = useState<Scenario[]>([]);
-  const [showAddClass, setShowAddClass] = useState(false);
-  const [waterfallModel, setWaterfallModel] = useState<WaterfallModel>('european');
-  const [hurdleRate, setHurdleRate] = useState<number>(8);
-  const [carryPercentage, setCarryPercentage] = useState<number>(20);
+  const { value: ui, patch: patchUI } = useUIKey<{
+    investorClasses: InvestorClass[];
+    exitValue: number;
+    scenarios: Scenario[];
+    showAddClass: boolean;
+    waterfallModel: WaterfallModel;
+    hurdleRate: number;
+    carryPercentage: number;
+  }>('waterfall-modeling', {
+    investorClasses: defaultInvestorClasses,
+    exitValue: 100_000_000,
+    scenarios: [],
+    showAddClass: false,
+    waterfallModel: 'european',
+    hurdleRate: 8,
+    carryPercentage: 20,
+  });
+  const { investorClasses, exitValue, scenarios, showAddClass, waterfallModel, hurdleRate, carryPercentage } = ui;
 
   const routeConfig = getRouteConfig('/waterfall');
 
@@ -205,7 +216,7 @@ export function WaterfallModeling() {
       results,
       gpCarry
     };
-    setScenarios([...scenarios, newScenario]);
+    patchUI({ scenarios: [...scenarios, newScenario] });
   };
 
   const getClassById = (id: string) => investorClasses.find(ic => ic.id === id);
@@ -246,7 +257,7 @@ export function WaterfallModeling() {
         ]}
         primaryAction={{
           label: 'Add Class',
-          onClick: () => setShowAddClass(true),
+          onClick: () => patchUI({ showAddClass: true }),
         }}
       />
 
@@ -372,7 +383,7 @@ export function WaterfallModeling() {
             </h3>
             <div className="grid grid-cols-2 gap-3 mb-4">
               <button
-                onClick={() => setWaterfallModel('european')}
+                onClick={() => patchUI({ waterfallModel: 'european' })}
                 className={`p-4 rounded-lg border-2 transition-all text-left ${
                   waterfallModel === 'european'
                     ? 'border-[var(--app-primary)] bg-[var(--app-primary-bg)]'
@@ -388,7 +399,7 @@ export function WaterfallModeling() {
                 </p>
               </button>
               <button
-                onClick={() => setWaterfallModel('american')}
+                onClick={() => patchUI({ waterfallModel: 'american' })}
                 className={`p-4 rounded-lg border-2 transition-all text-left ${
                   waterfallModel === 'american'
                     ? 'border-[var(--app-primary)] bg-[var(--app-primary-bg)]'
@@ -413,7 +424,7 @@ export function WaterfallModeling() {
                   <Input
                     type="number"
                     value={hurdleRate.toString()}
-                    onChange={(e) => setHurdleRate(Number(e.target.value))}
+                    onChange={(e) => patchUI({ hurdleRate: Number(e.target.value) })}
                     className="flex-1"
                   />
                   <span className="text-sm text-[var(--app-text-muted)]">%</span>
@@ -425,7 +436,7 @@ export function WaterfallModeling() {
                   <Input
                     type="number"
                     value={carryPercentage.toString()}
-                    onChange={(e) => setCarryPercentage(Number(e.target.value))}
+                    onChange={(e) => patchUI({ carryPercentage: Number(e.target.value) })}
                     className="flex-1"
                   />
                   <span className="text-sm text-[var(--app-text-muted)]">%</span>
@@ -446,7 +457,7 @@ export function WaterfallModeling() {
                 <Input
                   type="number"
                   value={exitValue.toString()}
-                  onChange={(e) => setExitValue(Number(e.target.value))}
+                  onChange={(e) => patchUI({ exitValue: Number(e.target.value) })}
                   startContent={<DollarSign className="w-4 h-4 text-[var(--app-text-muted)]" />}
                   placeholder="100000000"
                 />
@@ -462,7 +473,7 @@ export function WaterfallModeling() {
                       size="sm"
                       variant={exitValue === val ? 'solid' : 'flat'}
                       color={exitValue === val ? 'primary' : 'default'}
-                      onPress={() => setExitValue(val)}
+                      onPress={() => patchUI({ exitValue: val })}
                     >
                       {formatCurrency(val)}
                     </Button>

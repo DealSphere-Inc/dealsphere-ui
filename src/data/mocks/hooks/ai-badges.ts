@@ -126,3 +126,125 @@ export const getMockPortfolioCompanies = (): PortfolioCompany[] => {
   ];
 };
 
+export interface NavigationBadge {
+  count: number;
+  variant: 'danger' | 'warning' | 'info';
+  tooltip?: string;
+}
+
+export interface BadgeData {
+  [itemId: string]: NavigationBadge | null;
+}
+
+const calculateFundAdminBadge = (capitalCalls: CapitalCall[]): NavigationBadge | null => {
+  const overdueCalls = capitalCalls.filter((call) => call.status === 'overdue');
+  if (overdueCalls.length === 0) return null;
+
+  const totalOverdueAmount = overdueCalls.reduce((sum, call) => sum + call.amount, 0);
+  const avgDaysOverdue =
+    overdueCalls.reduce((sum, call) => {
+      const daysOverdue = Math.floor((Date.now() - call.dueDate.getTime()) / (24 * 60 * 60 * 1000));
+      return sum + daysOverdue;
+    }, 0) / overdueCalls.length;
+
+  return {
+    count: overdueCalls.length,
+    variant: avgDaysOverdue > 7 ? 'danger' : 'warning',
+    tooltip: `${overdueCalls.length} overdue capital call${overdueCalls.length > 1 ? 's' : ''} ($${(totalOverdueAmount / 1000000).toFixed(1)}M) - AI detected urgent action needed`,
+  };
+};
+
+const calculateComplianceBadge = (tasks: ComplianceTask[]): NavigationBadge | null => {
+  const today = new Date();
+  const upcomingTasks = tasks.filter((task) => {
+    const daysUntilDeadline = (task.deadline.getTime() - today.getTime()) / (24 * 60 * 60 * 1000);
+    return daysUntilDeadline <= 7 && daysUntilDeadline > 0 && task.status !== 'completed';
+  });
+
+  if (upcomingTasks.length === 0) return null;
+
+  const highComplexityCount = upcomingTasks.filter((t) => t.complexity === 'high').length;
+  const nearestDeadline = Math.min(...upcomingTasks.map((t) => t.deadline.getTime()));
+  const daysUntil = Math.ceil((nearestDeadline - today.getTime()) / (24 * 60 * 60 * 1000));
+
+  return {
+    count: upcomingTasks.length,
+    variant: daysUntil <= 3 || highComplexityCount > 0 ? 'danger' : 'warning',
+    tooltip: `${upcomingTasks.length} compliance deadline${upcomingTasks.length > 1 ? 's' : ''} in ${daysUntil} day${daysUntil > 1 ? 's' : ''} - AI complexity: ${upcomingTasks[0].complexity.charAt(0).toUpperCase() + upcomingTasks[0].complexity.slice(1)}`,
+  };
+};
+
+const calculatePortfolioBadge = (companies: PortfolioCompany[]): NavigationBadge | null => {
+  const atRiskCompanies = companies.filter((company) => company.runway < 12);
+  if (atRiskCompanies.length === 0) return null;
+
+  const criticalCompanies = atRiskCompanies.filter((c) => c.runway < 6);
+
+  return {
+    count: atRiskCompanies.length,
+    variant: criticalCompanies.length > 0 ? 'danger' : 'warning',
+    tooltip: `${atRiskCompanies.length} compan${atRiskCompanies.length > 1 ? 'ies' : 'y'} with runway < 12 months - AI predicted risk`,
+  };
+};
+
+const calculateLPManagementBadge = (capitalCalls: CapitalCall[]): NavigationBadge | null => {
+  const overdueByLP = capitalCalls
+    .filter((call) => call.status === 'overdue')
+    .reduce((acc, call) => {
+      acc[call.lpId] = (acc[call.lpId] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+  const problemLPs = Object.keys(overdueByLP).length;
+  if (problemLPs === 0) return null;
+
+  return {
+    count: problemLPs,
+    variant: problemLPs > 2 ? 'danger' : 'warning',
+    tooltip: `${problemLPs} LP${problemLPs > 1 ? 's' : ''} with overdue capital calls - AI suggests follow-up`,
+  };
+};
+
+const calculate409ABadge = (): NavigationBadge | null => {
+  const today = new Date();
+  const lastValuation = new Date(today.getTime() - 11 * 30 * 24 * 60 * 60 * 1000); // 11 months ago
+  const monthsSinceValuation = (today.getTime() - lastValuation.getTime()) / (30 * 24 * 60 * 60 * 1000);
+
+  if (monthsSinceValuation < 10) return null;
+
+  return {
+    count: 1,
+    variant: monthsSinceValuation >= 12 ? 'danger' : 'warning',
+    tooltip: '409A valuation due for renewal - AI detected based on 12-month cycle',
+  };
+};
+
+const calculateAnalyticsBadge = (companies: PortfolioCompany[]): NavigationBadge | null => {
+  const anomalies = companies.filter((company) => {
+    const predictedHealth = company.health; // In real system, would compare to previous
+    return predictedHealth < 70;
+  });
+
+  if (anomalies.length === 0) return null;
+
+  return {
+    count: anomalies.length,
+    variant: 'info',
+    tooltip: `${anomalies.length} anomal${anomalies.length > 1 ? 'ies' : 'y'} detected in portfolio metrics - AI analysis available`,
+  };
+};
+
+export const calculateAIBadges = (): BadgeData => {
+  const capitalCalls = getMockCapitalCalls();
+  const complianceTasks = getMockComplianceTasks();
+  const portfolioCompanies = getMockPortfolioCompanies();
+
+  return {
+    'fund-admin': calculateFundAdminBadge(capitalCalls),
+    compliance: calculateComplianceBadge(complianceTasks),
+    portfolio: calculatePortfolioBadge(portfolioCompanies),
+    'lp-management': calculateLPManagementBadge(capitalCalls),
+    '409a-valuations': calculate409ABadge(),
+    analytics: calculateAnalyticsBadge(portfolioCompanies),
+  };
+};

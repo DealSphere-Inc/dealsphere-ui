@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react';
+import { useUIKey } from '@/store/ui';
 import { CheckCircle2, Circle, Clock, Eye, FileText, Users, DollarSign, BarChart, Upload, Download, Search, Filter, TrendingUp, AlertCircle, ArrowLeft, Brain } from 'lucide-react';
 import { Card, Badge, Progress, Button, Input, Breadcrumb, PageHeader, Tabs, Tab, PageContainer } from '@/ui';
 import { useFund } from '@/contexts/fund-context';
@@ -18,13 +18,24 @@ import {
   type ICStatus,
 } from '@/data/mocks/deal-intelligence/deal-intelligence';
 
+interface DealIntelligenceUIState {
+  viewMode: 'fund-level' | 'per-deal';
+  selectedDeal: ActiveDeal | null;
+  searchQuery: string;
+  selectedCategory: DocumentCategory | 'all';
+  selectedDetailTab: 'overview' | 'analytics' | 'documents' | 'analysis' | 'ic-materials';
+}
+
 export function DealIntelligence() {
   const { selectedFund } = useFund();
-  const [viewMode, setViewMode] = useState<'fund-level' | 'per-deal'>('fund-level');
-  const [selectedDeal, setSelectedDeal] = useState<ActiveDeal | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<DocumentCategory | 'all'>('all');
-  const [selectedDetailTab, setSelectedDetailTab] = useState<'overview' | 'analytics' | 'documents' | 'analysis' | 'ic-materials'>('overview');
+  const { value: ui, patch: patchUI } = useUIKey<DealIntelligenceUIState>('deal-intelligence', {
+    viewMode: 'fund-level',
+    selectedDeal: null,
+    searchQuery: '',
+    selectedCategory: 'all',
+    selectedDetailTab: 'overview',
+  });
+  const { viewMode, selectedDeal, searchQuery, selectedCategory, selectedDetailTab } = ui;
 
   const getStatusIcon = (status: DocumentStatus) => {
     switch (status) {
@@ -77,13 +88,11 @@ export function DealIntelligence() {
   };
 
   const handleDealClick = (deal: ActiveDeal) => {
-    setSelectedDeal(deal);
-    setViewMode('per-deal');
+    patchUI({ selectedDeal: deal, viewMode: 'per-deal' });
   };
 
   const handleBackToFundView = () => {
-    setViewMode('fund-level');
-    setSelectedDeal(null);
+    patchUI({ viewMode: 'fund-level', selectedDeal: null });
   };
 
   const filteredDocuments = mockDocuments.filter(doc => {
@@ -734,7 +743,7 @@ export function DealIntelligence() {
                     type="text"
                     placeholder="Search documents..."
                     value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onChange={(e) => patchUI({ searchQuery: e.target.value })}
                     startContent={<Search className="w-4 h-4 text-[var(--app-text-subtle)]" />}
                     size="md"
                   />

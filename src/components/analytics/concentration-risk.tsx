@@ -1,6 +1,5 @@
 'use client'
 
-import { useState } from 'react';
 import { Card, Button, Badge, Progress } from '@/ui';
 import { AlertTriangle, PieChart } from 'lucide-react';
 import {
@@ -9,6 +8,7 @@ import {
   concentrationByStage,
   type ConcentrationMetric
 } from '@/data/mocks/mock-fund-analytics-data';
+import { useUIKey } from '@/store/ui';
 
 type ConcentrationView = 'company' | 'sector' | 'stage';
 
@@ -90,7 +90,11 @@ function ConcentrationRow({ item, maxPercentage, isHighRisk }: ConcentrationRowP
 }
 
 export function ConcentrationRisk() {
-  const [selectedView, setSelectedView] = useState<ConcentrationView>('company');
+  const { value: ui, patch: patchUI } = useUIKey<{ selectedView: ConcentrationView }>(
+    'concentration-risk',
+    { selectedView: 'company' }
+  );
+  const { selectedView } = ui;
 
   const getConcentrationData = (): ConcentrationMetric[] => {
     switch (selectedView) {
@@ -131,7 +135,7 @@ export function ConcentrationRisk() {
             <Button
               variant={selectedView === 'company' ? 'solid' : 'flat'}
               size="sm"
-              onPress={() => setSelectedView('company')}
+              onPress={() => patchUI({ selectedView: 'company' })}
               className={selectedView === 'company' ? 'bg-[var(--app-primary)] text-white' : ''}
             >
               By Company
@@ -139,7 +143,7 @@ export function ConcentrationRisk() {
             <Button
               variant={selectedView === 'sector' ? 'solid' : 'flat'}
               size="sm"
-              onPress={() => setSelectedView('sector')}
+              onPress={() => patchUI({ selectedView: 'sector' })}
               className={selectedView === 'sector' ? 'bg-[var(--app-primary)] text-white' : ''}
             >
               By Sector
@@ -147,7 +151,7 @@ export function ConcentrationRisk() {
             <Button
               variant={selectedView === 'stage' ? 'solid' : 'flat'}
               size="sm"
-              onPress={() => setSelectedView('stage')}
+              onPress={() => patchUI({ selectedView: 'stage' })}
               className={selectedView === 'stage' ? 'bg-[var(--app-primary)] text-white' : ''}
             >
               By Stage

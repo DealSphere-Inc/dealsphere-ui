@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react';
+import { useUIKey } from '@/store/ui';
 import { Card, Button, Badge, Progress, PageContainer, Breadcrumb, PageHeader } from '@/ui';
 import { TrendingUp, DollarSign, Building2, Download, Eye, Lock, Unlock, Send, FileText, PieChart, BarChart3, Calendar, Users, ArrowUpRight, ArrowDownRight, Activity, UserCheck, Mail } from 'lucide-react';
 import { getRouteConfig } from '@/config/routes';
@@ -19,8 +19,14 @@ import {
 } from '@/data/mocks/lp-portal/lp-management';
 
 export function LPManagement() {
-  const [selectedTab, setSelectedTab] = useState<string>('overview');
-  const [selectedLP, setSelectedLP] = useState<LP | null>(null);
+  const { value: ui, patch: patchUI } = useUIKey<{
+    selectedTab: string;
+    selectedLP: LP | null;
+  }>('lp-management', {
+    selectedTab: 'overview',
+    selectedLP: null,
+  });
+  const { selectedTab, selectedLP } = ui;
 
   // Bulk selection for LPs
   const {
@@ -29,7 +35,7 @@ export function LPManagement() {
     selectAll,
     clearSelection,
     isSelected,
-  } = useBulkSelection(mockLPs);
+  } = useBulkSelection(mockLPs, 'lp-management:lps');
 
   // Get route config for breadcrumbs and AI suggestions
   const routeConfig = getRouteConfig('/lp-management');
@@ -234,7 +240,7 @@ export function LPManagement() {
           }
         ]}
         activeTab={selectedTab}
-        onTabChange={(tabId) => setSelectedTab(tabId)}
+        onTabChange={(tabId) => patchUI({ selectedTab: tabId })}
       />
 
       {/* Fund Overview Stats */}
@@ -319,6 +325,7 @@ export function LPManagement() {
             />
 
             <AdvancedTable
+              stateKey="lp-management:overview"
               data={mockLPs}
               columns={lpColumns}
               searchable={true}
@@ -328,7 +335,7 @@ export function LPManagement() {
               exportFilename="lp-management-data.csv"
               pageSize={10}
               showColumnToggle={true}
-              onRowClick={(lp) => setSelectedLP(lp)}
+              onRowClick={(lp) => patchUI({ selectedLP: lp })}
             />
           </div>
         )}
