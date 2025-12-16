@@ -7,30 +7,31 @@ import { Button, Card, Badge, Progress, Breadcrumb, PageHeader, PageContainer } 
 import { ButtonGroup, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from '@nextui-org/react';
 import { getRouteConfig } from '@/config/routes';
 import { KanbanBoard } from '@/components/kanban-board';
-import { useAppDispatch } from '@/store/hooks';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { setSuggestionsOverride } from '@/store/slices/copilotSlice';
+import { pipelineDataRequested, dealStageUpdated } from '@/store/slices/pipelineSlice';
 import { useUIKey } from '@/store/ui';
-import {
-  getPipelineCopilotSuggestions,
-  getPipelineDeals,
-  getPipelineStages,
-  type PipelineDeal as Deal,
-  type PipelineDealOutcome as DealOutcome,
-} from '@/services/pipelineService';
+import type { PipelineDeal as Deal, PipelineDealOutcome as DealOutcome } from '@/services/pipelineService';
 
 export function Pipeline() {
   const dispatch = useAppDispatch();
-  const pipelineDeals = getPipelineDeals();
-  const pipelineStages = getPipelineStages();
-  const pipelineCopilotSuggestions = getPipelineCopilotSuggestions();
+
+  // Get pipeline data from Redux
+  const { stages: pipelineStages, deals: pipelineDeals, copilotSuggestions: pipelineCopilotSuggestions, loading, error } = useAppSelector(
+    (state) => state.pipeline
+  );
+
+  // Load pipeline data on mount
+  useEffect(() => {
+    dispatch(pipelineDataRequested());
+  }, [dispatch]);
+
   const { value: pipelineUI, patch: patchPipelineUI } = useUIKey('pipeline', {
     viewMode: 'kanban' as 'kanban' | 'list',
     showClosedDeals: false,
-    localDeals: pipelineDeals,
   });
   const viewMode = pipelineUI.viewMode;
   const showClosedDeals = pipelineUI.showClosedDeals;
-  const localDeals = pipelineUI.localDeals as Deal[];
 
   const getOutcomeBadgeClass = (outcome: DealOutcome) => {
     switch (outcome) {
@@ -47,16 +48,12 @@ export function Pipeline() {
     }
   };
 
-  const filteredDeals = showClosedDeals ? localDeals : localDeals.filter(d => d.outcome === 'active');
-  const activeDealsCount = localDeals.filter(d => d.outcome === 'active').length;
-  const closedDealsCount = localDeals.filter(d => d.outcome !== 'active').length;
+  const filteredDeals = showClosedDeals ? pipelineDeals : pipelineDeals.filter(d => d.outcome === 'active');
+  const activeDealsCount = pipelineDeals.filter(d => d.outcome === 'active').length;
+  const closedDealsCount = pipelineDeals.filter(d => d.outcome !== 'active').length;
 
   const handleItemMove = (itemId: number | string, newStage: string) => {
-    patchPipelineUI({
-      localDeals: localDeals.map((deal) =>
-        deal.id === itemId ? { ...deal, stage: newStage } : deal
-      ),
-    });
+    dispatch(dealStageUpdated({ dealId: itemId, newStage }));
   };
 
   // Get route config for breadcrumbs and AI suggestions
@@ -71,11 +68,13 @@ export function Pipeline() {
 
   // Surface the inbound deal-flow suggestion inside the Copilot suggestions panel when on this page
   useEffect(() => {
-    dispatch(setSuggestionsOverride(pipelineCopilotSuggestions));
+    if (pipelineCopilotSuggestions.length > 0) {
+      dispatch(setSuggestionsOverride(pipelineCopilotSuggestions));
+    }
     return () => {
       dispatch(setSuggestionsOverride(null));
     };
-  }, [dispatch]);
+  }, [dispatch, pipelineCopilotSuggestions]);
 
   return (
     <PageContainer>

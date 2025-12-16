@@ -1,12 +1,27 @@
 'use client';
 
+import { useEffect } from 'react';
 import { Shield, CheckCircle2, Search, Download } from 'lucide-react';
 import { Card, Button, Badge, PageContainer } from '@/ui';
 import { MetricCard } from '@/components/metric-card';
-import { getAuditorDashboardSnapshot } from '@/services/dashboards/auditorDashboardService';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { auditorDashboardRequested } from '@/store/slices/dashboardsSlice';
 
 export function AuditorDashboard() {
-  const { metrics, auditTrail, complianceItems } = getAuditorDashboardSnapshot();
+  const dispatch = useAppDispatch();
+
+  // Get auditor dashboard data from Redux
+  const { data, loading, error } = useAppSelector((state) => state.dashboards.auditor);
+
+  // Load auditor dashboard data on mount
+  useEffect(() => {
+    dispatch(auditorDashboardRequested());
+  }, [dispatch]);
+
+  // Extract data with defaults
+  const metrics = data?.metrics || [];
+  const auditTrail = data?.auditTrail || [];
+  const complianceItems = data?.complianceItems || [];
 
   return (
     <PageContainer className="space-y-6">
@@ -26,7 +41,7 @@ export function AuditorDashboard() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {metrics.map((metric, index) => (
+        {metrics.map((metric: any, index: number) => (
           <MetricCard key={index} {...metric} />
         ))}
       </div>

@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect } from 'react';
 import { Breadcrumb, PageHeader, PageContainer } from '@/ui';
 import { Briefcase, LayoutGrid, FileText, MessageSquare } from 'lucide-react';
 import { PortfolioDashboard } from './portfolio-dashboard';
@@ -8,22 +9,31 @@ import { PortfolioUpdates } from './portfolio-updates';
 import { FundSelector } from './fund-selector';
 import { getRouteConfig } from '@/config/routes';
 import { useUIKey } from '@/store/ui';
-import { getPortfolioHealthyCompanies, getPortfolioPageMetrics } from '@/services/portfolio/portfolioPageMetricsService';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { portfolioMetricsRequested } from '@/store/slices/portfolioSlice';
 
 export function Portfolio() {
   const { value: ui, patch: patchUI } = useUIKey('portfolio', { selected: 'overview' });
   const { selected } = ui;
 
+  // Get portfolio data from Redux
+  const dispatch = useAppDispatch();
+  const { metrics, healthyCompanies: portfolioPageHealthyCompanies, loading, error } = useAppSelector(
+    (state) => state.portfolio
+  );
+
+  // Load portfolio metrics on mount
+  useEffect(() => {
+    dispatch(portfolioMetricsRequested());
+  }, [dispatch]);
+
   // Get route config for breadcrumbs and AI suggestions
   const routeConfig = getRouteConfig('/portfolio');
 
-  const portfolioPageMetrics = getPortfolioPageMetrics();
-  const portfolioPageHealthyCompanies = getPortfolioHealthyCompanies();
-
-  const totalCompanies = portfolioPageMetrics.totalCompanies;
+  const totalCompanies = metrics?.totalCompanies || 0;
   const healthyCompanies = portfolioPageHealthyCompanies;
-  const atRiskCompanies = portfolioPageMetrics.atRiskCompanies;
-  const pendingUpdates = portfolioPageMetrics.pendingUpdates;
+  const atRiskCompanies = metrics?.atRiskCompanies || 0;
+  const pendingUpdates = metrics?.pendingUpdates || 0;
 
   return (
     <PageContainer>

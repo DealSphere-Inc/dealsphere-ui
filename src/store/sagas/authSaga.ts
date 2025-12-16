@@ -5,6 +5,7 @@ import type { User, UserRole } from '@/types/auth';
 import {
   authHydrated,
   loggedOut,
+  loginFailed,
   loginRequested,
   loginSucceeded,
   logoutRequested,
@@ -43,16 +44,23 @@ function* hydrateAuthWorker() {
 }
 
 function* loginWorker(action: ReturnType<typeof loginRequested>) {
-  const { email, role } = action.payload;
-  const user: User = createUser(email, role);
-
-  yield put(loginSucceeded(user));
-
   try {
-    localStorage.setItem(STORAGE_AUTH_KEY, 'true');
-    localStorage.setItem(STORAGE_USER_KEY, JSON.stringify(user));
-  } catch (error) {
-    console.error('Failed to persist auth to localStorage', error);
+    const { email, role } = action.payload;
+    const user: User = createUser(email, role);
+
+    yield put(loginSucceeded(user));
+
+    if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+      try {
+        localStorage.setItem(STORAGE_AUTH_KEY, 'true');
+        localStorage.setItem(STORAGE_USER_KEY, JSON.stringify(user));
+      } catch (error) {
+        console.error('Failed to persist auth to localStorage', error);
+      }
+    }
+  } catch (error: any) {
+    console.error('Login failed', error);
+    yield put(loginFailed(error?.message || 'Login failed'));
   }
 }
 

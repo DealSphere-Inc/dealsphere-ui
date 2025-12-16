@@ -1,12 +1,30 @@
 'use client';
 
+import { useEffect } from 'react';
 import { BarChart3, TrendingUp, FileText, DollarSign, Download, Calendar, CheckCircle2, AlertCircle, Clock, CreditCard, Pen, Shield, ChevronRight, Wallet } from 'lucide-react';
 import { Card, Button, Badge, Progress, PageContainer } from '@/ui';
 import { MetricCard } from '@/components/metric-card';
-import { getLPDashboardSnapshot } from '@/services/dashboards/lpDashboardService';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { lpDashboardRequested } from '@/store/slices/dashboardsSlice';
 
 export function LPDashboard() {
-  const { metrics, documents, capitalActivity, pendingCalls, pendingSignatures, commitment } = getLPDashboardSnapshot();
+  const dispatch = useAppDispatch();
+
+  // Get LP dashboard data from Redux
+  const { data, loading, error } = useAppSelector((state) => state.dashboards.lp);
+
+  // Load LP dashboard data on mount
+  useEffect(() => {
+    dispatch(lpDashboardRequested());
+  }, [dispatch]);
+
+  // Extract data with defaults
+  const metrics = data?.metrics || [];
+  const documents = data?.documents || [];
+  const capitalActivity = data?.capitalActivity || [];
+  const pendingCalls = data?.pendingCalls || [];
+  const pendingSignatures = data?.pendingSignatures || [];
+  const commitment = data?.commitment || { totalCommitment: 0, calledAmount: 0 };
 
   const formatCurrency = (amount: number) => {
     if (amount >= 1_000_000) return `$${(amount / 1_000_000).toFixed(1)}M`;
@@ -60,7 +78,7 @@ export function LPDashboard() {
       )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {metrics.map((metric, index) => (
+        {metrics.map((metric: any, index: number) => (
           <MetricCard key={index} {...metric} />
         ))}
       </div>

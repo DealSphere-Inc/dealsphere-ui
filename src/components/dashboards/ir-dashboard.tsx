@@ -1,12 +1,27 @@
 'use client';
 
+import { useEffect } from 'react';
 import { Mail, Calendar, Phone } from 'lucide-react';
 import { Card, Button, Badge, PageContainer } from '@/ui';
 import { MetricCard } from '@/components/metric-card';
-import { getIRDashboardSnapshot } from '@/services/dashboards/irDashboardService';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { irDashboardRequested } from '@/store/slices/dashboardsSlice';
 
 export function IRDashboard() {
-  const { metrics, recentInteractions, upcomingTasks } = getIRDashboardSnapshot();
+  const dispatch = useAppDispatch();
+
+  // Get IR dashboard data from Redux
+  const { data, loading, error } = useAppSelector((state) => state.dashboards.ir);
+
+  // Load IR dashboard data on mount
+  useEffect(() => {
+    dispatch(irDashboardRequested());
+  }, [dispatch]);
+
+  // Extract data with defaults
+  const metrics = data?.metrics || [];
+  const recentInteractions = data?.recentInteractions || [];
+  const upcomingTasks = data?.upcomingTasks || [];
 
   return (
     <PageContainer className="space-y-6">
@@ -26,7 +41,7 @@ export function IRDashboard() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {metrics.map((metric, index) => (
+        {metrics.map((metric: any, index: number) => (
           <MetricCard key={index} {...metric} />
         ))}
       </div>

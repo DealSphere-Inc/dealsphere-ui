@@ -2,7 +2,7 @@ import { call, put, select, take, takeLatest } from 'redux-saga/effects';
 import type { SagaIterator } from 'redux-saga';
 import type { RootState } from '@/store/rootReducer';
 import type { Fund, FundViewMode } from '@/types/fund';
-import { fundHydrated, fundsLoaded, setSelectedFundId, setViewMode } from '@/store/slices/fundSlice';
+import { fundHydrated, fundsLoaded, fundsFailed, fundsRequested, setSelectedFundId, setViewMode } from '@/store/slices/fundSlice';
 import { clientMounted } from '@/store/slices/uiEffectsSlice';
 import { fetchFunds } from '@/services/fundsService';
 
@@ -63,10 +63,12 @@ function* persistViewModeWorker(): SagaIterator {
 
 function* loadFundsWorker(): SagaIterator {
   try {
+    yield put(fundsRequested());
     const funds: Fund[] = yield call(fetchFunds);
     yield put(fundsLoaded(funds));
-  } catch (error) {
+  } catch (error: any) {
     console.error('Failed to load funds', error);
+    yield put(fundsFailed(error?.message || 'Failed to load funds'));
   }
 }
 

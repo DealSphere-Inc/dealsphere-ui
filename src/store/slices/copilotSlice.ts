@@ -22,6 +22,7 @@ interface CopilotState {
   showSuggestions: boolean;
   quickActionsOverride: QuickAction[] | null;
   suggestionsOverride: Suggestion[] | null;
+  error: string | null;
 }
 
 const initialState: CopilotState = {
@@ -40,6 +41,7 @@ const initialState: CopilotState = {
   showSuggestions: true,
   quickActionsOverride: null,
   suggestionsOverride: null,
+  error: null,
 };
 
 const copilotSlice = createSlice({
@@ -83,25 +85,29 @@ const copilotSlice = createSlice({
       state,
       _action: PayloadAction<{ pathname: string; query: string }>
     ) => {
-      void state;
+      state.error = null;
     },
     sendMessageRequested: (
       state,
       _action: PayloadAction<{ pathname: string; content: string }>
     ) => {
-      void state;
+      state.error = null;
     },
     quickActionInvoked: (
       state,
       _action: PayloadAction<{ pathname: string; action: QuickAction }>
     ) => {
-      void state;
+      state.error = null;
     },
     suggestionInvoked: (
       state,
       _action: PayloadAction<{ suggestion: Suggestion }>
     ) => {
-      void state;
+      state.error = null;
+    },
+    copilotError: (state, action: PayloadAction<string>) => {
+      state.error = action.payload;
+      state.isTyping = false;
     },
   },
 });
@@ -119,6 +125,7 @@ export const {
   sendMessageRequested,
   quickActionInvoked,
   suggestionInvoked,
+  copilotError,
 } = copilotSlice.actions;
 
 export const copilotReducer = copilotSlice.reducer;

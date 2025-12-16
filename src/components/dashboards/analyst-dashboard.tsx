@@ -1,12 +1,27 @@
 'use client';
 
+import { useEffect } from 'react';
 import { Search, CheckCircle2, Clock } from 'lucide-react';
 import { Card, Button, Badge, PageContainer } from '@/ui';
 import { MetricCard } from '@/components/metric-card';
-import { getAnalystDashboardSnapshot } from '@/services/dashboards/analystDashboardService';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { analystDashboardRequested } from '@/store/slices/dashboardsSlice';
 
 export function AnalystDashboard() {
-  const { metrics, recentDeals, urgentTasks } = getAnalystDashboardSnapshot();
+  const dispatch = useAppDispatch();
+
+  // Get analyst dashboard data from Redux
+  const { data, loading, error } = useAppSelector((state) => state.dashboards.analyst);
+
+  // Load analyst dashboard data on mount
+  useEffect(() => {
+    dispatch(analystDashboardRequested());
+  }, [dispatch]);
+
+  // Extract data with defaults
+  const metrics = data?.metrics || [];
+  const recentDeals = data?.recentDeals || [];
+  const urgentTasks = data?.urgentTasks || [];
 
   return (
     <PageContainer className="space-y-6">
@@ -23,7 +38,7 @@ export function AnalystDashboard() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {metrics.map((metric, index) => (
+        {metrics.map((metric: any, index: number) => (
           <MetricCard key={index} {...metric} />
         ))}
       </div>

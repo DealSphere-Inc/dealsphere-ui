@@ -1,12 +1,27 @@
 'use client';
 
+import { useEffect } from 'react';
 import { DollarSign, AlertTriangle, Calendar, Download } from 'lucide-react';
 import { Card, Button, Badge, PageContainer } from '@/ui';
 import { MetricCard } from '@/components/metric-card';
-import { getOpsDashboardSnapshot } from '@/services/dashboards/opsDashboardService';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { opsDashboardRequested } from '@/store/slices/dashboardsSlice';
 
 export function OpsDashboard() {
-  const { metrics, complianceAlerts, upcomingDistributions } = getOpsDashboardSnapshot();
+  const dispatch = useAppDispatch();
+
+  // Get ops dashboard data from Redux
+  const { data, loading, error } = useAppSelector((state) => state.dashboards.ops);
+
+  // Load ops dashboard data on mount
+  useEffect(() => {
+    dispatch(opsDashboardRequested());
+  }, [dispatch]);
+
+  // Extract data with defaults
+  const metrics = data?.metrics || [];
+  const complianceAlerts = data?.complianceAlerts || [];
+  const upcomingDistributions = data?.upcomingDistributions || [];
 
   return (
     <PageContainer className="space-y-6">
@@ -26,7 +41,7 @@ export function OpsDashboard() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {metrics.map((metric, index) => (
+        {metrics.map((metric: any, index: number) => (
           <MetricCard key={index} {...metric} />
         ))}
       </div>

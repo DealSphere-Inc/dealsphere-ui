@@ -6,6 +6,8 @@ interface FundState {
   funds: Fund[];
   selectedFundId: string | null;
   viewMode: FundViewMode;
+  loading: boolean;
+  error: string | null;
 }
 
 const initialState: FundState = {
@@ -13,17 +15,29 @@ const initialState: FundState = {
   funds: [],
   selectedFundId: null,
   viewMode: 'individual',
+  loading: false,
+  error: null,
 };
 
 const fundSlice = createSlice({
   name: 'fund',
   initialState,
   reducers: {
+    fundsRequested: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
     fundsLoaded: (state, action: PayloadAction<Fund[]>) => {
       state.funds = action.payload;
+      state.loading = false;
+      state.error = null;
       if (state.selectedFundId === null && action.payload.length > 0) {
         state.selectedFundId = action.payload[0]!.id;
       }
+    },
+    fundsFailed: (state, action: PayloadAction<string>) => {
+      state.loading = false;
+      state.error = action.payload;
     },
     fundHydrated: (state, action: PayloadAction<{ selectedFundId: string | null; viewMode: FundViewMode }>) => {
       state.hydrated = true;
@@ -39,5 +53,5 @@ const fundSlice = createSlice({
   },
 });
 
-export const { fundsLoaded, fundHydrated, setSelectedFundId, setViewMode } = fundSlice.actions;
+export const { fundsRequested, fundsLoaded, fundsFailed, fundHydrated, setSelectedFundId, setViewMode } = fundSlice.actions;
 export const fundReducer = fundSlice.reducer;

@@ -1,12 +1,27 @@
 'use client';
 
+import { useEffect } from 'react';
 import { TrendingUp, FileText, Search, Download } from 'lucide-react';
 import { Card, Button, Badge, PageContainer } from '@/ui';
 import { MetricCard } from '@/components/metric-card';
-import { getResearcherDashboardSnapshot } from '@/services/dashboards/researcherDashboardService';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { researcherDashboardRequested } from '@/store/slices/dashboardsSlice';
 
 export function ResearcherDashboard() {
-  const { metrics, recentReports, trendingTopics } = getResearcherDashboardSnapshot();
+  const dispatch = useAppDispatch();
+
+  // Get researcher dashboard data from Redux
+  const { data, loading, error } = useAppSelector((state) => state.dashboards.researcher);
+
+  // Load researcher dashboard data on mount
+  useEffect(() => {
+    dispatch(researcherDashboardRequested());
+  }, [dispatch]);
+
+  // Extract data with defaults
+  const metrics = data?.metrics || [];
+  const recentReports = data?.recentReports || [];
+  const trendingTopics = data?.trendingTopics || [];
 
   return (
     <PageContainer className="space-y-6">
@@ -26,7 +41,7 @@ export function ResearcherDashboard() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {metrics.map((metric, index) => (
+        {metrics.map((metric: any, index: number) => (
           <MetricCard key={index} {...metric} />
         ))}
       </div>
