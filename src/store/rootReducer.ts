@@ -16,6 +16,7 @@ import { aiReducer } from './slices/aiSlice';
 import { dealIntelligenceReducer } from './slices/dealIntelligenceSlice';
 import { crmReducer } from './slices/crmSlice';
 import { miscReducer } from './slices/miscSlice';
+import { searchReducer } from './slices/searchSlice';
 
 export const rootReducer = combineReducers({
   alerts: alertsReducer,
@@ -35,6 +36,7 @@ export const rootReducer = combineReducers({
   dealIntelligence: dealIntelligenceReducer,
   crm: crmReducer,
   misc: miscReducer,
+  search: searchReducer,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

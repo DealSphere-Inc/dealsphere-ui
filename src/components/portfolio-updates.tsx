@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect } from 'react';
 import { Card, Badge, Button, Input, PageContainer } from '@/ui';
 import {
   TrendingUp,
@@ -12,7 +13,13 @@ import {
   Calendar,
 } from 'lucide-react';
 import { useUIKey } from '@/store/ui';
-import { getPortfolioUpdates } from '@/services/portfolio/portfolioDataService';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import {
+  portfolioUpdatesRequested,
+  portfolioSelectors,
+} from '@/store/slices/portfolioSlice';
+import { LoadingState, ErrorState, EmptyState } from '@/components/ui/async-states';
+import { UI_STATE_KEYS, UI_STATE_DEFAULTS } from '@/store/constants/uiStateKeys';
 
 const updateIcons = {
   financial: <DollarSign className="w-5 h-5" />,
@@ -39,12 +46,42 @@ const updateBadgeColors = {
 };
 
 export function PortfolioUpdates() {
-  const portfolioUpdates = getPortfolioUpdates();
-  const { value: ui, patch: patchUI } = useUIKey('portfolio-updates', {
-    selectedType: 'all',
-    searchQuery: '',
-  });
+  const dispatch = useAppDispatch();
+
+  // Use centralized selectors
+  const data = useAppSelector(portfolioSelectors.selectData);
+  const status = useAppSelector(portfolioSelectors.selectStatus);
+  const error = useAppSelector(portfolioSelectors.selectError);
+
+  // Use centralized UI state defaults
+  const { value: ui, patch: patchUI } = useUIKey(
+    UI_STATE_KEYS.PORTFOLIO_UPDATES,
+    UI_STATE_DEFAULTS.portfolioUpdates
+  );
   const { selectedType, searchQuery } = ui;
+
+  // Dispatch request on mount
+  useEffect(() => {
+    dispatch(portfolioUpdatesRequested({}));
+  }, [dispatch]);
+
+  // Loading state
+  if (status === 'loading') {
+    return <LoadingState message="Loading portfolio updates..." />;
+  }
+
+  // Error state
+  if (status === 'failed' && error) {
+    return (
+      <ErrorState
+        error={error}
+        title="Failed to Load Portfolio Updates"
+        onRetry={() => dispatch(portfolioUpdatesRequested({}))}
+      />
+    );
+  }
+
+  const portfolioUpdates = data?.updates || [];
 
   const filteredUpdates = portfolioUpdates.filter(update => {
     const typeMatch = selectedType === 'all' || update.type === selectedType;

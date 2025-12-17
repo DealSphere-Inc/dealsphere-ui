@@ -8,7 +8,9 @@ import { CompanyScoring } from './company-scoring';
 import { getDealflowReviewSlides, type DealflowReviewSlide } from '@/services/dealflow/dealflowReviewService';
 import { useUIKey } from '@/store/ui';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { dealflowDealsRequested } from '@/store/slices/dealflowSlice';
+import { dealflowDealsRequested, dealflowSelectors } from '@/store/slices/dealflowSlice';
+import { LoadingState, ErrorState, EmptyState } from '@/components/ui/async-states';
+import { UI_STATE_KEYS, UI_STATE_DEFAULTS } from '@/store/constants/uiStateKeys';
 
 interface Vote {
   partnerId: string;
@@ -29,32 +31,53 @@ interface ReviewSession {
 
 export function DealflowReview() {
   const dispatch = useAppDispatch();
-  const { deals, dealsLoading, dealsError } = useAppSelector((state) => state.dealflow);
+
+  // Use centralized selectors
+  const data = useAppSelector(dealflowSelectors.selectData);
+  const status = useAppSelector(dealflowSelectors.selectStatus);
+  const error = useAppSelector(dealflowSelectors.selectError);
 
   // Load dealflow deals on mount
   useEffect(() => {
-    dispatch(dealflowDealsRequested());
+    dispatch(dealflowDealsRequested({}));
   }, [dispatch]);
 
-  const selectedDeal = deals[0];
-  const slides = selectedDeal ? getDealflowReviewSlides(selectedDeal) : [];
-  const { value: ui, patch: patchUI } = useUIKey<{
-    currentSlideIndex: number;
-    isPresenting: boolean;
-    votes: Vote[];
-    myVote: 'yes' | 'no' | 'maybe' | null;
-    voteComment: string;
-  }>('dealflow-review', {
-    currentSlideIndex: 0,
-    isPresenting: false,
-    votes: [],
-    myVote: null,
-    voteComment: '',
-  });
-  const { currentSlideIndex, isPresenting, votes, myVote, voteComment } = ui;
+  // Use centralized UI state defaults
+  const { value: ui, patch: patchUI } = useUIKey(
+    UI_STATE_KEYS.DEALFLOW_REVIEW,
+    UI_STATE_DEFAULTS.dealflowReview
+  );
+
+  // Extend with additional UI state not in defaults
+  const { value: isPresenting, patch: patchIsPresenting } = useUIKey<boolean>('dealflow-review-presenting', false);
+  const { value: votes, patch: patchVotes } = useUIKey<Vote[]>('dealflow-review-votes', []);
+  const { value: myVote, patch: patchMyVote } = useUIKey<'yes' | 'no' | 'maybe' | null>('dealflow-review-my-vote', null);
+  const { value: voteComment, patch: patchVoteComment } = useUIKey<string>('dealflow-review-vote-comment', '');
+
+  const { currentSlideIndex, selectedDealId } = ui;
 
   // Get route config for breadcrumbs and AI suggestions
   const routeConfig = getRouteConfig('/dealflow-review');
+
+  // Loading state
+  if (status === 'loading') {
+    return <LoadingState message="Loading dealflow deals..." />;
+  }
+
+  // Error state
+  if (status === 'failed' && error) {
+    return (
+      <ErrorState
+        error={error}
+        title="Failed to Load Dealflow Deals"
+        onRetry={() => dispatch(dealflowDealsRequested({}))}
+      />
+    );
+  }
+
+  const deals = data?.deals || [];
+  const selectedDeal = deals[0];
+  const slides = selectedDeal ? getDealflowReviewSlides(selectedDeal) : [];
 
   if (!selectedDeal) {
     return (
@@ -97,7 +120,8 @@ export function DealflowReview() {
       comments: voteComment,
       timestamp: new Date().toISOString()
     };
-    patchUI({ myVote: vote, votes: [...votes, newVote] });
+    patchMyVote(vote);
+    patchVotes([...votes, newVote]);
   };
 
   const formatCurrency = (amount: number) => {
@@ -344,7 +368,7 @@ export function DealflowReview() {
           }}
           primaryAction={{
             label: isPresenting ? 'Stop Presenting' : 'Start Presentation',
-            onClick: () => patchUI({ isPresenting: !isPresenting }),
+            onClick: () => patchIsPresenting(!isPresenting),
             aiSuggested: false
           }}
           secondaryActions={[
@@ -520,7 +544,7 @@ export function DealflowReview() {
               className="w-full px-3 py-2 rounded-lg border border-[var(--app-border)] bg-[var(--app-surface)] text-[var(--app-text)] min-h-[80px]"
               placeholder="Add your thoughts, questions, or concerns..."
               value={voteComment}
-              onChange={(e) => patchUI({ voteComment: e.target.value })}
+              onChange={(e) => patchVoteComment(e.target.value)}
             />
           </Card>
 

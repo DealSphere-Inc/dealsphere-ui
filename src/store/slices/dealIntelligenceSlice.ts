@@ -1,40 +1,53 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
+import type { AsyncState, NormalizedError } from '@/store/types/AsyncState';
+import { createInitialAsyncState } from '@/store/types/AsyncState';
+import { createAsyncSelectors } from '@/store/utils/createAsyncSelectors';
+import type {
+  ActiveDeal,
+  Document,
+  DealAnalytics,
+  FundAnalytics,
+  DocumentCategory,
+} from '@/services/dealIntelligence/dealIntelligenceService';
+import type { StandardQueryParams } from '@/types/serviceParams';
 
-interface DealIntelligenceData {
-  activeDeals: any[];
-  dealAnalyticsData: any[];
-  documentCategories: any[];
-  fundAnalytics: any;
-  mockDocuments: any[];
+export interface DealIntelligenceData {
+  activeDeals: ActiveDeal[];
+  dealAnalyticsData: DealAnalytics[];
+  documentCategories: Array<{
+    id: DocumentCategory;
+    name: string;
+    icon: any;
+    color: string;
+  }>;
+  fundAnalytics: FundAnalytics;
+  documents: Document[];
 }
 
-interface DealIntelligenceState {
-  data: DealIntelligenceData | null;
-  loading: boolean;
-  error: string | null;
+export interface GetDealIntelligenceParams extends Partial<StandardQueryParams> {
+  fundId: string | null;
 }
 
-const initialState: DealIntelligenceState = {
-  data: null,
-  loading: false,
-  error: null,
-};
+type DealIntelligenceState = AsyncState<DealIntelligenceData>;
+
+const initialState: DealIntelligenceState = createInitialAsyncState<DealIntelligenceData>();
 
 const dealIntelligenceSlice = createSlice({
   name: 'dealIntelligence',
   initialState,
   reducers: {
-    dealIntelligenceRequested: (state) => {
-      state.loading = true;
-      state.error = null;
+    dealIntelligenceRequested: (state, action: PayloadAction<GetDealIntelligenceParams>) => {
+      state.status = 'loading';
+      state.error = undefined;
     },
     dealIntelligenceLoaded: (state, action: PayloadAction<DealIntelligenceData>) => {
       state.data = action.payload;
-      state.loading = false;
+      state.status = 'succeeded';
+      state.error = undefined;
     },
-    dealIntelligenceFailed: (state, action: PayloadAction<string>) => {
+    dealIntelligenceFailed: (state, action: PayloadAction<NormalizedError>) => {
+      state.status = 'failed';
       state.error = action.payload;
-      state.loading = false;
     },
   },
 });
@@ -44,5 +57,8 @@ export const {
   dealIntelligenceLoaded,
   dealIntelligenceFailed,
 } = dealIntelligenceSlice.actions;
+
+// Centralized selectors
+export const dealIntelligenceSelectors = createAsyncSelectors<DealIntelligenceData>('dealIntelligence');
 
 export const dealIntelligenceReducer = dealIntelligenceSlice.reducer;

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { Search, ChevronDown, LogOut, Sparkles, Moon, Sun } from 'lucide-react';
 import { useAuth } from '@/contexts/auth-context';
 import { Button, Badge, Card, Input } from '@/ui';
@@ -8,11 +8,13 @@ import { useRouter } from 'next/navigation';
 import { useAICopilot } from './ai-copilot-sidebar';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { alertsRequested, markAlertRead } from '@/store/slices/alertsSlice';
+import { searchRequested, searchCleared, searchSelectors } from '@/store/slices/searchSlice';
 import { NotificationCenter } from '@/components/notification-center';
 import type { Notification } from '@/types/notification';
 import { useTheme } from 'next-themes';
-import { searchTopbar, type TopbarSearchResult } from '@/services/topbarSearchService';
+import type { TopbarSearchResult } from '@/services/topbarSearchService';
 import { useUIKey } from '@/store/ui';
+import { UI_STATE_KEYS, UI_STATE_DEFAULTS } from '@/store/constants/uiStateKeys';
 
 export function Topbar() {
   const { user, logout } = useAuth();
@@ -21,11 +23,17 @@ export function Topbar() {
   const dispatch = useAppDispatch();
   const { items: reduxNotifications } = useAppSelector((state) => state.alerts);
   const { theme, setTheme } = useTheme();
-  const { value: topbarUI, patch: patchTopbarUI } = useUIKey('topbar', {
-    isProfileOpen: false,
-    searchQuery: '',
-    isSearchFocused: false,
-  });
+
+  // Use centralized UI state defaults
+  const { value: topbarUI, patch: patchTopbarUI } = useUIKey(
+    UI_STATE_KEYS.TOPBAR,
+    UI_STATE_DEFAULTS.topbar
+  );
+
+  // Use centralized selectors for search
+  const searchData = useAppSelector(searchSelectors.selectData);
+  const searchResults = searchData?.results || [];
+
   const searchRef = useRef<HTMLDivElement>(null);
 
   const handleLogout = () => {
@@ -60,10 +68,14 @@ export function Topbar() {
     });
   };
 
-  const searchResults = useMemo(
-    () => searchTopbar(topbarUI.searchQuery),
-    [topbarUI.searchQuery]
-  );
+  // Dispatch search request when query changes
+  useEffect(() => {
+    if (topbarUI.searchQuery.trim()) {
+      dispatch(searchRequested({ query: topbarUI.searchQuery }));
+    } else {
+      dispatch(searchCleared());
+    }
+  }, [dispatch, topbarUI.searchQuery]);
 
   // Close search dropdown when clicking outside
   useEffect(() => {

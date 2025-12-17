@@ -6,17 +6,21 @@ import {
   dealIntelligenceFailed,
 } from '../slices/dealIntelligenceSlice';
 import { getDealIntelligenceData } from '@/services/dealIntelligence/dealIntelligenceService';
+import { normalizeError } from '@/store/utils/normalizeError';
 
 /**
  * Worker saga: Load deal intelligence data
  */
-function* loadDealIntelligenceWorker(): SagaIterator {
+function* loadDealIntelligenceWorker(
+  action: ReturnType<typeof dealIntelligenceRequested>
+): SagaIterator {
   try {
-    const data = yield call(getDealIntelligenceData);
+    const params = action.payload;
+    const data = yield call(getDealIntelligenceData, params);
     yield put(dealIntelligenceLoaded(data));
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Failed to load deal intelligence data', error);
-    yield put(dealIntelligenceFailed(error?.message || 'Failed to load deal intelligence data'));
+    yield put(dealIntelligenceFailed(normalizeError(error)));
   }
 }
 

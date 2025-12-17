@@ -8,12 +8,15 @@ import { useFund } from '@/contexts/fund-context';
 import { getRouteConfig } from '@/config/routes';
 import { CompanySearch } from './deal-intelligence/company-search';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { dealIntelligenceRequested } from '@/store/slices/dealIntelligenceSlice';
+import { dealIntelligenceRequested, dealIntelligenceSelectors } from '@/store/slices/dealIntelligenceSlice';
+import { LoadingState, ErrorState, EmptyState } from '@/components/ui/async-states';
+import { UI_STATE_KEYS, UI_STATE_DEFAULTS } from '@/store/constants/uiStateKeys';
 import {
   type ActiveDeal,
   type DocumentCategory,
   type DocumentStatus,
   type ICStatus,
+  type Document,
 } from '@/services/dealIntelligence/dealIntelligenceService';
 
 interface DealIntelligenceUIState {
@@ -27,13 +30,48 @@ interface DealIntelligenceUIState {
 export function DealIntelligence() {
   const dispatch = useAppDispatch();
   const { selectedFund } = useFund();
-  const { data, loading, error } = useAppSelector((state) => state.dealIntelligence);
 
-  // Load deal intelligence data on mount
+  // Use centralized selectors
+  const data = useAppSelector(dealIntelligenceSelectors.selectData);
+  const status = useAppSelector(dealIntelligenceSelectors.selectStatus);
+  const error = useAppSelector(dealIntelligenceSelectors.selectError);
+
+  // Use UI state constants
+  const { value: ui, patch: patchUI } = useUIKey(
+    UI_STATE_KEYS.DEAL_INTELLIGENCE,
+    UI_STATE_DEFAULTS.dealIntelligence
+  );
+  const { viewMode, selectedDeal, searchQuery, selectedCategory, selectedDetailTab } = ui;
+
+  // Dispatch request on mount with fundId
   useEffect(() => {
-    dispatch(dealIntelligenceRequested());
-  }, [dispatch]);
+    if (selectedFund?.id) {
+      dispatch(dealIntelligenceRequested({ fundId: selectedFund.id }));
+    }
+  }, [dispatch, selectedFund?.id]);
 
+  // Loading state
+  if (status === 'loading') {
+    return <LoadingState message="Loading deal intelligence..." />;
+  }
+
+  // Error state
+  if (status === 'failed' && error) {
+    return (
+      <ErrorState
+        error={error}
+        title="Failed to Load Deal Intelligence"
+        onRetry={() => dispatch(dealIntelligenceRequested({ fundId: selectedFund?.id || null }))}
+      />
+    );
+  }
+
+  // Empty state
+  if (status === 'succeeded' && !data) {
+    return <EmptyState icon={Brain} title="No deal intelligence data available" />;
+  }
+
+  // Destructure with proper types
   const activeDeals = data?.activeDeals || [];
   const dealAnalyticsData = data?.dealAnalyticsData || [];
   const documentCategories = data?.documentCategories || [];
@@ -42,15 +80,7 @@ export function DealIntelligence() {
     dealDistribution: { byStage: [], bySector: [] },
     ddProgress: { avgCompletion: 0, onTrack: 0, atRisk: 0, blocked: 0 }
   };
-  const mockDocuments = data?.mockDocuments || [];
-  const { value: ui, patch: patchUI } = useUIKey<DealIntelligenceUIState>('deal-intelligence', {
-    viewMode: 'fund-level',
-    selectedDeal: null,
-    searchQuery: '',
-    selectedCategory: 'all',
-    selectedDetailTab: 'overview',
-  });
-  const { viewMode, selectedDeal, searchQuery, selectedCategory, selectedDetailTab } = ui;
+  const documents: Document[] = data?.documents || [];
 
   const getStatusIcon = (status: DocumentStatus) => {
     switch (status) {
@@ -110,7 +140,7 @@ export function DealIntelligence() {
     patchUI({ viewMode: 'fund-level', selectedDeal: null });
   };
 
-  const filteredDocuments = mockDocuments.filter((doc: any) => {
+  const filteredDocuments = documents.filter((doc) => {
     const matchesDeal = !selectedDeal || doc.dealId === selectedDeal.id;
     const matchesCategory = selectedCategory === 'all' || doc.category === selectedCategory;
     const matchesSearch = searchQuery === '' ||
@@ -119,10 +149,10 @@ export function DealIntelligence() {
     return matchesDeal && matchesCategory && matchesSearch;
   });
 
-  const dealsReadyForIC = activeDeals.filter((d: any) => d.icStatus === 'ready-for-ic').length;
-  const dealsInProgress = activeDeals.filter((d: any) => d.icStatus === 'dd-in-progress').length;
-  const overdueDocuments = mockDocuments.filter((d: any) => d.status === 'overdue').length;
-  const pendingReviews = mockDocuments.filter((d: any) => d.status === 'pending').length;
+  const dealsReadyForIC = activeDeals.filter((d) => d.icStatus === 'ready-for-ic').length;
+  const dealsInProgress = activeDeals.filter((d) => d.icStatus === 'dd-in-progress').length;
+  const overdueDocuments = documents.filter((d) => d.status === 'overdue').length;
+  const pendingReviews = documents.filter((d) => d.status === 'pending').length;
 
   // Get route config for breadcrumbs and AI suggestions
   const routeConfig = getRouteConfig('/deal-intelligence');
@@ -776,9 +806,9 @@ export function DealIntelligence() {
 
               {/* Document Categories Stats */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
-                {documentCategories.map((category: any) => {
+                {documentCategories.map((category) => {
                   const CategoryIcon = category.icon;
-                  const count = mockDocuments.filter((d: any) => d.dealId === selectedDeal.id && d.category === category.id).length;
+                  const count = documents.filter((d) => d.dealId === selectedDeal.id && d.category === category.id).length;
                   return (
                     <Card
                       key={category.id}

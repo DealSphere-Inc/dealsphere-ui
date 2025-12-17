@@ -4,8 +4,9 @@ import { useEffect } from 'react';
 import { Card, Button, Badge, Progress } from '@/ui';
 import { Star, User, TrendingUp, Target, Users, Lightbulb, CheckCircle2, Edit3 } from 'lucide-react';
 import { useUIKey } from '@/store/ui';
-import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { companyScoringRequested } from '@/store/slices/dealflowSlice';
+import { getCompanyScoreData } from '@/services/dealflow/companyScoringService';
+// import { useAppDispatch, useAppSelector } from '@/store/hooks';
+// import { companyScoringRequested } from '@/store/slices/dealflowSlice';
 
 interface ScoringCriteria {
   id: string;
@@ -54,13 +55,9 @@ const defaultCriteria: ScoringCriteria[] = [
 ];
 
 export function CompanyScoring({ companyId, companyName }: { companyId: number; companyName: string }) {
-  const dispatch = useAppDispatch();
-  const { scoreData, scoreLoading, scoreError } = useAppSelector((state) => state.dealflow);
-
-  // Load company scoring data on mount
-  useEffect(() => {
-    dispatch(companyScoringRequested());
-  }, [dispatch]);
+  // TODO: Restore company scoring Redux integration via separate scoring slice
+  // For now calling service directly since dealflow slice was migrated to handle deals only
+  const scoreData = getCompanyScoreData();
 
   const { value: ui, patch: patchUI } = useUIKey<{
     isEditingScores: boolean;

@@ -1,60 +1,39 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
+import type { AsyncState, NormalizedError } from '@/store/types/AsyncState';
+import { createInitialAsyncState } from '@/store/types/AsyncState';
+import { createAsyncSelectors } from '@/store/utils/createAsyncSelectors';
 import type { Deal } from '@/services/dealflow/dealflowReviewService';
 import type { CompanyScoreData } from '@/services/dealflow/companyScoringService';
+import type { StandardQueryParams } from '@/types/serviceParams';
 
-interface DealflowState {
-  // Dealflow Review
+export interface DealflowDealsData {
   deals: Deal[];
-  dealsLoading: boolean;
-  dealsError: string | null;
-
-  // Company Scoring
-  scoreData: CompanyScoreData | null;
-  scoreLoading: boolean;
-  scoreError: string | null;
 }
 
-const initialState: DealflowState = {
-  deals: [],
-  dealsLoading: false,
-  dealsError: null,
-  scoreData: null,
-  scoreLoading: false,
-  scoreError: null,
-};
+export interface GetDealflowDealsParams extends Partial<StandardQueryParams> {
+  fundId?: string | null;
+}
+
+type DealflowState = AsyncState<DealflowDealsData>;
+
+const initialState: DealflowState = createInitialAsyncState<DealflowDealsData>();
 
 const dealflowSlice = createSlice({
   name: 'dealflow',
   initialState,
   reducers: {
-    // Dealflow Review - Deals
-    dealflowDealsRequested: (state) => {
-      state.dealsLoading = true;
-      state.dealsError = null;
+    dealflowDealsRequested: (state, action: PayloadAction<GetDealflowDealsParams>) => {
+      state.status = 'loading';
+      state.error = undefined;
     },
-    dealflowDealsLoaded: (state, action: PayloadAction<Deal[]>) => {
-      state.deals = action.payload;
-      state.dealsLoading = false;
-      state.dealsError = null;
+    dealflowDealsLoaded: (state, action: PayloadAction<DealflowDealsData>) => {
+      state.data = action.payload;
+      state.status = 'succeeded';
+      state.error = undefined;
     },
-    dealflowDealsFailed: (state, action: PayloadAction<string>) => {
-      state.dealsLoading = false;
-      state.dealsError = action.payload;
-    },
-
-    // Company Scoring
-    companyScoringRequested: (state) => {
-      state.scoreLoading = true;
-      state.scoreError = null;
-    },
-    companyScoringLoaded: (state, action: PayloadAction<CompanyScoreData>) => {
-      state.scoreData = action.payload;
-      state.scoreLoading = false;
-      state.scoreError = null;
-    },
-    companyScoringFailed: (state, action: PayloadAction<string>) => {
-      state.scoreLoading = false;
-      state.scoreError = action.payload;
+    dealflowDealsFailed: (state, action: PayloadAction<NormalizedError>) => {
+      state.status = 'failed';
+      state.error = action.payload;
     },
   },
 });
@@ -63,9 +42,9 @@ export const {
   dealflowDealsRequested,
   dealflowDealsLoaded,
   dealflowDealsFailed,
-  companyScoringRequested,
-  companyScoringLoaded,
-  companyScoringFailed,
 } = dealflowSlice.actions;
+
+// Centralized selectors
+export const dealflowSelectors = createAsyncSelectors<DealflowDealsData>('dealflow');
 
 export const dealflowReducer = dealflowSlice.reducer;

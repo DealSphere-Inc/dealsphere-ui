@@ -1,27 +1,32 @@
 import { call, put, takeLatest } from 'redux-saga/effects';
 import type { SagaIterator } from 'redux-saga';
 import {
-  portfolioMetricsRequested,
-  portfolioMetricsLoaded,
-  portfolioMetricsFailed,
+  portfolioUpdatesRequested,
+  portfolioUpdatesLoaded,
+  portfolioUpdatesFailed,
 } from '@/store/slices/portfolioSlice';
-import {
-  getPortfolioPageMetrics,
-  getPortfolioHealthyCompanies,
-} from '@/services/portfolio/portfolioPageMetricsService';
+import { getPortfolioUpdates } from '@/services/portfolio/portfolioDataService';
+import { normalizeError } from '@/store/utils/normalizeError';
 
-function* loadPortfolioMetricsWorker(): SagaIterator {
+/**
+ * Worker saga: Load portfolio updates
+ */
+function* loadPortfolioUpdatesWorker(
+  action: ReturnType<typeof portfolioUpdatesRequested>
+): SagaIterator {
   try {
-    const metrics: ReturnType<typeof getPortfolioPageMetrics> = yield call(getPortfolioPageMetrics);
-    const healthyCompanies: number = yield call(getPortfolioHealthyCompanies);
-
-    yield put(portfolioMetricsLoaded({ metrics, healthyCompanies }));
-  } catch (error: any) {
-    console.error('Failed to load portfolio metrics', error);
-    yield put(portfolioMetricsFailed(error?.message || 'Failed to load portfolio metrics'));
+    const params = action.payload;
+    const updates = yield call(getPortfolioUpdates);
+    yield put(portfolioUpdatesLoaded({ updates }));
+  } catch (error: unknown) {
+    console.error('Failed to load portfolio updates', error);
+    yield put(portfolioUpdatesFailed(normalizeError(error)));
   }
 }
 
+/**
+ * Root portfolio saga
+ */
 export function* portfolioSaga(): SagaIterator {
-  yield takeLatest(portfolioMetricsRequested.type, loadPortfolioMetricsWorker);
+  yield takeLatest(portfolioUpdatesRequested.type, loadPortfolioUpdatesWorker);
 }

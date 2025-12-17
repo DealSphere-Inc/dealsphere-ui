@@ -15,6 +15,7 @@ import { aiSaga } from './sagas/aiSaga';
 import { dealIntelligenceSaga } from './sagas/dealIntelligenceSaga';
 import { crmSaga } from './sagas/crmSaga';
 import { miscSaga } from './sagas/miscSaga';
+import { searchSaga } from './sagas/searchSaga';
 
 export function* rootSaga() {
   yield all([
@@ -34,5 +35,6 @@ export function* rootSaga() {
     call(dealIntelligenceSaga),
     call(crmSaga),
     call(miscSaga),
+    call(searchSaga),
   ]);
 }

@@ -15,8 +15,10 @@ import {
   setInputValue,
   setShowSuggestions,
   suggestionInvoked,
+  copilotSuggestionsRequested,
+  copilotSuggestionsSelectors,
 } from '@/store/slices/copilotSlice';
-import { getCopilotPageSuggestions, getCopilotQuickActions, type QuickAction, type Suggestion } from '@/services/ai/copilotService';
+import type { QuickAction, Suggestion } from '@/services/ai/copilotService';
 
 export function useAICopilot() {
   const dispatch = useAppDispatch();
@@ -45,15 +47,18 @@ export function AICopilotSidebar() {
   const quickActionsOverride = useAppSelector((state) => state.copilot.quickActionsOverride);
   const suggestionsOverride = useAppSelector((state) => state.copilot.suggestionsOverride);
 
+  // Use centralized selectors for suggestions/actions
+  const suggestionsData = useAppSelector(copilotSuggestionsSelectors.selectData);
+
   const suggestions = useMemo(() => {
-    const fallback = getCopilotPageSuggestions(pathname);
+    const fallback = suggestionsData?.suggestions || [];
     return suggestionsOverride && suggestionsOverride.length > 0 ? suggestionsOverride : fallback;
-  }, [pathname, suggestionsOverride]);
+  }, [suggestionsData, suggestionsOverride]);
 
   const quickActions = useMemo(() => {
-    const fallback = getCopilotQuickActions(pathname);
+    const fallback = suggestionsData?.quickActions || [];
     return quickActionsOverride && quickActionsOverride.length > 0 ? quickActionsOverride : fallback;
-  }, [pathname, quickActionsOverride]);
+  }, [suggestionsData, quickActionsOverride]);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -61,7 +66,9 @@ export function AICopilotSidebar() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages.length]);
 
+  // Load suggestions/actions when pathname changes
   useEffect(() => {
+    dispatch(copilotSuggestionsRequested({ pathname }));
     dispatch(setShowSuggestions(true));
   }, [dispatch, pathname]);
 

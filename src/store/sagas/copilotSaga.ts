@@ -1,4 +1,5 @@
-import { delay, put, takeLatest } from 'redux-saga/effects';
+import { call, delay, put, takeLatest } from 'redux-saga/effects';
+import type { SagaIterator } from 'redux-saga';
 import {
   addMessage,
   clearInputValue,
@@ -7,13 +8,18 @@ import {
   sendMessageRequested,
   setIsTyping,
   suggestionInvoked,
+  copilotSuggestionsRequested,
+  copilotSuggestionsLoaded,
+  copilotSuggestionsFailed,
   type CopilotMessage,
 } from '@/store/slices/copilotSlice';
 import {
   type QuickAction,
   type Suggestion,
   getCopilotContextualResponse,
+  getCopilotSuggestionsAndActions,
 } from '@/services/ai/copilotService';
+import { normalizeError } from '@/store/utils/normalizeError';
 
 const randomConfidence = () => Math.random() * 0.2 + 0.75;
 const nextId = () => Date.now().toString();
@@ -131,9 +137,29 @@ function* suggestionWorker(action: ReturnType<typeof suggestionInvoked>) {
   yield put(setIsTyping(false));
 }
 
+/**
+ * Worker saga: Load copilot suggestions and quick actions
+ */
+function* loadCopilotSuggestionsWorker(
+  action: ReturnType<typeof copilotSuggestionsRequested>
+): SagaIterator {
+  try {
+    const params = action.payload;
+    const data = yield call(getCopilotSuggestionsAndActions, params);
+    yield put(copilotSuggestionsLoaded(data));
+  } catch (error: unknown) {
+    console.error('Failed to load copilot suggestions', error);
+    yield put(copilotSuggestionsFailed(normalizeError(error)));
+  }
+}
+
+/**
+ * Root copilot saga
+ */
 export function* copilotSaga() {
   yield takeLatest(openWithQueryRequested.type, openWithQueryWorker);
   yield takeLatest(sendMessageRequested.type, sendMessageWorker);
   yield takeLatest(quickActionInvoked.type, quickActionWorker);
   yield takeLatest(suggestionInvoked.type, suggestionWorker);
+  yield takeLatest(copilotSuggestionsRequested.type, loadCopilotSuggestionsWorker);
 }
