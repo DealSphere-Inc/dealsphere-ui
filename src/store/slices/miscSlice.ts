@@ -1,4 +1,7 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
+import type { AsyncState, NormalizedError } from '@/store/types/AsyncState';
+import { createInitialAsyncState } from '@/store/types/AsyncState';
+import type { RootState } from '../rootReducer';
 
 // Types for each feature
 interface IntegrationsData {
@@ -23,49 +26,17 @@ interface CompanySearchData {
 }
 
 interface MiscState {
-  integrations: {
-    data: IntegrationsData | null;
-    loading: boolean;
-    error: string | null;
-  };
-  lpPortal: {
-    data: LPPortalData | null;
-    loading: boolean;
-    error: string | null;
-  };
-  auditTrail: {
-    data: AuditTrailData | null;
-    loading: boolean;
-    error: string | null;
-  };
-  companySearch: {
-    data: CompanySearchData | null;
-    loading: boolean;
-    error: string | null;
-  };
+  integrations: AsyncState<IntegrationsData>;
+  lpPortal: AsyncState<LPPortalData>;
+  auditTrail: AsyncState<AuditTrailData>;
+  companySearch: AsyncState<CompanySearchData>;
 }
 
 const initialState: MiscState = {
-  integrations: {
-    data: null,
-    loading: false,
-    error: null,
-  },
-  lpPortal: {
-    data: null,
-    loading: false,
-    error: null,
-  },
-  auditTrail: {
-    data: null,
-    loading: false,
-    error: null,
-  },
-  companySearch: {
-    data: null,
-    loading: false,
-    error: null,
-  },
+  integrations: createInitialAsyncState<IntegrationsData>(),
+  lpPortal: createInitialAsyncState<LPPortalData>(),
+  auditTrail: createInitialAsyncState<AuditTrailData>(),
+  companySearch: createInitialAsyncState<CompanySearchData>(),
 };
 
 const miscSlice = createSlice({
@@ -74,58 +45,62 @@ const miscSlice = createSlice({
   reducers: {
     // Integrations actions
     integrationsRequested: (state) => {
-      state.integrations.loading = true;
-      state.integrations.error = null;
+      state.integrations.status = 'loading';
+      state.integrations.error = undefined;
     },
     integrationsLoaded: (state, action: PayloadAction<IntegrationsData>) => {
       state.integrations.data = action.payload;
-      state.integrations.loading = false;
+      state.integrations.status = 'succeeded';
+      state.integrations.error = undefined;
     },
-    integrationsFailed: (state, action: PayloadAction<string>) => {
+    integrationsFailed: (state, action: PayloadAction<NormalizedError>) => {
+      state.integrations.status = 'failed';
       state.integrations.error = action.payload;
-      state.integrations.loading = false;
     },
 
     // LP Portal actions
     lpPortalRequested: (state) => {
-      state.lpPortal.loading = true;
-      state.lpPortal.error = null;
+      state.lpPortal.status = 'loading';
+      state.lpPortal.error = undefined;
     },
     lpPortalLoaded: (state, action: PayloadAction<LPPortalData>) => {
       state.lpPortal.data = action.payload;
-      state.lpPortal.loading = false;
+      state.lpPortal.status = 'succeeded';
+      state.lpPortal.error = undefined;
     },
-    lpPortalFailed: (state, action: PayloadAction<string>) => {
+    lpPortalFailed: (state, action: PayloadAction<NormalizedError>) => {
+      state.lpPortal.status = 'failed';
       state.lpPortal.error = action.payload;
-      state.lpPortal.loading = false;
     },
 
     // Audit Trail actions
     auditTrailRequested: (state) => {
-      state.auditTrail.loading = true;
-      state.auditTrail.error = null;
+      state.auditTrail.status = 'loading';
+      state.auditTrail.error = undefined;
     },
     auditTrailLoaded: (state, action: PayloadAction<AuditTrailData>) => {
       state.auditTrail.data = action.payload;
-      state.auditTrail.loading = false;
+      state.auditTrail.status = 'succeeded';
+      state.auditTrail.error = undefined;
     },
-    auditTrailFailed: (state, action: PayloadAction<string>) => {
+    auditTrailFailed: (state, action: PayloadAction<NormalizedError>) => {
+      state.auditTrail.status = 'failed';
       state.auditTrail.error = action.payload;
-      state.auditTrail.loading = false;
     },
 
     // Company Search actions
     companySearchRequested: (state) => {
-      state.companySearch.loading = true;
-      state.companySearch.error = null;
+      state.companySearch.status = 'loading';
+      state.companySearch.error = undefined;
     },
     companySearchLoaded: (state, action: PayloadAction<CompanySearchData>) => {
       state.companySearch.data = action.payload;
-      state.companySearch.loading = false;
+      state.companySearch.status = 'succeeded';
+      state.companySearch.error = undefined;
     },
-    companySearchFailed: (state, action: PayloadAction<string>) => {
+    companySearchFailed: (state, action: PayloadAction<NormalizedError>) => {
+      state.companySearch.status = 'failed';
       state.companySearch.error = action.payload;
-      state.companySearch.loading = false;
     },
   },
 });
@@ -144,5 +119,49 @@ export const {
   companySearchLoaded,
   companySearchFailed,
 } = miscSlice.actions;
+
+// Selectors for integrations
+export const integrationsSelectors = {
+  selectData: (state: RootState) => state.misc.integrations.data,
+  selectStatus: (state: RootState) => state.misc.integrations.status,
+  selectError: (state: RootState) => state.misc.integrations.error,
+  selectIsLoading: (state: RootState) => state.misc.integrations.status === 'loading',
+  selectIsSucceeded: (state: RootState) => state.misc.integrations.status === 'succeeded',
+  selectIsFailed: (state: RootState) => state.misc.integrations.status === 'failed',
+  selectState: (state: RootState) => state.misc.integrations,
+};
+
+// Selectors for LP portal
+export const lpPortalSelectors = {
+  selectData: (state: RootState) => state.misc.lpPortal.data,
+  selectStatus: (state: RootState) => state.misc.lpPortal.status,
+  selectError: (state: RootState) => state.misc.lpPortal.error,
+  selectIsLoading: (state: RootState) => state.misc.lpPortal.status === 'loading',
+  selectIsSucceeded: (state: RootState) => state.misc.lpPortal.status === 'succeeded',
+  selectIsFailed: (state: RootState) => state.misc.lpPortal.status === 'failed',
+  selectState: (state: RootState) => state.misc.lpPortal,
+};
+
+// Selectors for audit trail
+export const auditTrailSelectors = {
+  selectData: (state: RootState) => state.misc.auditTrail.data,
+  selectStatus: (state: RootState) => state.misc.auditTrail.status,
+  selectError: (state: RootState) => state.misc.auditTrail.error,
+  selectIsLoading: (state: RootState) => state.misc.auditTrail.status === 'loading',
+  selectIsSucceeded: (state: RootState) => state.misc.auditTrail.status === 'succeeded',
+  selectIsFailed: (state: RootState) => state.misc.auditTrail.status === 'failed',
+  selectState: (state: RootState) => state.misc.auditTrail,
+};
+
+// Selectors for company search
+export const companySearchSelectors = {
+  selectData: (state: RootState) => state.misc.companySearch.data,
+  selectStatus: (state: RootState) => state.misc.companySearch.status,
+  selectError: (state: RootState) => state.misc.companySearch.error,
+  selectIsLoading: (state: RootState) => state.misc.companySearch.status === 'loading',
+  selectIsSucceeded: (state: RootState) => state.misc.companySearch.status === 'succeeded',
+  selectIsFailed: (state: RootState) => state.misc.companySearch.status === 'failed',
+  selectState: (state: RootState) => state.misc.companySearch,
+};
 
 export const miscReducer = miscSlice.reducer;

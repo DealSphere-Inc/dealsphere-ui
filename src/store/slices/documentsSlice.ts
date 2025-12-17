@@ -1,70 +1,83 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import type { AsyncState, NormalizedError } from '@/store/types/AsyncState';
+import { createInitialAsyncState } from '@/store/types/AsyncState';
+import { createAsyncSelectors } from '@/store/utils/createAsyncSelectors';
 import type {
   AccessLevel,
   Document,
   DocumentFolder,
 } from '@/components/documents/document-manager';
+import type { StandardQueryParams } from '@/types/serviceParams';
 
-export interface DocumentsState {
+export interface DocumentsData {
   documents: Document[];
   folders: DocumentFolder[];
-  loading: boolean;
-  error?: string;
 }
 
-const initialState: DocumentsState = {
-  documents: [],
-  folders: [],
-  loading: false,
-};
+export interface GetDocumentsParams extends Partial<StandardQueryParams> {
+  fundId?: string | null;
+  folderId?: string | null;
+  favoritesOnly?: boolean;
+}
+
+type DocumentsState = AsyncState<DocumentsData>;
+
+const initialState: DocumentsState = createInitialAsyncState<DocumentsData>();
 
 const documentsSlice = createSlice({
   name: 'documents',
   initialState,
   reducers: {
-    documentsRequested: (state) => {
-      state.loading = true;
+    documentsRequested: (state, action: PayloadAction<GetDocumentsParams>) => {
+      state.status = 'loading';
       state.error = undefined;
     },
-    documentsLoaded: (
-      state,
-      action: PayloadAction<{ documents: Document[]; folders: DocumentFolder[] }>
-    ) => {
-      state.documents = action.payload.documents;
-      state.folders = action.payload.folders;
-      state.loading = false;
+    documentsLoaded: (state, action: PayloadAction<DocumentsData>) => {
+      state.data = action.payload;
+      state.status = 'succeeded';
+      state.error = undefined;
     },
-    documentsFailed: (state, action: PayloadAction<string>) => {
-      state.loading = false;
+    documentsFailed: (state, action: PayloadAction<NormalizedError>) => {
+      state.status = 'failed';
       state.error = action.payload;
     },
+
+    // Local mutations (optimistic updates)
     documentDeleted: (state, action: PayloadAction<string>) => {
-      const id = action.payload;
-      state.documents = state.documents.filter((doc) => doc.id !== id);
+      if (state.data) {
+        const id = action.payload;
+        state.data.documents = state.data.documents.filter((doc) => doc.id !== id);
+      }
     },
     documentFavoriteToggled: (state, action: PayloadAction<string>) => {
-      const id = action.payload;
-      state.documents = state.documents.map((doc) =>
-        doc.id === id ? { ...doc, isFavorite: !doc.isFavorite } : doc
-      );
+      if (state.data) {
+        const id = action.payload;
+        state.data.documents = state.data.documents.map((doc) =>
+          doc.id === id ? { ...doc, isFavorite: !doc.isFavorite } : doc
+        );
+      }
     },
     documentMoved: (
       state,
       action: PayloadAction<{ documentId: string; newFolderId: string | null }>
     ) => {
-      const { documentId, newFolderId } = action.payload;
-      state.documents = state.documents.map((doc) =>
-        doc.id === documentId ? { ...doc, folderId: newFolderId } : doc
-      );
+      if (state.data) {
+        const { documentId, newFolderId } = action.payload;
+        state.data.documents = state.data.documents.map((doc) =>
+          doc.id === documentId ? { ...doc, folderId: newFolderId } : doc
+        );
+      }
     },
     documentAccessUpdated: (
       state,
       action: PayloadAction<{ documentId: string; accessLevel: AccessLevel }>
     ) => {
-      const { documentId, accessLevel } = action.payload;
-      state.documents = state.documents.map((doc) =>
-        doc.id === documentId ? { ...doc, accessLevel } : doc
-      );
+      if (state.data) {
+        const { documentId, accessLevel } = action.payload;
+        state.data.documents = state.data.documents.map((doc) =>
+          doc.id === documentId ? { ...doc, accessLevel } : doc
+        );
+      }
     },
   },
 });
@@ -79,5 +92,7 @@ export const {
   documentAccessUpdated,
 } = documentsSlice.actions;
 
-export const documentsReducer = documentsSlice.reducer;
+// Centralized selectors
+export const documentsSelectors = createAsyncSelectors<DocumentsData>('documents');
 
+export const documentsReducer = documentsSlice.reducer;

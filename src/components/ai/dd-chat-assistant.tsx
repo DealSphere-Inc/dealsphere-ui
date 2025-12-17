@@ -8,7 +8,7 @@ import type { Message } from '@/services/ai/ddChatService';
 import { useUIKey } from '@/store/ui';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { ddChatSendRequested } from '@/store/slices/uiEffectsSlice';
-import { ddChatConversationRequested } from '@/store/slices/aiSlice';
+import { ddChatConversationRequested, ddChatSelectors } from '@/store/slices/aiSlice';
 
 const defaultDDChatAssistantState = {
   inputValue: '',
@@ -20,16 +20,16 @@ export function DDChatAssistant({ dealId, dealName }: { dealId?: number; dealNam
   const stateKey = `dd-chat-assistant:${dealId ?? dealName ?? 'default'}`;
   const conversationKey = (dealId ?? dealName ?? 'default').toString();
 
-  // Load conversation from Redux
-  const conversation = useAppSelector((state) => state.ai.ddChat.conversations[conversationKey]);
-  const loading = useAppSelector((state) => state.ai.ddChat.loading);
+  // Load conversation from Redux using selectors
+  const conversation = useAppSelector(ddChatSelectors.selectConversation(conversationKey));
+  const loading = useAppSelector(ddChatSelectors.selectIsLoading);
 
   // Load conversation on mount if not already loaded
   useEffect(() => {
-    if (!conversation && dealId) {
-      dispatch(ddChatConversationRequested(dealId));
+    if (!conversation.length && dealId) {
+      dispatch(ddChatConversationRequested({ dealId }));
     }
-  }, [dispatch, dealId, conversation]);
+  }, [dispatch, dealId, conversation.length]);
 
   const { value: ui, patch: patchUI } = useUIKey<{ inputValue: string; isTyping: boolean }>(
     stateKey,

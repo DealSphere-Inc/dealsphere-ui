@@ -345,6 +345,7 @@ export function DeploymentPacing() {
             value={currentFund.deploymentRate}
             maxValue={100}
             className="mb-2"
+            aria-label={`Fund deployment progress ${currentFund.deploymentRate.toFixed(1)}%`}
           />
           <div className="grid grid-cols-3 gap-4 text-xs">
             <div>

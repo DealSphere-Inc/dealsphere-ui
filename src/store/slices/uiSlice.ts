@@ -1,5 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import type { RootState } from '../rootReducer';
 
+/**
+ * UI slice - Pure UI state storage (no async operations)
+ * Provides a key-value store for component UI state
+ * Used by the useUIKey hook for persistent component state
+ */
 interface UIState {
   byKey: Record<string, unknown>;
 }
@@ -36,5 +42,11 @@ const uiSlice = createSlice({
 });
 
 export const { setUIState, patchUIState, clearUIState } = uiSlice.actions;
-export const uiReducer = uiSlice.reducer;
 
+// Selectors
+export const uiSelectors = {
+  selectByKey: (state: RootState) => state.ui.byKey,
+  selectUIState: (key: string) => (state: RootState) => state.ui.byKey[key],
+};
+
+export const uiReducer = uiSlice.reducer;

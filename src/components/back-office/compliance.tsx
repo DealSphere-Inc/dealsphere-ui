@@ -7,11 +7,14 @@ import { getRouteConfig } from '@/config/routes';
 import { AMLKYCWorkflow } from '../compliance/aml-kyc-workflow';
 import { useUIKey } from '@/store/ui';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { complianceRequested } from '@/store/slices/backOfficeSlice';
+import { complianceRequested, complianceSelectors } from '@/store/slices/backOfficeSlice';
 
 export function Compliance() {
   const dispatch = useAppDispatch();
-  const { data, loading, error } = useAppSelector((state) => state.backOffice.compliance);
+  const data = useAppSelector(complianceSelectors.selectData);
+  const status = useAppSelector(complianceSelectors.selectStatus);
+  const error = useAppSelector(complianceSelectors.selectError);
+  const loading = status === 'loading';
 
   // Load compliance data on mount
   useEffect(() => {
@@ -209,7 +212,7 @@ export function Compliance() {
         {/* Overview Tab */}
         {selectedTab === 'overview' && (
           <div className="space-y-3">
-            {complianceItems
+            {[...complianceItems]
               .sort((a, b) => {
                 // Sort by priority and status
                 const priorityOrder = { high: 0, medium: 1, low: 2 };

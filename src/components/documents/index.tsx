@@ -12,14 +12,16 @@ import {
   documentFavoriteToggled,
   documentMoved,
   documentsRequested,
+  documentsSelectors,
 } from '@/store/slices/documentsSlice';
 import { useUIKey } from '@/store/ui';
 
 export function Documents() {
   const routeConfig = getRouteConfig('/documents');
   const dispatch = useAppDispatch();
-  const documents = useAppSelector((state) => state.documents.documents);
-  const folders = useAppSelector((state) => state.documents.folders);
+  const data = useAppSelector(documentsSelectors.selectData);
+  const documents = data?.documents || [];
+  const folders = data?.folders || [];
   const { value: ui, patch: patchUI } = useUIKey<{ currentFolderId: string | null }>('documents-page', {
     currentFolderId: null,
   });
@@ -27,7 +29,7 @@ export function Documents() {
   const preview = useDocumentPreview();
 
   useEffect(() => {
-    dispatch(documentsRequested());
+    dispatch(documentsRequested({}));
   }, [dispatch]);
 
   const handleUpload = (folderId?: string | null) => {

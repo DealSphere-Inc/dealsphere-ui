@@ -7,11 +7,14 @@ import { getRouteConfig } from '@/config/routes';
 import { TrendingUp, FileText, Download, Calendar, DollarSign, AlertCircle, CheckCircle, Clock, Building2, ChevronRight, Calculator , Receipt} from 'lucide-react';
 import { useUIKey } from '@/store/ui';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { valuation409aRequested } from '@/store/slices/backOfficeSlice';
+import { valuation409aRequested, valuation409aSelectors } from '@/store/slices/backOfficeSlice';
 
 export function Valuation409A() {
   const dispatch = useAppDispatch();
-  const { data, loading, error } = useAppSelector((state) => state.backOffice.valuation409a);
+  const data = useAppSelector(valuation409aSelectors.selectData);
+  const status = useAppSelector(valuation409aSelectors.selectStatus);
+  const error = useAppSelector(valuation409aSelectors.selectError);
+  const loading = status === 'loading';
 
   // Load 409A valuation data on mount
   useEffect(() => {

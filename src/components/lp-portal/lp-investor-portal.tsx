@@ -6,13 +6,16 @@ import { Tabs, Tab } from '@/ui';
 import { TrendingUp, DollarSign, Download, FileText, Calendar, Activity, BarChart3, PieChart, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import { useUIKey } from '@/store/ui';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { lpPortalRequested } from '@/store/slices/miscSlice';
+import { lpPortalRequested, lpPortalSelectors } from '@/store/slices/miscSlice';
 
 export function LPInvestorPortal() {
   const dispatch = useAppDispatch();
   const { value: ui, patch: patchUI } = useUIKey('lp-investor-portal', { selectedTab: 'overview' });
   const { selectedTab } = ui;
-  const { data, loading, error } = useAppSelector((state) => state.misc.lpPortal);
+  const data = useAppSelector(lpPortalSelectors.selectData);
+  const status = useAppSelector(lpPortalSelectors.selectStatus);
+  const error = useAppSelector(lpPortalSelectors.selectError);
+  const loading = status === 'loading';
 
   // Load LP portal data on mount
   useEffect(() => {
@@ -57,6 +60,7 @@ export function LPInvestorPortal() {
               value={(investor.calledCapital / investor.commitmentAmount) * 100}
               maxValue={100}
               className="h-2 mt-3"
+              aria-label={`Capital deployment ${((investor.calledCapital / investor.commitmentAmount) * 100).toFixed(0)}%`}
             />
             <p className="text-xs text-[var(--app-text-subtle)] mt-1">
               {((investor.calledCapital / investor.commitmentAmount) * 100).toFixed(0)}% deployed
@@ -240,7 +244,7 @@ export function LPInvestorPortal() {
                       <span className="text-sm font-medium">Early Stage (Seed/Series A)</span>
                       <span className="text-sm text-[var(--app-text-muted)]">45%</span>
                     </div>
-                    <Progress value={45} maxValue={100} className="h-2" />
+                    <Progress value={45} maxValue={100} className="h-2" aria-label="Early Stage portfolio 45%" />
                   </div>
 
                   <div>
@@ -248,7 +252,7 @@ export function LPInvestorPortal() {
                       <span className="text-sm font-medium">Growth Stage (Series B+)</span>
                       <span className="text-sm text-[var(--app-text-muted)]">35%</span>
                     </div>
-                    <Progress value={35} maxValue={100} className="h-2" />
+                    <Progress value={35} maxValue={100} className="h-2" aria-label="Growth Stage portfolio 35%" />
                   </div>
 
                   <div>
@@ -256,7 +260,7 @@ export function LPInvestorPortal() {
                       <span className="text-sm font-medium">Realized/Exits</span>
                       <span className="text-sm text-[var(--app-text-muted)]">20%</span>
                     </div>
-                    <Progress value={20} maxValue={100} className="h-2" />
+                    <Progress value={20} maxValue={100} className="h-2" aria-label="Realized Exits portfolio 20%" />
                   </div>
                 </div>
               </Card>

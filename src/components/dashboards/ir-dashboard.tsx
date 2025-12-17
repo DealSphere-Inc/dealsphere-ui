@@ -5,13 +5,16 @@ import { Mail, Calendar, Phone } from 'lucide-react';
 import { Card, Button, Badge, PageContainer } from '@/ui';
 import { MetricCard } from '@/components/metric-card';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { irDashboardRequested } from '@/store/slices/dashboardsSlice';
+import { irDashboardRequested, irDashboardSelectors } from '@/store/slices/dashboardsSlice';
 
 export function IRDashboard() {
   const dispatch = useAppDispatch();
 
   // Get IR dashboard data from Redux
-  const { data, loading, error } = useAppSelector((state) => state.dashboards.ir);
+  const data = useAppSelector(irDashboardSelectors.selectData);
+  const status = useAppSelector(irDashboardSelectors.selectStatus);
+  const error = useAppSelector(irDashboardSelectors.selectError);
+  const loading = status === 'loading';
 
   // Load IR dashboard data on mount
   useEffect(() => {

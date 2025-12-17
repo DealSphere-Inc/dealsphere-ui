@@ -5,13 +5,16 @@ import { BarChart3, TrendingUp, FileText, DollarSign, Download, Calendar, CheckC
 import { Card, Button, Badge, Progress, PageContainer } from '@/ui';
 import { MetricCard } from '@/components/metric-card';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { lpDashboardRequested } from '@/store/slices/dashboardsSlice';
+import { lpDashboardRequested, lpDashboardSelectors } from '@/store/slices/dashboardsSlice';
 
 export function LPDashboard() {
   const dispatch = useAppDispatch();
 
   // Get LP dashboard data from Redux
-  const { data, loading, error } = useAppSelector((state) => state.dashboards.lp);
+  const data = useAppSelector(lpDashboardSelectors.selectData);
+  const status = useAppSelector(lpDashboardSelectors.selectStatus);
+  const error = useAppSelector(lpDashboardSelectors.selectError);
+  const loading = status === 'loading';
 
   // Load LP dashboard data on mount
   useEffect(() => {
@@ -113,7 +116,7 @@ export function LPDashboard() {
             <span>Capital Called</span>
             <span className="font-medium">{((calledAmount / totalCommitment) * 100).toFixed(0)}%</span>
           </div>
-          <Progress value={(calledAmount / totalCommitment) * 100} maxValue={100} className="h-3" />
+          <Progress value={(calledAmount / totalCommitment) * 100} maxValue={100} className="h-3" aria-label={`Capital called ${((calledAmount / totalCommitment) * 100).toFixed(0)}%`} />
         </div>
       </Card>
 

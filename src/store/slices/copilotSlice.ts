@@ -26,6 +26,8 @@ export interface CopilotSuggestionsData {
 
 export interface GetCopilotSuggestionsParams extends Partial<StandardQueryParams> {
   pathname: string;
+  tab?: string | null; // Current active tab on the page
+  context?: Record<string, any>; // Additional context (selected items, filters, etc.)
 }
 
 interface CopilotState {

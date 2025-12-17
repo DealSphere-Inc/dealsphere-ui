@@ -11,18 +11,21 @@ import {
   getCRMInteractions,
   getCRMTimelineInteractions,
 } from '@/services/crm/contactsService';
+import { normalizeError } from '@/store/utils/normalizeError';
 
 /**
  * Worker saga: Load all CRM data
  */
-function* loadCRMDataWorker(): SagaIterator {
+function* loadCRMDataWorker(action: ReturnType<typeof crmDataRequested>): SagaIterator {
   try {
+    const params = action.payload;
+
     // Load all CRM data in parallel
     const [contacts, emailAccounts, interactions, timelineInteractions] = yield all([
-      call(getCRMContacts),
-      call(getCRMEmailAccounts),
-      call(getCRMInteractions),
-      call(getCRMTimelineInteractions),
+      call(getCRMContacts, params),
+      call(getCRMEmailAccounts, params),
+      call(getCRMInteractions, params),
+      call(getCRMTimelineInteractions, params),
     ]);
 
     yield put(crmDataLoaded({
@@ -31,9 +34,9 @@ function* loadCRMDataWorker(): SagaIterator {
       interactions,
       timelineInteractions,
     }));
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Failed to load CRM data', error);
-    yield put(crmDataFailed(error?.message || 'Failed to load CRM data'));
+    yield put(crmDataFailed(normalizeError(error)));
   }
 }
 

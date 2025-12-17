@@ -1,12 +1,32 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import type { NormalizedError } from '@/store/types/AsyncState';
 import type { User, UserRole } from '@/types/auth';
+import type { RootState } from '../rootReducer';
+
+/**
+ * Auth slice uses a hybrid approach:
+ * - UI state: hydrated, isAuthenticated, user
+ * - Async operations: login, logout, switchRole
+ *
+ * Note: This doesn't use full AsyncState<T> because auth state is primarily
+ * UI-driven (isAuthenticated, user) rather than data-fetching.
+ */
+
+export interface LoginParams {
+  email: string;
+  password: string;
+  role: UserRole;
+}
 
 interface AuthState {
+  // UI state
   hydrated: boolean;
   isAuthenticated: boolean;
   user: User | null;
+
+  // Async operation state
   loading: boolean;
-  error: string | null;
+  error: NormalizedError | null;
 }
 
 const initialState: AuthState = {
@@ -26,7 +46,7 @@ const authSlice = createSlice({
       state.isAuthenticated = action.payload.isAuthenticated;
       state.user = action.payload.user;
     },
-    loginRequested: (state, _action: PayloadAction<{ email: string; password: string; role: UserRole }>) => {
+    loginRequested: (state, _action: PayloadAction<LoginParams>) => {
       state.loading = true;
       state.error = null;
     },
@@ -36,12 +56,13 @@ const authSlice = createSlice({
       state.loading = false;
       state.error = null;
     },
-    loginFailed: (state, action: PayloadAction<string>) => {
+    loginFailed: (state, action: PayloadAction<NormalizedError>) => {
       state.loading = false;
       state.error = action.payload;
     },
     logoutRequested: (state) => {
       state.loading = true;
+      state.error = null;
     },
     loggedOut: (state) => {
       state.isAuthenticated = false;
@@ -72,5 +93,13 @@ export const {
   userUpdated,
 } = authSlice.actions;
 
-export const authReducer = authSlice.reducer;
+// Selectors
+export const authSelectors = {
+  selectHydrated: (state: RootState) => state.auth.hydrated,
+  selectIsAuthenticated: (state: RootState) => state.auth.isAuthenticated,
+  selectUser: (state: RootState) => state.auth.user,
+  selectLoading: (state: RootState) => state.auth.loading,
+  selectError: (state: RootState) => state.auth.error,
+};
 
+export const authReducer = authSlice.reducer;

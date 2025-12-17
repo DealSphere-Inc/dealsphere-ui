@@ -135,7 +135,7 @@ function* ddChatSendWorker(
   const stored = (yield select(selectUIKey<DDChatState>(key))) as DDChatState | undefined;
   const current: DDChatState =
     stored ?? {
-      messages: getInitialDDChatConversation(),
+      messages: getInitialDDChatConversation({ dealId: 0 }), // Placeholder params
       inputValue: '',
       isTyping: false,
     };

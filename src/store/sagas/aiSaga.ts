@@ -1,6 +1,5 @@
 import { call, put, takeLatest, all } from 'redux-saga/effects';
 import type { SagaIterator } from 'redux-saga';
-import type { PayloadAction } from '@reduxjs/toolkit';
 import {
   pitchDeckAnalysesRequested,
   pitchDeckAnalysesLoaded,
@@ -11,31 +10,37 @@ import {
 } from '../slices/aiSlice';
 import { getPitchDeckAnalyses } from '@/services/ai/pitchDeckService';
 import { getInitialDDChatConversation } from '@/services/ai/ddChatService';
+import { normalizeError } from '@/store/utils/normalizeError';
 
 /**
  * Worker saga: Load pitch deck analyses
  */
-function* loadPitchDeckAnalysesWorker(): SagaIterator {
+function* loadPitchDeckAnalysesWorker(
+  action: ReturnType<typeof pitchDeckAnalysesRequested>
+): SagaIterator {
   try {
-    const analyses = yield call(getPitchDeckAnalyses);
-    yield put(pitchDeckAnalysesLoaded(analyses));
-  } catch (error: any) {
+    const params = action.payload;
+    const analyses = yield call(getPitchDeckAnalyses, params);
+    yield put(pitchDeckAnalysesLoaded({ analyses }));
+  } catch (error: unknown) {
     console.error('Failed to load pitch deck analyses', error);
-    yield put(pitchDeckAnalysesFailed(error?.message || 'Failed to load pitch deck analyses'));
+    yield put(pitchDeckAnalysesFailed(normalizeError(error)));
   }
 }
 
 /**
  * Worker saga: Load DD chat conversation
  */
-function* loadDDChatConversationWorker(action: PayloadAction<number>): SagaIterator {
+function* loadDDChatConversationWorker(
+  action: ReturnType<typeof ddChatConversationRequested>
+): SagaIterator {
   try {
-    const dealId = action.payload;
-    const messages = yield call(getInitialDDChatConversation);
-    yield put(ddChatConversationLoaded({ dealId, messages }));
-  } catch (error: any) {
+    const params = action.payload;
+    const messages = yield call(getInitialDDChatConversation, params);
+    yield put(ddChatConversationLoaded({ dealId: params.dealId, messages }));
+  } catch (error: unknown) {
     console.error('Failed to load DD chat conversation', error);
-    yield put(ddChatConversationFailed(error?.message || 'Failed to load DD chat conversation'));
+    yield put(ddChatConversationFailed(normalizeError(error)));
   }
 }
 

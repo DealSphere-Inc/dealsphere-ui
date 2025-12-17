@@ -7,7 +7,7 @@ import { getRouteConfig } from '@/config/routes';
 import { CalendarIntegration, type CalendarAccount, type CalendarEvent } from './calendar-integration';
 import { useUIKey } from '@/store/ui';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { integrationsRequested } from '@/store/slices/miscSlice';
+import { integrationsRequested, integrationsSelectors } from '@/store/slices/miscSlice';
 
 interface Integration {
   id: string;
@@ -56,7 +56,10 @@ const availableIntegrations: Integration[] = [
 export function Integrations() {
   const dispatch = useAppDispatch();
   const routeConfig = getRouteConfig('/integrations');
-  const { data, loading, error } = useAppSelector((state) => state.misc.integrations);
+  const data = useAppSelector(integrationsSelectors.selectData);
+  const status = useAppSelector(integrationsSelectors.selectStatus);
+  const error = useAppSelector(integrationsSelectors.selectError);
+  const loading = status === 'loading';
 
   // Load integrations data on mount
   useEffect(() => {

@@ -62,4 +62,9 @@ export const {
   reportExportRequested,
 } = uiEffectsSlice.actions;
 
+// Selectors (no state to select, included for consistency)
+export const uiEffectsSelectors = {
+  // No state - this slice only triggers side effects
+};
+
 export const uiEffectsReducer = uiEffectsSlice.reducer;

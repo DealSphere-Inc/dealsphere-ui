@@ -5,13 +5,16 @@ import { Search, CheckCircle2, Clock } from 'lucide-react';
 import { Card, Button, Badge, PageContainer } from '@/ui';
 import { MetricCard } from '@/components/metric-card';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { analystDashboardRequested } from '@/store/slices/dashboardsSlice';
+import { analystDashboardRequested, analystDashboardSelectors } from '@/store/slices/dashboardsSlice';
 
 export function AnalystDashboard() {
   const dispatch = useAppDispatch();
 
   // Get analyst dashboard data from Redux
-  const { data, loading, error } = useAppSelector((state) => state.dashboards.analyst);
+  const data = useAppSelector(analystDashboardSelectors.selectData);
+  const status = useAppSelector(analystDashboardSelectors.selectStatus);
+  const error = useAppSelector(analystDashboardSelectors.selectError);
+  const loading = status === 'loading';
 
   // Load analyst dashboard data on mount
   useEffect(() => {

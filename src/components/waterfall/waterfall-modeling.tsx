@@ -520,6 +520,7 @@ export function WaterfallModeling() {
                           value={percentage}
                           maxValue={100}
                           className="h-2"
+                          aria-label={`${ic.name} distribution ${percentage.toFixed(1)}%`}
                           style={{ ['--progress-color' as string]: ic.color }}
                         />
                       </div>

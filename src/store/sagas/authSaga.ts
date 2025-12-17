@@ -14,6 +14,7 @@ import {
 } from '@/store/slices/authSlice';
 import { clientMounted } from '@/store/slices/uiEffectsSlice';
 import { safeLocalStorage } from '@/lib/storage/safeLocalStorage';
+import { normalizeError } from '@/store/utils/normalizeError';
 
 const STORAGE_AUTH_KEY = 'isAuthenticated';
 const STORAGE_USER_KEY = 'user';
@@ -44,9 +45,9 @@ function* loginWorker(action: ReturnType<typeof loginRequested>) {
     // Persist to localStorage
     safeLocalStorage.setItem(STORAGE_AUTH_KEY, 'true');
     safeLocalStorage.setJSON(STORAGE_USER_KEY, user);
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Login failed', error);
-    yield put(loginFailed(error?.message || 'Login failed'));
+    yield put(loginFailed(normalizeError(error)));
   }
 }
 

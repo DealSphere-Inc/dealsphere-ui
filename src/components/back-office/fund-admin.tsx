@@ -11,11 +11,14 @@ import { ExpenseTracker } from '../fund-admin/expense-tracker'
 import { NAVCalculator } from '../fund-admin/nav-calculator'
 import { TransferSecondary } from '../fund-admin/transfer-secondary'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
-import { fundAdminRequested } from '@/store/slices/backOfficeSlice'
+import { fundAdminRequested, fundAdminSelectors } from '@/store/slices/backOfficeSlice'
 
 export function FundAdmin() {
   const dispatch = useAppDispatch();
-  const { data, loading, error } = useAppSelector((state) => state.backOffice.fundAdmin);
+  const data = useAppSelector(fundAdminSelectors.selectData);
+  const status = useAppSelector(fundAdminSelectors.selectStatus);
+  const error = useAppSelector(fundAdminSelectors.selectError);
+  const loading = status === 'loading';
 
   // Load fund admin data on mount
   useEffect(() => {
@@ -325,7 +328,7 @@ export function FundAdmin() {
                             <span className="text-[var(--app-text-muted)]">Collection Progress</span>
                             <span className="font-semibold">{collectionRate.toFixed(0)}%</span>
                           </div>
-                          <Progress value={collectionRate} maxValue={100} className="h-2" />
+                          <Progress value={collectionRate} maxValue={100} className="h-2" aria-label={`Collection progress ${collectionRate.toFixed(0)}%`} />
                         </div>
 
                         <div className="flex items-center justify-between text-sm">
@@ -467,7 +470,7 @@ export function FundAdmin() {
 
                       {response.status !== 'paid' && (
                         <div className="mb-3">
-                          <Progress value={paymentProgress} maxValue={100} className="h-2" />
+                          <Progress value={paymentProgress} maxValue={100} className="h-2" aria-label={`${response.lpName} payment progress ${paymentProgress.toFixed(0)}%`} />
                         </div>
                       )}
 

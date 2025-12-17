@@ -179,7 +179,7 @@ export function ReportExport() {
                     </div>
                     {job.status === 'processing' && (
                       <div className="mt-2">
-                        <Progress value={job.progress} maxValue={100} className="h-2" />
+                        <Progress value={job.progress} maxValue={100} className="h-2" aria-label={`Export job progress ${job.progress}%`} />
                         <p className="text-xs text-[var(--app-text-subtle)] mt-1">
                           {job.progress}% complete
                         </p>

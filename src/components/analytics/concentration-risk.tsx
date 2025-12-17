@@ -76,6 +76,7 @@ function ConcentrationRow({ item, maxPercentage, isHighRisk }: ConcentrationRowP
         value={item.percentage}
         maxValue={maxPercentage}
         className="mb-1"
+        aria-label={`${item.category} concentration ${item.percentage.toFixed(1)}%`}
         style={{
           '--progress-color': getRiskColor(item.percentage)
         } as React.CSSProperties}
@@ -194,6 +195,7 @@ export function ConcentrationRisk() {
                 maxValue={data.length}
                 className="mb-1"
                 color="danger"
+                aria-label={`High risk positions: ${highRiskCount} of ${data.length}`}
               />
             </div>
             <div>
@@ -206,6 +208,7 @@ export function ConcentrationRisk() {
                 maxValue={data.length}
                 className="mb-1"
                 color="warning"
+                aria-label={`Medium risk positions: ${mediumRiskCount} of ${data.length}`}
               />
             </div>
             <div>
@@ -218,6 +221,7 @@ export function ConcentrationRisk() {
                 maxValue={data.length}
                 className="mb-1"
                 color="success"
+                aria-label={`Low risk positions: ${data.length - highRiskCount - mediumRiskCount} of ${data.length}`}
               />
             </div>
           </div>

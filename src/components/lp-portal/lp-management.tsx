@@ -506,6 +506,7 @@ export function LPManagement() {
                         value={(lp.calledCapital / lp.commitmentAmount) * 100}
                         maxValue={100}
                         className="h-2"
+                        aria-label={`${lp.name} capital deployment ${((lp.calledCapital / lp.commitmentAmount) * 100).toFixed(1)}%`}
                       />
                       <p className="text-xs text-[var(--app-text-subtle)] mt-1">
                         {((lp.calledCapital / lp.commitmentAmount) * 100).toFixed(1)}% deployed

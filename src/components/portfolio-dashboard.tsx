@@ -174,6 +174,7 @@ export function PortfolioDashboard() {
                 maxValue={200}
                 className="mb-1"
                 color="success"
+                aria-label={`Unrealized return ${unrealizedReturn.toFixed(1)}%`}
               />
               <p className="text-xs text-[var(--app-text-subtle)]">
                 {unrealizedReturn.toFixed(1)}% return on deployed capital
@@ -213,6 +214,7 @@ export function PortfolioDashboard() {
                   value={allocation.percentage}
                   maxValue={100}
                   className="mb-1"
+                  aria-label={`${allocation.sector} allocation ${allocation.percentage.toFixed(1)}%`}
                   style={{
                     backgroundColor: 'var(--app-surface-hover)',
                   }}

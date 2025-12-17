@@ -62,10 +62,12 @@ export function* fundSaga(): SagaIterator {
     });
   }
 
-  // Initial load with empty params
-  yield put(fundsRequested({}));
+  // Set up watchers first
   yield takeLatest(fundsRequested.type, loadFundsWorker);
-  yield call(hydrateFundWorker);
   yield takeLatest(setSelectedFundId.type, persistSelectedFundIdWorker);
   yield takeLatest(setViewMode.type, persistViewModeWorker);
+
+  // Then dispatch initial load and hydration
+  yield call(hydrateFundWorker);
+  yield put(fundsRequested({}));
 }

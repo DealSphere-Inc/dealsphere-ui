@@ -329,7 +329,7 @@ export function DealflowReview() {
                       <span className="text-sm font-medium">{item.category}</span>
                       <span className="text-sm text-[var(--app-text-muted)]">{item.percentage}%</span>
                     </div>
-                    <Progress value={item.percentage} maxValue={100} className="h-2" />
+                    <Progress value={item.percentage} maxValue={100} className="h-2" aria-label={`${item.category} ${item.percentage}%`} />
                   </div>
                 ))}
               </div>

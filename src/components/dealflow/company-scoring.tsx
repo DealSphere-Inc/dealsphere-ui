@@ -164,6 +164,7 @@ export function CompanyScoring({ companyId, companyName }: { companyId: number; 
               value={scoreData.weightedAverageScore * 10}
               maxValue={100}
               className="h-3"
+              aria-label={`Weighted average score ${scoreData.weightedAverageScore.toFixed(2)} out of 10`}
             />
           </div>
         </div>

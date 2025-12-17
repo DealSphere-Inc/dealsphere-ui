@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import type { RootState } from '../rootReducer';
 
 export interface NavigationBadge {
   count: number;
@@ -11,6 +12,10 @@ export interface SidebarState {
   rightCollapsed: boolean;
 }
 
+/**
+ * Navigation slice - Pure UI state (no async operations)
+ * Manages sidebar state, expanded groups, and navigation badges
+ */
 interface NavigationState {
   hydrated: boolean;
   expandedGroups: string[];
@@ -92,5 +97,14 @@ export const {
   toggleRightSidebar,
 } = navigationSlice.actions;
 
-export const navigationReducer = navigationSlice.reducer;
+// Selectors
+export const navigationSelectors = {
+  selectHydrated: (state: RootState) => state.navigation.hydrated,
+  selectExpandedGroups: (state: RootState) => state.navigation.expandedGroups,
+  selectBadges: (state: RootState) => state.navigation.badges,
+  selectSidebarState: (state: RootState) => state.navigation.sidebarState,
+  selectIsLeftCollapsed: (state: RootState) => state.navigation.sidebarState.leftCollapsed,
+  selectIsRightCollapsed: (state: RootState) => state.navigation.sidebarState.rightCollapsed,
+};
 
+export const navigationReducer = navigationSlice.reducer;

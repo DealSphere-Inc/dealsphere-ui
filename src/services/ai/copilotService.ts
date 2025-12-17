@@ -31,11 +31,10 @@ export function getCopilotContextualResponse(pathname: string, query: string): s
  */
 export function getCopilotSuggestionsAndActions(params: GetCopilotSuggestionsParams): CopilotSuggestionsData {
   if (isMockMode()) {
-    // Accept params but return static data
-    // Future: Apply filters based on params
+    // Accept params and pass pathname + tab to mock functions
     return {
-      suggestions: getMockCopilotPageSuggestions(params.pathname),
-      quickActions: getMockCopilotQuickActions(params.pathname),
+      suggestions: getMockCopilotPageSuggestions(params.pathname, params.tab),
+      quickActions: getMockCopilotQuickActions(params.pathname, params.tab),
     };
   }
 

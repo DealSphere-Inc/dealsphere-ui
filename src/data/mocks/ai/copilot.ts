@@ -56,7 +56,10 @@ export const getMockCopilotContextualResponse = (pathname: string, query: string
   return `I'm here to help with "${query}". I can analyze your data, draft documents, or provide insights. Could you provide more context about what you're looking for?`;
 };
 
-export const getMockCopilotPageSuggestions = (pathname: string): Suggestion[] => {
+export const getMockCopilotPageSuggestions = (pathname: string, tab?: string | null): Suggestion[] => {
+  // Create a composite key from pathname and tab for context-specific suggestions
+  const contextKey = tab ? `${pathname}:${tab}` : pathname;
+
   const baseSuggestions: Record<string, Suggestion[]> = {
     '/dashboard': [
       {
@@ -114,9 +117,139 @@ export const getMockCopilotPageSuggestions = (pathname: string): Suggestion[] =>
         confidence: 0.94,
       },
     ],
+    // Tab-specific suggestions for /contacts page
+    '/contacts:overview': [
+      {
+        id: 'identify-cold-contacts',
+        text: 'Identify contacts who haven\'t been reached in 60+ days',
+        reasoning: 'Found 8 high-value contacts with no recent activity',
+        confidence: 0.89,
+      },
+      {
+        id: 'draft-outreach',
+        text: 'Draft personalized outreach emails',
+        reasoning: 'Based on interaction history and deals',
+        confidence: 0.83,
+      },
+    ],
+    '/contacts:timeline': [
+      {
+        id: 'schedule-followups',
+        text: 'Schedule follow-ups for recent interactions',
+        reasoning: '5 conversations need follow-up actions',
+        confidence: 0.87,
+      },
+      {
+        id: 'analyze-engagement',
+        text: 'Analyze engagement patterns over time',
+        reasoning: 'Identify optimal outreach timing',
+        confidence: 0.80,
+      },
+    ],
+    '/contacts:email': [
+      {
+        id: 'sync-emails',
+        text: 'Sync recent email conversations',
+        reasoning: '12 new emails detected across accounts',
+        confidence: 0.91,
+      },
+      {
+        id: 'auto-categorize',
+        text: 'Auto-categorize email interactions',
+        reasoning: 'Using AI to tag meetings, intros, and updates',
+        confidence: 0.84,
+      },
+    ],
+    // Tab-specific suggestions for /lp-portal page
+    '/lp-portal:overview': [
+      {
+        id: 'investor-summary',
+        text: 'Generate investor summary report',
+        reasoning: 'Quarterly reporting period approaching',
+        confidence: 0.86,
+      },
+      {
+        id: 'performance-highlights',
+        text: 'Prepare performance highlights for LP meeting',
+        reasoning: 'Based on recent portfolio updates',
+        confidence: 0.82,
+      },
+    ],
+    '/lp-portal:reports': [
+      {
+        id: 'generate-quarterly',
+        text: 'Generate Q4 quarterly report',
+        reasoning: 'All data collected, ready to compile',
+        confidence: 0.93,
+      },
+      {
+        id: 'customize-reports',
+        text: 'Customize reports for top 5 LPs',
+        reasoning: 'Different reporting preferences detected',
+        confidence: 0.79,
+      },
+    ],
+    '/lp-portal:capital': [
+      {
+        id: 'forecast-calls',
+        text: 'Forecast next 3 capital calls',
+        reasoning: 'Based on deployment schedule',
+        confidence: 0.88,
+      },
+      {
+        id: 'track-commitments',
+        text: 'Track unfunded commitments by LP',
+        reasoning: 'Identify potential dry powder issues',
+        confidence: 0.85,
+      },
+    ],
+    '/lp-portal:performance': [
+      {
+        id: 'benchmark-performance',
+        text: 'Benchmark against industry peers',
+        reasoning: 'New Cambridge Associates data available',
+        confidence: 0.81,
+      },
+      {
+        id: 'explain-variances',
+        text: 'Explain TVPI variance vs last quarter',
+        reasoning: 'TVPI changed by 0.3x, prepare commentary',
+        confidence: 0.87,
+      },
+    ],
+    // Tab-specific for Deal Intelligence page
+    '/deal-intelligence:fund-level': [
+      {
+        id: 'deal-flow-insights',
+        text: 'Analyze deal flow trends this month',
+        reasoning: '15% increase in early-stage deals detected',
+        confidence: 0.84,
+      },
+      {
+        id: 'dd-bottlenecks',
+        text: 'Identify due diligence bottlenecks',
+        reasoning: '3 deals stalled in legal review',
+        confidence: 0.90,
+      },
+    ],
+    '/deal-intelligence:per-deal': [
+      {
+        id: 'deal-risk-analysis',
+        text: 'Run comprehensive risk analysis on this deal',
+        reasoning: 'Market conditions changed since initial review',
+        confidence: 0.82,
+      },
+      {
+        id: 'compare-similar',
+        text: 'Compare with similar deals in portfolio',
+        reasoning: 'Found 3 comparable investments',
+        confidence: 0.86,
+      },
+    ],
   };
 
-  return baseSuggestions[pathname] || [
+  // Try context-specific (pathname:tab) first, fall back to pathname only
+  return baseSuggestions[contextKey] || baseSuggestions[pathname] || [
     {
       id: 'default',
       text: 'Analyze current page data',
@@ -126,7 +259,10 @@ export const getMockCopilotPageSuggestions = (pathname: string): Suggestion[] =>
   ];
 };
 
-export const getMockCopilotQuickActions = (pathname: string): QuickAction[] => {
+export const getMockCopilotQuickActions = (pathname: string, tab?: string | null): QuickAction[] => {
+  // Create a composite key from pathname and tab for context-specific actions
+  const contextKey = tab ? `${pathname}:${tab}` : pathname;
+
   const baseActions: Record<string, QuickAction[]> = {
     '/dashboard': [
       {
@@ -154,9 +290,49 @@ export const getMockCopilotQuickActions = (pathname: string): QuickAction[] => {
       { id: 'draft-call', label: 'Draft Capital Call', icon: Sparkles, action: 'Generate capital call' },
       { id: 'track-lps', label: 'Track LPs', icon: Zap, action: 'Show LP status' },
     ],
+    // Tab-specific quick actions for /contacts page
+    '/contacts:overview': [
+      { id: 'filter-cold', label: 'Filter Cold Contacts', icon: Zap, action: 'Show inactive contacts' },
+      { id: 'export-list', label: 'Export Contact List', icon: Sparkles, action: 'Generate export' },
+    ],
+    '/contacts:timeline': [
+      { id: 'add-note', label: 'Add Interaction Note', icon: Sparkles, action: 'Log new interaction' },
+      { id: 'schedule-meeting', label: 'Schedule Follow-up', icon: Zap, action: 'Create calendar event' },
+    ],
+    '/contacts:email': [
+      { id: 'compose-email', label: 'Compose Email', icon: Sparkles, action: 'Draft new email' },
+      { id: 'sync-now', label: 'Sync Emails Now', icon: Zap, action: 'Force sync all accounts' },
+    ],
+    // Tab-specific quick actions for /lp-portal page
+    '/lp-portal:overview': [
+      { id: 'send-update', label: 'Send LP Update', icon: Sparkles, action: 'Draft investor update' },
+      { id: 'view-activity', label: 'View Recent Activity', icon: Zap, action: 'Show activity log' },
+    ],
+    '/lp-portal:reports': [
+      { id: 'generate-report', label: 'Generate Report', icon: Sparkles, action: 'Create quarterly report' },
+      { id: 'customize-template', label: 'Customize Template', icon: Zap, action: 'Edit report format' },
+    ],
+    '/lp-portal:capital': [
+      { id: 'new-call', label: 'Create Capital Call', icon: Sparkles, action: 'Draft new call' },
+      { id: 'track-responses', label: 'Track Responses', icon: Zap, action: 'Show LP responses' },
+    ],
+    '/lp-portal:performance': [
+      { id: 'export-metrics', label: 'Export Metrics', icon: Sparkles, action: 'Download performance data' },
+      { id: 'compare-benchmark', label: 'Compare to Benchmark', icon: Zap, action: 'Load peer data' },
+    ],
+    // Tab-specific for Deal Intelligence page
+    '/deal-intelligence:fund-level': [
+      { id: 'pipeline-report', label: 'Generate Pipeline Report', icon: Sparkles, action: 'Create pipeline summary' },
+      { id: 'dd-status', label: 'DD Status Overview', icon: Zap, action: 'Show all DD progress' },
+    ],
+    '/deal-intelligence:per-deal': [
+      { id: 'risk-report', label: 'Generate Risk Report', icon: Sparkles, action: 'Analyze deal risks' },
+      { id: 'share-summary', label: 'Share Deal Summary', icon: Zap, action: 'Export deal memo' },
+    ],
   };
 
-  return baseActions[pathname] || [
+  // Try context-specific (pathname:tab) first, fall back to pathname only
+  return baseActions[contextKey] || baseActions[pathname] || [
     { id: 'help', label: 'What can you do?', icon: Lightbulb, action: 'Show capabilities' },
   ];
 };

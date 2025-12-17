@@ -22,7 +22,7 @@ import {
 	import type { AuditEvent } from '@/services/blockchain/auditTrailService';
 	import { useUIKey } from '@/store/ui';
 	import { useAppDispatch, useAppSelector } from '@/store/hooks';
-	import { auditTrailRequested } from '@/store/slices/miscSlice';
+	import { auditTrailRequested, auditTrailSelectors } from '@/store/slices/miscSlice';
 
 	export function BlockchainAuditTrail() {
   const dispatch = useAppDispatch();
@@ -38,7 +38,10 @@ import {
 	  const { searchQuery, selectedEvent, filter } = ui;
 
 	  const routeConfig = getRouteConfig('/audit-trail');
-	  const { data, loading, error } = useAppSelector((state) => state.misc.auditTrail);
+	  const data = useAppSelector(auditTrailSelectors.selectData);
+	  const status = useAppSelector(auditTrailSelectors.selectStatus);
+	  const error = useAppSelector(auditTrailSelectors.selectError);
+	  const loading = status === 'loading';
 
 	  // Load audit trail data on mount
 	  useEffect(() => {

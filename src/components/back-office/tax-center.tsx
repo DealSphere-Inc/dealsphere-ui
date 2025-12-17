@@ -7,11 +7,14 @@ import { getRouteConfig } from '@/config/routes';
 import { K1Generator } from '../tax/k1-generator';
 import { useUIKey } from '@/store/ui';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { taxCenterRequested } from '@/store/slices/backOfficeSlice';
+import { taxCenterRequested, taxCenterSelectors } from '@/store/slices/backOfficeSlice';
 
 export function TaxCenter() {
   const dispatch = useAppDispatch();
-  const { data, loading, error } = useAppSelector((state) => state.backOffice.taxCenter);
+  const data = useAppSelector(taxCenterSelectors.selectData);
+  const status = useAppSelector(taxCenterSelectors.selectStatus);
+  const error = useAppSelector(taxCenterSelectors.selectError);
+  const loading = status === 'loading';
 
   // Load tax center data on mount
   useEffect(() => {
@@ -362,7 +365,7 @@ export function TaxCenter() {
                             {summary.k1sIssued} of {summary.k1sTotal} ({k1Progress.toFixed(0)}%)
                           </span>
                         </div>
-                        <Progress value={k1Progress} maxValue={100} className="h-2" />
+                        <Progress value={k1Progress} maxValue={100} className="h-2" aria-label={`Schedule K-1s progress ${k1Progress.toFixed(0)}%`} />
                       </div>
 
                       <div>
@@ -372,7 +375,7 @@ export function TaxCenter() {
                             {summary.form1099Issued} of {summary.form1099Total} ({form1099Progress.toFixed(0)}%)
                           </span>
                         </div>
-                        <Progress value={form1099Progress} maxValue={100} className="h-2" />
+                        <Progress value={form1099Progress} maxValue={100} className="h-2" aria-label={`Form 1099s progress ${form1099Progress.toFixed(0)}%`} />
                       </div>
                     </div>
                   </div>

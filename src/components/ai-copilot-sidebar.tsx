@@ -66,11 +66,36 @@ export function AICopilotSidebar() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages.length]);
 
-  // Load suggestions/actions when pathname changes
+  // Get the active tab from UI state based on current page
+  const uiState = useAppSelector((state) => state.ui.byKey);
+  const getCurrentTab = useCallback(() => {
+    // Extract tab from page-specific UI state
+    if (pathname === '/contacts') {
+      const state = uiState['crm-contacts'] as any;
+      return state?.activeTab || null;
+    }
+    if (pathname === '/lp-portal') {
+      const state = uiState['lp-investor-portal'] as any;
+      return state?.selectedTab || null;
+    }
+    if (pathname === '/lp-management') {
+      const state = uiState['lp-management'] as any;
+      return state?.selectedTab || null;
+    }
+    if (pathname === '/deal-intelligence') {
+      const state = uiState['deal-intelligence'] as any;
+      return state?.viewMode || null;
+    }
+    return null;
+  }, [pathname, uiState]);
+
+  const currentTab = getCurrentTab();
+
+  // Load suggestions/actions when pathname or tab changes
   useEffect(() => {
-    dispatch(copilotSuggestionsRequested({ pathname }));
+    dispatch(copilotSuggestionsRequested({ pathname, tab: currentTab }));
     dispatch(setShowSuggestions(true));
-  }, [dispatch, pathname]);
+  }, [dispatch, pathname, currentTab]);
 
   const handleSendMessage = useCallback(() => {
     dispatch(sendMessageRequested({ pathname, content: inputValue }));

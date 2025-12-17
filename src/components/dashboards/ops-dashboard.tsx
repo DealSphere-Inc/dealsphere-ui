@@ -5,13 +5,16 @@ import { DollarSign, AlertTriangle, Calendar, Download } from 'lucide-react';
 import { Card, Button, Badge, PageContainer } from '@/ui';
 import { MetricCard } from '@/components/metric-card';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { opsDashboardRequested } from '@/store/slices/dashboardsSlice';
+import { opsDashboardRequested, opsDashboardSelectors } from '@/store/slices/dashboardsSlice';
 
 export function OpsDashboard() {
   const dispatch = useAppDispatch();
 
   // Get ops dashboard data from Redux
-  const { data, loading, error } = useAppSelector((state) => state.dashboards.ops);
+  const data = useAppSelector(opsDashboardSelectors.selectData);
+  const status = useAppSelector(opsDashboardSelectors.selectStatus);
+  const error = useAppSelector(opsDashboardSelectors.selectError);
+  const loading = status === 'loading';
 
   // Load ops dashboard data on mount
   useEffect(() => {

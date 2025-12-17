@@ -8,7 +8,7 @@ import type { PitchDeckAnalysis } from '@/services/ai/pitchDeckService';
 import { useUIKey } from '@/store/ui';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { pitchDeckUploadRequested } from '@/store/slices/uiEffectsSlice';
-import { pitchDeckAnalysesRequested } from '@/store/slices/aiSlice';
+import { pitchDeckAnalysesRequested, pitchDeckSelectors } from '@/store/slices/aiSlice';
 
 const defaultPitchDeckReaderState = {
   selectedAnalysisId: null as string | null,
@@ -17,11 +17,14 @@ const defaultPitchDeckReaderState = {
 
 export function PitchDeckReader() {
   const dispatch = useAppDispatch();
-  const { analyses, loading, error } = useAppSelector((state) => state.ai.pitchDeck);
+  const data = useAppSelector(pitchDeckSelectors.selectData);
+  const status = useAppSelector(pitchDeckSelectors.selectStatus);
+
+  const analyses = data?.analyses || [];
 
   // Load pitch deck analyses on mount
   useEffect(() => {
-    dispatch(pitchDeckAnalysesRequested());
+    dispatch(pitchDeckAnalysesRequested({}));
   }, [dispatch]);
   const { value: ui, patch: patchUI } = useUIKey<{ selectedAnalysisId: string | null; isUploading: boolean }>(
     'pitch-deck-reader',
@@ -301,7 +304,7 @@ export function PitchDeckReader() {
             <Clock className="w-5 h-5 text-[var(--app-primary)] animate-spin" />
             <span className="font-medium">Analyzing pitch deck...</span>
           </div>
-          <Progress value={45} maxValue={100} className="mb-2" />
+          <Progress value={45} maxValue={100} className="mb-2" aria-label="Analyzing pitch deck 45%" />
           <p className="text-xs text-[var(--app-text-muted)]">
             Extracting slides, identifying key metrics, and generating insights
           </p>

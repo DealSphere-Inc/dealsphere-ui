@@ -12,7 +12,7 @@ import { InteractionTimeline, type TimelineInteraction } from '@/components/crm/
 import { NetworkGraph } from './network-graph';
 import { useUIKey } from '@/store/ui';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { crmDataRequested } from '@/store/slices/crmSlice';
+import { crmDataRequested, crmSelectors } from '@/store/slices/crmSlice';
 import type { Contact, Interaction } from '@/services/crm/contactsService';
 
 interface ContactsUIState {
@@ -31,42 +31,43 @@ interface ContactsUIState {
 export function Contacts() {
   const dispatch = useAppDispatch();
   const routeConfig = getRouteConfig('/contacts');
-  const { data, loading, error } = useAppSelector((state) => state.crm);
+  const data = useAppSelector(crmSelectors.selectData);
+  const status = useAppSelector(crmSelectors.selectStatus);
 
   // Load CRM data on mount
   useEffect(() => {
-    dispatch(crmDataRequested());
+    dispatch(crmDataRequested({}));
   }, [dispatch]);
 
   const mockContacts = data?.contacts || [];
   const mockEmailAccounts = data?.emailAccounts || [];
   const mockInteractions = data?.interactions || [];
   const mockTimelineInteractions = data?.timelineInteractions || [];
-  const { value: ui, patch: patchUI } = useUIKey<ContactsUIState>('crm-contacts', {
-    contacts: mockContacts,
+  const { value: ui, patch: patchUI } = useUIKey<Omit<ContactsUIState, 'contacts' | 'emailAccounts'>>('crm-contacts', {
     selectedContact: null,
     searchQuery: '',
     filterRole: 'all',
     isDrawerOpen: false,
     smartLists: [],
     activeSmartList: null,
-    emailAccounts: mockEmailAccounts,
     activeTab: 'overview',
     showNetworkGraph: false,
   });
 
   const {
-    contacts,
     selectedContact,
     searchQuery,
     filterRole,
     isDrawerOpen,
     smartLists,
     activeSmartList,
-    emailAccounts,
     activeTab,
     showNetworkGraph,
   } = ui;
+
+  // Use contacts directly from Redux, not from UI state
+  const contacts = mockContacts;
+  const emailAccounts = mockEmailAccounts;
 
   // Helper to get relationship metrics for a contact
   const getRelationshipMetrics = (contact: Contact): RelationshipMetrics => {
@@ -149,11 +150,9 @@ export function Contacts() {
   };
 
   const toggleStar = (contactId: string) => {
-    patchUI({
-      contacts: contacts.map((contact) =>
-        contact.id === contactId ? { ...contact, starred: !contact.starred } : contact
-      ),
-    });
+    // TODO: Dispatch action to update contact star status
+    // For now, this is read-only from Redux state
+    console.log('Toggle star for contact:', contactId);
   };
 
   const getRoleBadgeColor = (role: string) => {
@@ -314,7 +313,7 @@ export function Contacts() {
                   <div className="flex items-start justify-between mb-2">
                     <div className="flex items-center gap-2">
                       <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[var(--app-primary)] to-[var(--app-accent)] flex items-center justify-center text-white font-semibold">
-                        {contact.name.split(' ').map(n => n[0]).join('')}
+                        {contact.name.split(' ').map((n: string) => n[0]).join('')}
                       </div>
                       <div>
                         <p className="font-medium flex items-center gap-1">
@@ -596,11 +595,9 @@ export function Contacts() {
                   onDisconnect={(id) => console.log('Disconnect:', id)}
                   onSync={(id) => console.log('Sync:', id)}
                   onToggleAutoCapture={(id, enabled) => {
-                    patchUI({
-                      emailAccounts: emailAccounts.map((account) =>
-                        account.id === id ? { ...account, autoCapture: enabled } : account
-                      ),
-                    });
+                    // TODO: Dispatch action to update email account auto-capture
+                    // For now, this is read-only from Redux state
+                    console.log('Toggle auto-capture for account:', id, enabled);
                   }}
                 />
               )}

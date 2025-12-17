@@ -278,6 +278,7 @@ export function DealIntelligence() {
                   <Progress
                     value={fundAnalytics.ddProgress.avgCompletion}
                     size="sm"
+                    aria-label={`Average DD completion ${fundAnalytics.ddProgress.avgCompletion}%`}
                     classNames={{
                       base: "h-2",
                       track: "bg-[var(--app-surface-hover)]",
@@ -404,6 +405,7 @@ export function DealIntelligence() {
                   <Progress
                     value={deal.progress}
                     size="sm"
+                    aria-label={`${deal.name} DD progress ${deal.progress}%`}
                     classNames={{
                       base: "h-2",
                       track: "bg-[var(--app-surface-hover)]",
@@ -475,6 +477,7 @@ export function DealIntelligence() {
           <Progress
             value={selectedDeal.progress}
             size="md"
+            aria-label={`${selectedDeal.name} overall DD progress ${selectedDeal.progress}%`}
             classNames={{
               base: "h-3",
               track: "bg-[var(--app-surface-hover)]",
@@ -512,6 +515,7 @@ export function DealIntelligence() {
                         <Progress
                           value={percentage}
                           size="sm"
+                          aria-label={`${cat.category} category ${percentage.toFixed(0)}% complete`}
                           classNames={{
                             base: "h-2",
                             track: "bg-[var(--app-surface-hover)]",

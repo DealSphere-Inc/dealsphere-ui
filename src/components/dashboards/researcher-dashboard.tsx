@@ -5,13 +5,16 @@ import { TrendingUp, FileText, Search, Download } from 'lucide-react';
 import { Card, Button, Badge, PageContainer } from '@/ui';
 import { MetricCard } from '@/components/metric-card';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { researcherDashboardRequested } from '@/store/slices/dashboardsSlice';
+import { researcherDashboardRequested, researcherDashboardSelectors } from '@/store/slices/dashboardsSlice';
 
 export function ResearcherDashboard() {
   const dispatch = useAppDispatch();
 
   // Get researcher dashboard data from Redux
-  const { data, loading, error } = useAppSelector((state) => state.dashboards.researcher);
+  const data = useAppSelector(researcherDashboardSelectors.selectData);
+  const status = useAppSelector(researcherDashboardSelectors.selectStatus);
+  const error = useAppSelector(researcherDashboardSelectors.selectError);
+  const loading = status === 'loading';
 
   // Load researcher dashboard data on mount
   useEffect(() => {

@@ -148,6 +148,7 @@ export function FundPerformanceOverview() {
               value={currentFund.deploymentRate}
               maxValue={100}
               className="mb-1"
+              aria-label={`Deployment progress ${currentFund.deploymentRate.toFixed(1)}%`}
             />
             <div className="flex items-center justify-between text-xs text-[var(--app-text-subtle)]">
               <span>{currentFund.numberOfInvestments} investments</span>
@@ -235,6 +236,7 @@ export function FundPerformanceOverview() {
               maxValue={currentFund.tvpi}
               className="mb-1"
               color="success"
+              aria-label={`Realized value DPI ${currentFund.dpi.toFixed(2)}x of ${currentFund.tvpi.toFixed(2)}x TVPI`}
             />
             <p className="text-xs text-[var(--app-text-subtle)]">
               {((currentFund.dpi / currentFund.tvpi) * 100).toFixed(1)}% of total value
@@ -253,6 +255,7 @@ export function FundPerformanceOverview() {
               value={currentFund.rvpi}
               maxValue={currentFund.tvpi}
               className="mb-1"
+              aria-label={`Unrealized value RVPI ${currentFund.rvpi.toFixed(2)}x of ${currentFund.tvpi.toFixed(2)}x TVPI`}
             />
             <p className="text-xs text-[var(--app-text-subtle)]">
               {((currentFund.rvpi / currentFund.tvpi) * 100).toFixed(1)}% of total value

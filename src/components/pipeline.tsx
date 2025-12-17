@@ -200,6 +200,7 @@ export function Pipeline() {
                         size="sm"
                         color="primary"
                         className="w-16"
+                        aria-label={`${deal.name} probability ${deal.probability}%`}
                       />
                       <span className="text-sm text-[var(--app-text-muted)] w-8">{deal.probability}%</span>
                     </div>

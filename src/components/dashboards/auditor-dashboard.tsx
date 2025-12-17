@@ -5,13 +5,16 @@ import { Shield, CheckCircle2, Search, Download } from 'lucide-react';
 import { Card, Button, Badge, PageContainer } from '@/ui';
 import { MetricCard } from '@/components/metric-card';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { auditorDashboardRequested } from '@/store/slices/dashboardsSlice';
+import { auditorDashboardRequested, auditorDashboardSelectors } from '@/store/slices/dashboardsSlice';
 
 export function AuditorDashboard() {
   const dispatch = useAppDispatch();
 
   // Get auditor dashboard data from Redux
-  const { data, loading, error } = useAppSelector((state) => state.dashboards.auditor);
+  const data = useAppSelector(auditorDashboardSelectors.selectData);
+  const status = useAppSelector(auditorDashboardSelectors.selectStatus);
+  const error = useAppSelector(auditorDashboardSelectors.selectError);
+  const loading = status === 'loading';
 
   // Load auditor dashboard data on mount
   useEffect(() => {

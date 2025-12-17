@@ -22,11 +22,14 @@ import {
 } from 'lucide-react';
 import { useUIKey } from '@/store/ui';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { companySearchRequested } from '@/store/slices/miscSlice';
+import { companySearchRequested, companySearchSelectors } from '@/store/slices/miscSlice';
 
 export function CompanySearch() {
   const dispatch = useAppDispatch();
-  const { data, loading, error } = useAppSelector((state) => state.misc.companySearch);
+  const data = useAppSelector(companySearchSelectors.selectData);
+  const status = useAppSelector(companySearchSelectors.selectStatus);
+  const error = useAppSelector(companySearchSelectors.selectError);
+  const loading = status === 'loading';
 
   // Load company search data on mount
   useEffect(() => {
