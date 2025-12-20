@@ -38,7 +38,7 @@ export { Breadcrumb } from './Breadcrumb';
 export type { BreadcrumbProps, BreadcrumbItem, AISuggestion } from './Breadcrumb';
 
 export { PageHeader } from './PageHeader';
-export type { PageHeaderProps, PageHeaderTab } from './PageHeader';
+export type { PageHeaderProps, PageHeaderTab, PageHeaderBadge } from './PageHeader';
 
 export { WorkflowStepper } from './WorkflowStepper';
 export type { WorkflowStepperProps, WorkflowStep } from './WorkflowStepper';

@@ -99,7 +99,7 @@ export function PortfolioDashboard() {
   const unrealizedReturn = ((totalUnrealizedValue / portfolioSummary.totalInvested) * 100);
 
   return (
-    <PageContainer>
+    <div>
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 sm:mb-8 gap-4">
         <div>
@@ -360,6 +360,6 @@ export function PortfolioDashboard() {
           showColumnToggle={true}
         />
       </div>
-    </PageContainer>
+    </div>
   );
 }

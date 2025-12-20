@@ -25,7 +25,7 @@ const initialState: FundState = {
   ...createInitialAsyncState<FundsData>(),
   hydrated: false,
   selectedFundId: null,
-  viewMode: 'individual',
+  viewMode: 'consolidated',
 };
 
 const fundSlice = createSlice({
@@ -41,8 +41,12 @@ const fundSlice = createSlice({
       state.status = 'succeeded';
       state.error = undefined;
 
-      // Auto-select first fund if none selected
-      if (state.selectedFundId === null && action.payload.funds.length > 0) {
+      // Auto-select first fund only when viewing individual mode
+      if (
+        state.selectedFundId === null
+        && state.viewMode === 'individual'
+        && action.payload.funds.length > 0
+      ) {
         state.selectedFundId = action.payload.funds[0]!.id;
       }
     },

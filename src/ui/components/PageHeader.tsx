@@ -4,12 +4,22 @@ import { ReactNode } from 'react';
 import { Sparkles } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { Button, Badge, Tabs, Tab } from './';
+import type { BadgeProps } from './';
 
 export interface PageHeaderTab {
   id: string;
   label: string;
   count?: number;
   priority?: 'high' | 'medium' | 'low';
+}
+
+export interface PageHeaderBadge {
+  id?: string;
+  label: ReactNode;
+  variant?: BadgeProps['variant'];
+  color?: BadgeProps['color'];
+  size?: BadgeProps['size'];
+  className?: string;
 }
 
 export interface PageHeaderProps {
@@ -34,6 +44,8 @@ export interface PageHeaderProps {
   tabs?: PageHeaderTab[];
   activeTab?: string;
   onTabChange?: (tabId: string) => void;
+  badges?: PageHeaderBadge[];
+  badgeContainerClassName?: string;
   children?: ReactNode;
 }
 
@@ -48,6 +60,8 @@ export function PageHeader({
   tabs,
   activeTab,
   onTabChange,
+  badges,
+  badgeContainerClassName,
   children,
 }: PageHeaderProps) {
   const getTabPriorityColor = (priority?: 'high' | 'medium' | 'low') => {
@@ -165,7 +179,29 @@ export function PageHeader({
         )}
       </div>
 
-      {/* Tabs */}
+      {badges && badges.length > 0 && (
+        <div
+          className={[
+            'flex flex-wrap items-center gap-3 mt-4',
+            badgeContainerClassName,
+          ]
+            .filter(Boolean)
+            .join(' ')}
+        >
+          {badges.map((badge, index) => (
+            <Badge
+              key={badge.id ?? index}
+              variant={badge.variant}
+              color={badge.color}
+              size={badge.size}
+              className={badge.className}
+            >
+              {badge.label}
+            </Badge>
+          ))}
+        </div>
+      )}
+
       {/* Tabs */}
       {tabs && tabs.length > 0 && (
         <div className="w-full">
