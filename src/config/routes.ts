@@ -20,6 +20,7 @@ import {
   Plug,
   Settings,
   Receipt,
+  Bell,
 } from 'lucide-react';
 import type { BreadcrumbItem, AISuggestion } from '@/ui';
 
@@ -245,6 +246,24 @@ export const routes: Record<string, RouteConfig> = {
       confidence: 0.76,
     },
     description: 'Founders, LPs, and network contacts',
+  },
+
+  notifications: {
+    path: '/notifications',
+    label: 'Notifications',
+    icon: Bell,
+    breadcrumbs: [
+      { label: 'Home', href: '/dashboard' },
+      { label: 'Utilities', href: '/dashboard' },
+      { label: 'Notifications' },
+    ],
+    aiSuggestion: {
+      label: 'Dashboard',
+      href: '/dashboard',
+      reasoning: 'After reviewing notifications, return to the dashboard to prioritize today’s work.',
+      confidence: 0.78,
+    },
+    description: 'Alerts, reminders, and system updates',
   },
 
   reports: {
