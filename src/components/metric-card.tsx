@@ -1,6 +1,6 @@
 'use client'
 
-import type { ReactNode } from 'react';
+import { isValidElement, type ReactNode } from 'react';
 import { TrendingUp, TrendingDown } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { Card, Badge } from '@/ui';
@@ -70,7 +70,9 @@ export function MetricCard({
   const containerClassName = iconContainerClassName ?? 'p-2 bg-[var(--app-primary-bg)] rounded-lg';
   const resolvedIconClassName = iconClassName ?? 'w-5 h-5 text-[var(--app-primary)]';
 
-  const iconContent = typeof icon === 'function'
+  const iconContent = isValidElement(icon)
+    ? icon
+    : (typeof icon === 'function' || (typeof icon === 'object' && icon !== null && '$$typeof' in icon))
     ? (() => {
         const Icon = icon as LucideIcon;
         return <Icon className={resolvedIconClassName} />;
