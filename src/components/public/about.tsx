@@ -4,7 +4,6 @@ import { Card, Button } from '@/ui';
 import {
   Target,
   Users,
-  Award,
   TrendingUp,
   Shield,
   Sparkles,
@@ -113,7 +112,7 @@ export default function AboutPage() {
             Building the <span className="text-[var(--app-primary)]">Operating System</span> for Modern Venture Capital
           </h1>
           <p className="text-xl text-[var(--app-text-muted)] max-w-3xl mx-auto mb-10">
-            We're on a mission to transform how venture capital firms, PE funds, and crypto funds operate—replacing
+            We&apos;re on a mission to transform how venture capital firms, PE funds, and crypto funds operate—replacing
             spreadsheets, siloed tools, and manual processes with an intelligent, unified platform.
           </p>
         </div>
@@ -133,7 +132,7 @@ export default function AboutPage() {
               </h2>
               <p className="text-lg text-[var(--app-text-muted)] mb-6">
                 Traditional fund operations rely on disconnected tools, manual data entry, and outdated workflows.
-                We believe there's a better way.
+                We believe there&apos;s a better way.
               </p>
               <p className="text-lg text-[var(--app-text-muted)]">
                 VestLedger combines blockchain-based trust infrastructure, intelligent automation, and AI-powered
@@ -224,7 +223,7 @@ export default function AboutPage() {
             </div>
             <h2 className="text-3xl font-bold mb-4">Meet the Team</h2>
             <p className="text-lg text-[var(--app-text-muted)] max-w-2xl mx-auto">
-              We're a team of builders, operators, and technologists with deep expertise in venture capital,
+              We&apos;re a team of builders, operators, and technologists with deep expertise in venture capital,
               blockchain, and enterprise software.
             </p>
           </div>
@@ -259,8 +258,8 @@ export default function AboutPage() {
         <div className="max-w-3xl mx-auto">
           <h2 className="text-3xl font-bold mb-4">Join Us on This Journey</h2>
           <p className="text-lg text-[var(--app-text-muted)] mb-8">
-            We're building the future of venture capital operations. Whether you're a fund manager looking to transform
-            your operations or a talented individual wanting to join our mission, we'd love to hear from you.
+            We&apos;re building the future of venture capital operations. Whether you&apos;re a fund manager looking to transform
+            your operations or a talented individual wanting to join our mission, we&apos;d love to hear from you.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button as={Link} href="/eoi" color="primary" size="lg" endContent={<ArrowRight className="w-4 h-4" />}>

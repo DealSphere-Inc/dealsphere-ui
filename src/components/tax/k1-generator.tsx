@@ -1,7 +1,7 @@
 'use client';
 
 import { Card, Button, Badge, Input } from '@/ui';
-import { FileText, Download, Settings, Calendar, CheckCircle, AlertCircle, RefreshCw, Send, Eye } from 'lucide-react';
+import { FileText, Download, Settings, CheckCircle, AlertCircle, RefreshCw, Send, Eye } from 'lucide-react';
 import { useUIKey } from '@/store/ui';
 import { formatCurrency as formatCurrencyBase } from '@/utils/formatting';
 

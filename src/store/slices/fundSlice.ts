@@ -10,9 +10,7 @@ export interface FundsData {
   funds: Fund[];
 }
 
-export interface GetFundsParams extends Partial<StandardQueryParams> {
-  // Add filters as needed (e.g., status, type)
-}
+export type GetFundsParams = Partial<StandardQueryParams>;
 
 interface FundState extends AsyncState<FundsData> {
   // UI state (not part of async data)
@@ -32,7 +30,7 @@ const fundSlice = createSlice({
   name: 'fund',
   initialState,
   reducers: {
-    fundsRequested: (state, action: PayloadAction<GetFundsParams>) => {
+    fundsRequested: (state, _action: PayloadAction<GetFundsParams>) => {
       state.status = 'loading';
       state.error = undefined;
     },

@@ -2,7 +2,7 @@
 
 import { useUIKey } from '@/store/ui';
 import { Card, Button, Badge, Input } from '@/ui';
-import { DollarSign, Plus, Calendar, TrendingUp, TrendingDown, PieChart, Filter, Download } from 'lucide-react';
+import { DollarSign, Plus, PieChart, Filter, Download } from 'lucide-react';
 import { formatCurrency } from '@/utils/formatting';
 
 export type ExpenseType =

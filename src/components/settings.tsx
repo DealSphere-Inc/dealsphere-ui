@@ -9,7 +9,6 @@ import {
   Shield,
   Palette,
   Globe,
-  Key,
   CreditCard,
   Users,
   Mail,

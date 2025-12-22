@@ -1,15 +1,13 @@
 'use client'
 
-import { useEffect } from 'react';
 import { Breadcrumb, PageHeader, PageContainer } from '@/ui';
-import { Briefcase, LayoutGrid, FileText, MessageSquare } from 'lucide-react';
+import { Briefcase } from 'lucide-react';
 import { PortfolioDashboard } from './portfolio-dashboard';
 import { PortfolioDocuments } from './portfolio-documents';
 import { PortfolioUpdates } from './portfolio-updates';
 import { FundSelector } from './fund-selector';
 import { getRouteConfig } from '@/config/routes';
 import { useUIKey } from '@/store/ui';
-import { useAppDispatch, useAppSelector } from '@/store/hooks';
 
 export function Portfolio() {
   const { value: ui, patch: patchUI } = useUIKey('portfolio', { selected: 'overview' });

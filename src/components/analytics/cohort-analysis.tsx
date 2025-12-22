@@ -1,7 +1,7 @@
 'use client'
 
 import { Card, Button, Badge } from '@/ui';
-import { Layers, TrendingUp, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { Layers, TrendingUp, ArrowUpRight } from 'lucide-react';
 import {
   getCohortsBySector,
   getCohortsByStage,

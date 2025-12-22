@@ -22,7 +22,7 @@ export function Documents() {
   const { data } = useAsyncData(documentsRequested, documentsSelectors.selectState, { params: {} });
   const documents = data?.documents || [];
   const folders = data?.folders || [];
-  const { value: ui, patch: patchUI } = useUIKey<{ currentFolderId: string | null }>('documents-page', {
+  const { value: ui } = useUIKey<{ currentFolderId: string | null }>('documents-page', {
     currentFolderId: null,
   });
   const { currentFolderId } = ui;

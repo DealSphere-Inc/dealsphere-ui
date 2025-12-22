@@ -1,6 +1,6 @@
 'use client';
 
-import { BarChart3, TrendingUp, FileText, DollarSign, Download, Calendar, CheckCircle2, AlertCircle, Clock, CreditCard, Pen, Shield, ChevronRight, Wallet } from 'lucide-react';
+import { FileText, DollarSign, Download, Calendar, CheckCircle2, AlertCircle, Clock, CreditCard, Pen, Shield, ChevronRight, Wallet } from 'lucide-react';
 import { Card, Button, Badge, Progress, PageContainer } from '@/ui';
 import { MetricCard } from '@/components/metric-card';
 import { lpDashboardRequested, lpDashboardSelectors } from '@/store/slices/dashboardsSlice';
@@ -275,7 +275,7 @@ export function LPDashboard() {
           <div className="flex-1">
             <h3 className="font-medium">Blockchain-Verified Records</h3>
             <p className="text-sm text-[var(--app-text-muted)]">
-              All your capital activity and ownership records are cryptographically secured on VestLedger's private blockchain.
+              All your capital activity and ownership records are cryptographically secured on VestLedger&apos;s private blockchain.
             </p>
           </div>
           <Button variant="bordered" endContent={<ChevronRight className="w-4 h-4" />}>

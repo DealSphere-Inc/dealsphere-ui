@@ -1,10 +1,8 @@
 'use client'
 
 import { useEffect } from 'react';
-import { useTheme } from 'next-themes';
 import { motion } from 'framer-motion';
-import { Switch } from '@/ui';
-import { LayoutDashboard, GitBranch, Briefcase, Search, Vote, TrendingUp, Users, UserCheck, DollarSign, Shield, Scale, Receipt, FileDown, Sparkles, Activity, BarChart3, Sun, Moon, Settings, FileText, Plug } from 'lucide-react';
+import { LayoutDashboard, GitBranch, Briefcase, Search, Vote, TrendingUp, Users, UserCheck, DollarSign, Shield, Scale, Receipt, FileDown, Sparkles, Activity, BarChart3, Settings, FileText, Plug } from 'lucide-react';
 import { NavigationGroup } from './navigation-group';
 import { NavigationItem } from './navigation-item';
 import { SidebarToggleButton } from './sidebar-toggle-button';
@@ -89,7 +87,6 @@ const navigationStructure = {
 export function SidebarGrouped() {
   const { updateBadge, sidebarState, toggleLeftSidebar } = useNavigation();
   const aiBadges = useAIBadges();
-  const { theme, setTheme } = useTheme();
   const { user } = useAuth();
   const isCollapsed = sidebarState.leftCollapsed;
   const { value: sidebarUI, patch: patchSidebarUI } = useUIKey('sidebar-grouped', {

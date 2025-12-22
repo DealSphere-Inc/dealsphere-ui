@@ -1,10 +1,9 @@
 'use client'
 
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useMemo } from 'react';
 import { Card, Button, Input, Badge } from '@/ui';
 import { Send, Sparkles, User, Bot, Lightbulb, TrendingUp, AlertCircle, FileText } from 'lucide-react';
 import { DocumentPreviewModal, useDocumentPreview, getMockDocumentUrl } from '@/components/documents/preview';
-import type { Message } from '@/services/ai/ddChatService';
 import { useUIKey } from '@/store/ui';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { ddChatSendRequested } from '@/store/slices/uiEffectsSlice';
@@ -22,7 +21,6 @@ export function DDChatAssistant({ dealId, dealName }: { dealId?: number; dealNam
 
   // Load conversation from Redux using selectors
   const conversation = useAppSelector(ddChatSelectors.selectConversation(conversationKey));
-  const loading = useAppSelector(ddChatSelectors.selectIsLoading);
 
   // Load conversation on mount if not already loaded
   useEffect(() => {
@@ -36,7 +34,7 @@ export function DDChatAssistant({ dealId, dealName }: { dealId?: number; dealNam
     defaultDDChatAssistantState
   );
   const { inputValue, isTyping } = ui;
-  const messages = conversation || [];
+  const messages = useMemo(() => conversation ?? [], [conversation]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const preview = useDocumentPreview();
 

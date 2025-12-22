@@ -17,7 +17,6 @@ import {
   Heading,
   Text,
 } from '@/ui';
-import { Trash2, Edit, Plus } from 'lucide-react';
 import { useUIKey } from '@/store/ui';
 
 /**

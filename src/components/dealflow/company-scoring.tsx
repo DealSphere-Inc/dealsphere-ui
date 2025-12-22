@@ -1,8 +1,7 @@
 'use client'
 
-import { useEffect } from 'react';
 import { Card, Button, Badge, Progress } from '@/ui';
-import { Star, User, TrendingUp, Target, Users, Lightbulb, CheckCircle2, Edit3 } from 'lucide-react';
+import { Star, TrendingUp, Target, Users, Lightbulb, CheckCircle2, Edit3 } from 'lucide-react';
 import { useUIKey } from '@/store/ui';
 import { getCompanyScoreData } from '@/services/dealflow/companyScoringService';
 // import { useAppDispatch, useAppSelector } from '@/store/hooks';
@@ -259,7 +258,7 @@ export function CompanyScoring({ companyId, companyName }: { companyId: number; 
               {partnerScore.comments && (
                 <div className="pt-3 border-t border-[var(--app-border)]">
                   <p className="text-xs text-[var(--app-text-muted)] italic">
-                    "{partnerScore.comments}"
+                    &quot;{partnerScore.comments}&quot;
                   </p>
                 </div>
               )}

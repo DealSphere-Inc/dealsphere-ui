@@ -1,7 +1,7 @@
 'use client';
 
 import { Card, Button, Badge, Input } from '@/ui';
-import { Mail, Phone, Video, MessageSquare, Calendar, Paperclip, Clock, Plus, Filter, ChevronDown, ExternalLink, Edit3, Trash2 } from 'lucide-react';
+import { Mail, Phone, Video, MessageSquare, Calendar, Paperclip, Clock, Plus, Filter, Edit3, Trash2 } from 'lucide-react';
 import { useUIKey } from '@/store/ui';
 
 export interface TimelineInteraction {

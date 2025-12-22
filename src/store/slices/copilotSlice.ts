@@ -1,7 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type { AsyncState, NormalizedError } from '@/store/types/AsyncState';
 import { createInitialAsyncState } from '@/store/types/AsyncState';
-import { createAsyncSelectors } from '@/store/utils/createAsyncSelectors';
 import type { QuickAction, Suggestion } from '@/services/ai/copilotService';
 import type { StandardQueryParams } from '@/types/serviceParams';
 
@@ -133,7 +132,7 @@ const copilotSlice = createSlice({
     },
 
     // Async actions for loading suggestions/quick actions
-    copilotSuggestionsRequested: (state, action: PayloadAction<GetCopilotSuggestionsParams>) => {
+    copilotSuggestionsRequested: (state, _action: PayloadAction<GetCopilotSuggestionsParams>) => {
       state.suggestionsState.status = 'loading';
       state.suggestionsState.error = undefined;
     },

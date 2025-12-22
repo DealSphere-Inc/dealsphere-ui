@@ -51,7 +51,7 @@ export default function SecurityPage() {
           Security is our <span className="text-[var(--app-success)]">Foundation</span>
         </h1>
         <p className="text-xl text-[var(--app-text-muted)] max-w-2xl mx-auto">
-          Trust is the currency of private markets. That's why VestLedger is built with security-first architecture—for VCs, PE firms, and crypto funds alike.
+          Trust is the currency of private markets. That&apos;s why VestLedger is built with security-first architecture—for VCs, PE firms, and crypto funds alike.
         </p>
       </section>
 
@@ -86,7 +86,7 @@ export default function SecurityPage() {
               </div>
               <h2 className="text-3xl font-bold mb-6">Security at the Protocol Level</h2>
               <p className="text-lg text-[var(--app-text-muted)] mb-8 leading-relaxed">
-                VestLedger's Tokenized Trust Layer provides cryptographic proof of ownership, capital flows, and compliance status. This isn't just encryption—it's an immutable, verifiable source of truth.
+                VestLedger&apos;s Tokenized Trust Layer provides cryptographic proof of ownership, capital flows, and compliance status. This isn&apos;t just encryption—it&apos;s an immutable, verifiable source of truth.
               </p>
               <ul className="space-y-3">
                 {['On-chain ownership verification', 'Immutable audit trails', 'Programmable compliance rules', 'Secondary-ready asset tokenization'].map((item, i) => (
@@ -145,7 +145,7 @@ export default function SecurityPage() {
             </div>
             <h2 className="text-3xl font-bold mb-4">Built for VCs, PE Firms &amp; Crypto Funds</h2>
             <p className="text-lg text-[var(--app-text-muted)] max-w-2xl mx-auto">
-              VestLedger's private blockchain infrastructure serves the entire private markets ecosystem—from traditional PE and VC to crypto-native funds—with DeFi-ready architecture.
+              VestLedger&apos;s private blockchain infrastructure serves the entire private markets ecosystem—from traditional PE and VC to crypto-native funds—with DeFi-ready architecture.
             </p>
           </div>
 

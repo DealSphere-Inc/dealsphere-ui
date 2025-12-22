@@ -1,13 +1,13 @@
 'use client'
 
 import { Card, Button, Badge, Progress, PageContainer, Breadcrumb, PageHeader } from '@/ui';
-import { ThumbsUp, ThumbsDown, MinusCircle, MessageSquare, Users, Building2, TrendingUp, DollarSign, Target, Lightbulb, Share2, Download, Play, Pause, SkipForward, SkipBack, Maximize2, Plus, Edit3, FileSearch , Vote} from 'lucide-react';
+import { ThumbsUp, ThumbsDown, MinusCircle, MessageSquare, Users, Building2, Target, SkipForward, SkipBack, Plus, Edit3, FileSearch } from 'lucide-react';
 import { getRouteConfig } from '@/config/routes';
 import { CompanyScoring } from './company-scoring';
 import { getDealflowReviewSlides, type DealflowReviewSlide } from '@/services/dealflow/dealflowReviewService';
 import { useUIKey } from '@/store/ui';
 import { dealflowDealsRequested, dealflowSelectors } from '@/store/slices/dealflowSlice';
-import { LoadingState, ErrorState, EmptyState } from '@/components/ui/async-states';
+import { LoadingState, ErrorState } from '@/components/ui/async-states';
 import { UI_STATE_KEYS, UI_STATE_DEFAULTS } from '@/store/constants/uiStateKeys';
 import { formatCurrencyCompact } from '@/utils/formatting';
 import { useAsyncData } from '@/hooks/useAsyncData';
@@ -18,15 +18,6 @@ interface Vote {
   vote: 'yes' | 'no' | 'maybe';
   comments?: string;
   timestamp: string;
-}
-
-interface ReviewSession {
-  id: string;
-  dealId: string;
-  scheduledDate: string;
-  status: 'scheduled' | 'in-progress' | 'completed';
-  votes: Vote[];
-  decision?: 'proceed' | 'pass' | 'defer';
 }
 
 export function DealflowReview() {
@@ -44,7 +35,7 @@ export function DealflowReview() {
   const { value: myVote, patch: patchMyVote } = useUIKey<'yes' | 'no' | 'maybe' | null>('dealflow-review-my-vote', null);
   const { value: voteComment, patch: patchVoteComment } = useUIKey<string>('dealflow-review-vote-comment', '');
 
-  const { currentSlideIndex, selectedDealId } = ui;
+  const { currentSlideIndex } = ui;
 
   // Get route config for breadcrumbs and AI suggestions
   const routeConfig = getRouteConfig('/dealflow-review');
@@ -97,7 +88,6 @@ export function DealflowReview() {
 
   // Calculate AI insights for summary
   const yesVotes = votes.filter(v => v.vote === 'yes').length;
-  const noVotes = votes.filter(v => v.vote === 'no').length;
   const maybeVotes = votes.filter(v => v.vote === 'maybe').length;
   const totalVotes = votes.length;
   const consensusPercentage = totalVotes > 0 ? Math.round((yesVotes / totalVotes) * 100) : 0;

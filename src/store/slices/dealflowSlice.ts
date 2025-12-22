@@ -3,7 +3,6 @@ import type { AsyncState, NormalizedError } from '@/store/types/AsyncState';
 import { createInitialAsyncState } from '@/store/types/AsyncState';
 import { createAsyncSelectors } from '@/store/utils/createAsyncSelectors';
 import type { Deal } from '@/services/dealflow/dealflowReviewService';
-import type { CompanyScoreData } from '@/services/dealflow/companyScoringService';
 import type { StandardQueryParams } from '@/types/serviceParams';
 
 export interface DealflowDealsData {
@@ -22,7 +21,7 @@ const dealflowSlice = createSlice({
   name: 'dealflow',
   initialState,
   reducers: {
-    dealflowDealsRequested: (state, action: PayloadAction<GetDealflowDealsParams>) => {
+    dealflowDealsRequested: (state, _action: PayloadAction<GetDealflowDealsParams>) => {
       state.status = 'loading';
       state.error = undefined;
     },

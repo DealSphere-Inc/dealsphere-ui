@@ -12,18 +12,15 @@ import {
   Unlock,
   Trash2,
   Star,
-  Clock,
   Tag,
   Search,
-  Filter,
   Grid3x3,
   List,
   ChevronRight,
   FileText,
-  Image,
+  Image as ImageIcon,
   FileSpreadsheet,
   Archive,
-  MoreVertical,
 } from 'lucide-react';
 
 export type DocumentCategory =
@@ -154,8 +151,8 @@ export function DocumentManager({
   onShareDocument,
   onDeleteDocument,
   onToggleFavorite,
-  onMoveDocument,
-  onUpdateAccess,
+  onMoveDocument: _onMoveDocument,
+  onUpdateAccess: _onUpdateAccess,
 }: DocumentManagerProps) {
   const { value: ui, patch: patchUI } = useUIKey<{
     searchQuery: string;
@@ -191,7 +188,7 @@ export function DocumentManager({
       case 'excel':
         return <FileSpreadsheet className="w-5 h-5 text-[var(--app-success)]" />;
       case 'image':
-        return <Image className="w-5 h-5 text-[var(--app-warning)]" />;
+        return <ImageIcon className="w-5 h-5 text-[var(--app-warning)]" />;
       case 'archive':
         return <Archive className="w-5 h-5 text-[var(--app-text-muted)]" />;
       default:

@@ -1,7 +1,7 @@
 'use client';
 
 import { Card, Button, Badge, Input, Progress, PageContainer, Breadcrumb, PageHeader } from '@/ui';
-import { TrendingDown, DollarSign, TrendingUp, PieChart, Plus, Trash2, Play, Download, Layers, ArrowRight, Globe, Flag, Info, Calculator } from 'lucide-react';
+import { TrendingDown, DollarSign, TrendingUp, PieChart, Trash2, Play, Layers, ArrowRight, Globe, Flag, Calculator } from 'lucide-react';
 import { getRouteConfig } from '@/config/routes';
 import { useUIKey } from '@/store/ui';
 import { formatCurrencyCompact } from '@/utils/formatting';
@@ -86,7 +86,7 @@ export function WaterfallModeling() {
     hurdleRate: 8,
     carryPercentage: 20,
   });
-  const { investorClasses, exitValue, scenarios, showAddClass, waterfallModel, hurdleRate, carryPercentage } = ui;
+  const { investorClasses, exitValue, scenarios, waterfallModel, hurdleRate, carryPercentage } = ui;
 
   const routeConfig = getRouteConfig('/waterfall');
 
@@ -212,8 +212,6 @@ export function WaterfallModeling() {
     };
     patchUI({ scenarios: [...scenarios, newScenario] });
   };
-
-  const getClassById = (id: string) => investorClasses.find(ic => ic.id === id);
 
   const getTypeLabel = (type: string) => {
     switch (type) {

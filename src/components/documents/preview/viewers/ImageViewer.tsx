@@ -1,6 +1,7 @@
 'use client';
 
 import Zoom from 'react-medium-image-zoom';
+import Image from 'next/image';
 import { Spinner } from '@/ui';
 import { ImageViewerProps } from '../types';
 import 'react-medium-image-zoom/dist/styles.css';
@@ -41,14 +42,19 @@ export function ImageViewer({ url, alt, className = '', onLoadSuccess, onLoadErr
         </div>
       ) : (
         <Zoom>
-          <img
-            src={url}
-            alt={alt}
-            onLoad={handleLoad}
-            onError={handleError}
-            className="max-w-full max-h-[calc(100vh-200px)] object-contain cursor-zoom-in"
-            style={{ display: isLoading ? 'none' : 'block' }}
-          />
+          <div className="relative max-w-full max-h-[calc(100vh-200px)] w-full h-[calc(100vh-200px)]">
+            <Image
+              src={url}
+              alt={alt}
+              fill
+              unoptimized
+              sizes="(max-width: 1024px) 100vw, 80vw"
+              onLoadingComplete={handleLoad}
+              onError={handleError}
+              className="object-contain cursor-zoom-in"
+              style={{ display: isLoading ? 'none' : 'block' }}
+            />
+          </div>
         </Zoom>
       )}
     </div>

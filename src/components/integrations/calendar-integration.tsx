@@ -15,7 +15,6 @@ import {
   RefreshCw,
   Settings,
   Download,
-  Filter,
   Search,
   Plus,
 } from 'lucide-react';
@@ -578,10 +577,7 @@ export function CalendarIntegration({
               <p>No events found</p>
             </div>
           ) : (
-            filteredEvents.map(event => {
-              const isUpcoming = new Date(event.startTime) > new Date();
-
-              return (
+            filteredEvents.map(event => (
                 <div
                   key={event.id}
                   className="p-3 rounded-lg bg-[var(--app-surface-hover)] hover:bg-[var(--app-surface)] border border-[var(--app-border)] transition-colors"
@@ -696,8 +692,7 @@ export function CalendarIntegration({
                     </div>
                   </div>
                 </div>
-              );
-            })
+            ))
           )}
         </div>
       </Card>

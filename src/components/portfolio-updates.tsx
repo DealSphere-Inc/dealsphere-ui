@@ -1,6 +1,6 @@
 'use client'
 
-import { Card, Badge, Button, Input, PageContainer } from '@/ui';
+import { Card, Badge, Button, Input } from '@/ui';
 import {
   TrendingUp,
   Package,
@@ -8,7 +8,6 @@ import {
   DollarSign,
   Trophy,
   Search,
-  Filter,
   Calendar,
 } from 'lucide-react';
 import { useUIKey } from '@/store/ui';
@@ -16,7 +15,7 @@ import {
   portfolioUpdatesRequested,
   portfolioSelectors,
 } from '@/store/slices/portfolioSlice';
-import { LoadingState, ErrorState, EmptyState } from '@/components/ui/async-states';
+import { LoadingState, ErrorState } from '@/components/ui/async-states';
 import { UI_STATE_KEYS, UI_STATE_DEFAULTS } from '@/store/constants/uiStateKeys';
 import { useAsyncData } from '@/hooks/useAsyncData';
 import { PortfolioTabHeader } from '@/components/portfolio-tab-header';

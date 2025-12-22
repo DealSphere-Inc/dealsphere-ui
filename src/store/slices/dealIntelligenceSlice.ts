@@ -24,7 +24,7 @@ export interface DealIntelligenceData {
   documents: Document[];
 }
 
-export interface GetDealIntelligenceParams extends Partial<StandardQueryParams> {}
+export type GetDealIntelligenceParams = Partial<StandardQueryParams>;
 
 type DealIntelligenceState = AsyncState<DealIntelligenceData>;
 
@@ -34,7 +34,7 @@ const dealIntelligenceSlice = createSlice({
   name: 'dealIntelligence',
   initialState,
   reducers: {
-    dealIntelligenceRequested: (state, action: PayloadAction<GetDealIntelligenceParams>) => {
+    dealIntelligenceRequested: (state, _action: PayloadAction<GetDealIntelligenceParams>) => {
       state.status = 'loading';
       state.error = undefined;
     },

@@ -11,19 +11,10 @@ import { UI_STATE_KEYS, UI_STATE_DEFAULTS } from '@/store/constants/uiStateKeys'
 import { useAsyncData } from '@/hooks/useAsyncData';
 import {
   type ActiveDeal,
-  type DocumentCategory,
   type DocumentStatus,
   type ICStatus,
   type Document,
 } from '@/services/dealIntelligence/dealIntelligenceService';
-
-interface DealIntelligenceUIState {
-  viewMode: 'fund-level' | 'per-deal';
-  selectedDeal: ActiveDeal | null;
-  searchQuery: string;
-  selectedCategory: DocumentCategory | 'all';
-  selectedDetailTab: 'overview' | 'analytics' | 'documents' | 'analysis' | 'ic-materials';
-}
 
 export function DealIntelligence() {
   const { data, isLoading, error, refetch } = useAsyncData(dealIntelligenceRequested, dealIntelligenceSelectors.selectState, { params: {} });
@@ -33,7 +24,7 @@ export function DealIntelligence() {
     UI_STATE_KEYS.DEAL_INTELLIGENCE,
     UI_STATE_DEFAULTS.dealIntelligence
   );
-  const { viewMode, selectedDeal, searchQuery, selectedCategory, selectedDetailTab } = ui;
+  const { viewMode, selectedDeal, searchQuery, selectedCategory } = ui;
 
   // Loading state
   if (isLoading) {

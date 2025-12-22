@@ -1,7 +1,7 @@
 'use client'
 
-import { Card, Button, Badge, Progress, Select, PageContainer, Breadcrumb, PageHeader } from '@/ui';
-import { Download, FileText, File, Table, Image, Calendar, Filter, Check, Settings, Mail, Clock, Repeat , FileDown} from 'lucide-react';
+import { Card, Button, Badge, Progress, PageContainer, Breadcrumb, PageHeader } from '@/ui';
+import { Download, FileText, File, Table, Image as ImageIcon, Calendar, Filter, Check, Mail, Clock, Repeat , FileDown} from 'lucide-react';
 import { getRouteConfig } from '@/config/routes';
 import { getInitialExportJobs, getReportTemplates, type ExportJob, type ReportTemplate } from '@/services/reports/reportExportService';
 import { useUIKey } from '@/store/ui';
@@ -49,7 +49,7 @@ export function ReportExport() {
       case 'pdf': return <FileText className="w-4 h-4" />;
       case 'excel': return <Table className="w-4 h-4" />;
       case 'csv': return <File className="w-4 h-4" />;
-      case 'ppt': return <Image className="w-4 h-4" />;
+      case 'ppt': return <ImageIcon className="w-4 h-4" />;
       default: return <FileText className="w-4 h-4" />;
     }
   };

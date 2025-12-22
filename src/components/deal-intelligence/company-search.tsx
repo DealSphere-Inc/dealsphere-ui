@@ -1,23 +1,16 @@
 'use client';
 
-import { Card, Button, Badge, Input, Progress } from '@/ui';
+import { Card, Button, Badge, Input } from '@/ui';
 import {
   Search,
   Sparkles,
   Building2,
   MapPin,
   Users,
-  DollarSign,
-  TrendingUp,
   Plus,
   ExternalLink,
-  Filter,
   Star,
-  Zap,
-  Target,
-  Calendar,
-  Globe,
-  Briefcase
+  Zap
 } from 'lucide-react';
 import { useUIKey } from '@/store/ui';
 import { companySearchRequested, companySearchSelectors } from '@/store/slices/miscSlice';

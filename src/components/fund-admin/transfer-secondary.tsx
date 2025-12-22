@@ -2,7 +2,7 @@
 
 import { useUIKey } from '@/store/ui';
 import { Card, Button, Badge, Input } from '@/ui';
-import { ArrowRightLeft, Users, DollarSign, FileText, CheckCircle, XCircle, Clock, AlertCircle, Search, Filter } from 'lucide-react';
+import { ArrowRightLeft, Users, FileText, CheckCircle, XCircle, Clock, AlertCircle, Search } from 'lucide-react';
 import { formatCurrency, formatPercent } from '@/utils/formatting';
 
 export type TransferType = 'direct' | 'secondary-sale' | 'inheritance' | 'gift' | 'court-order';
@@ -112,7 +112,7 @@ export function TransferSecondary({
   onInitiateTransfer,
   onReviewTransfer,
   onApproveTransfer,
-  onRejectTransfer,
+  onRejectTransfer: _onRejectTransfer,
   onCompleteTransfer,
   onUploadDocument,
   onExerciseROFR,
@@ -128,7 +128,7 @@ export function TransferSecondary({
     filterType: 'all',
     selectedTransfer: null,
   });
-  const { searchQuery, filterStatus, filterType, selectedTransfer } = ui;
+  const { searchQuery, filterStatus, filterType } = ui;
 
   const getStatusBadge = (status: TransferStatus) => {
     switch (status) {

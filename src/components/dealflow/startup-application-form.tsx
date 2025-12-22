@@ -1,6 +1,6 @@
 'use client'
 
-import { Card, Button, Input, Badge } from '@/ui';
+import { Card, Button, Input } from '@/ui';
 import { Building2, User, Mail, Globe, DollarSign, Users, TrendingUp, FileText, CheckCircle2, Copy, Code } from 'lucide-react';
 import { useUIKey } from '@/store/ui';
 import { useAppDispatch } from '@/store/hooks';
@@ -298,7 +298,7 @@ export function StartupApplicationForm({ embedded = false }: { embedded?: boolea
             </div>
             <div className="space-y-4">
               <div>
-                <label className="text-sm text-[var(--app-text-muted)] mb-2 block">Problem You're Solving *</label>
+                <label className="text-sm text-[var(--app-text-muted)] mb-2 block">Problem You&apos;re Solving *</label>
                 <textarea
                   className="w-full px-3 py-2 rounded-lg border border-[var(--app-border)] bg-[var(--app-surface)] text-[var(--app-text)] min-h-[80px]"
                   placeholder="Describe the problem your startup is addressing..."
@@ -361,8 +361,8 @@ export function StartupApplicationForm({ embedded = false }: { embedded?: boolea
             <div>
               <p className="text-sm font-medium text-[var(--app-info)] mb-1">Automatic Dealflow Integration</p>
               <p className="text-xs text-[var(--app-text-muted)]">
-                Submissions from this form automatically populate your VestLedger dealflow pipeline in the "Sourced" stage.
-                You'll receive email notifications for new applications and can configure auto-categorization rules.
+                Submissions from this form automatically populate your VestLedger dealflow pipeline in the &quot;Sourced&quot; stage.
+                You&apos;ll receive email notifications for new applications and can configure auto-categorization rules.
               </p>
             </div>
           </div>

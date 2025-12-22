@@ -88,6 +88,8 @@ export function PitchDeckReader() {
   };
 
   if (selectedAnalysis) {
+    const keyHires = selectedAnalysis.summary?.team.keyHires ?? [];
+
     return (
       <div className="space-y-6">
         {/* Header */}
@@ -233,11 +235,11 @@ export function PitchDeckReader() {
                   ))}
                 </ul>
               </div>
-              {selectedAnalysis.summary?.team.keyHires.length! > 0 && (
+              {keyHires.length > 0 && (
                 <div>
                   <p className="text-xs text-[var(--app-text-muted)] mb-2">Key Hires</p>
                   <ul className="space-y-1">
-                    {selectedAnalysis.summary?.team.keyHires.map((hire, idx) => (
+                    {keyHires.map((hire, idx) => (
                       <li key={idx} className="text-sm">• {hire}</li>
                     ))}
                   </ul>

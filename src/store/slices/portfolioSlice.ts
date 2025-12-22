@@ -27,7 +27,7 @@ const portfolioSlice = createSlice({
   name: 'portfolio',
   initialState,
   reducers: {
-    portfolioUpdatesRequested: (state, action: PayloadAction<GetPortfolioUpdatesParams>) => {
+    portfolioUpdatesRequested: (state, _action: PayloadAction<GetPortfolioUpdatesParams>) => {
       state.status = 'loading';
       state.error = undefined;
     },

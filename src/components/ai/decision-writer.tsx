@@ -1,6 +1,6 @@
 'use client'
 
-import { Card, Button, Badge, Input } from '@/ui';
+import { Card, Button, Input } from '@/ui';
 import { Sparkles, Send, Copy, Download, ThumbsDown, AlertCircle, Check, FileText, Edit3, RefreshCw, Wand2, MessageSquare } from 'lucide-react';
 import { useUIKey } from '@/store/ui';
 import { useAppDispatch } from '@/store/hooks';
@@ -12,7 +12,6 @@ import {
   type DealInfo,
   type DecisionWriterTone,
   type RejectionReason,
-  type RejectionReasonCategory,
 } from '@/services/ai/decisionWriterService';
 
 const defaultDecisionWriterState: {
@@ -53,17 +52,6 @@ export function DecisionWriter() {
 
   const copyToClipboard = () => {
     dispatch(decisionWriterCopyRequested());
-  };
-
-  const getCategoryColor = (category: RejectionReasonCategory) => {
-    switch (category) {
-      case 'market': return 'bg-[var(--app-primary-bg)] text-[var(--app-primary)]';
-      case 'team': return 'bg-[var(--app-success-bg)] text-[var(--app-success)]';
-      case 'product': return 'bg-[var(--app-info-bg)] text-[var(--app-info)]';
-      case 'financials': return 'bg-[var(--app-warning-bg)] text-[var(--app-warning)]';
-      case 'fit': return 'bg-[var(--app-danger-bg)] text-[var(--app-danger)]';
-      default: return 'bg-[var(--app-surface-hover)] text-[var(--app-text-muted)]';
-    }
   };
 
   return (

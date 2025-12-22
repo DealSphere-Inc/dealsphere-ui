@@ -1,7 +1,7 @@
 'use client';
 
 import { Card, Button } from '@/ui';
-import { Link as LinkIcon, RefreshCw, Sparkles, ArrowRight, Layers, CheckCircle2 } from 'lucide-react';
+import { Link as LinkIcon, RefreshCw, Sparkles, ArrowRight, CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
 
 export default function HowItWorksPage() {
@@ -50,7 +50,7 @@ export default function HowItWorksPage() {
             How <span className="text-[var(--app-primary)]">Triad OS</span> Works
           </h1>
           <p className="text-xl text-[var(--app-text-muted)] max-w-2xl mx-auto">
-            Whether you're a VC, PE firm, or crypto fund, VestLedger's architecture is designed so each layer reinforces the others—creating compounding operational leverage and decision intelligence.
+            Whether you&apos;re a VC, PE firm, or crypto fund, VestLedger&apos;s architecture is designed so each layer reinforces the others—creating compounding operational leverage and decision intelligence.
           </p>
         </div>
       </section>

@@ -1,8 +1,8 @@
 'use client'
 
 import { useUIKey } from '@/store/ui'
-import { Card, Button, Badge, Progress, Input, Select, Breadcrumb, PageHeader, PageContainer } from '@/ui'
-import { DollarSign, Send, Download, Clock, CheckCircle, AlertTriangle, Users, FileText, Mail, ArrowUpRight, ArrowDownRight } from 'lucide-react'
+import { Card, Button, Badge, Progress, Select, Breadcrumb, PageHeader, PageContainer } from '@/ui'
+import { DollarSign, Send, Download, Users, FileText, Mail, ArrowUpRight, ArrowDownRight } from 'lucide-react'
 import { FundSelector } from '../fund-selector'
 import { getRouteConfig } from '@/config/routes'
 import { CarriedInterestTracker } from '../fund-admin/carried-interest-tracker'

@@ -1,18 +1,17 @@
 'use client'
 
-import { useEffect } from 'react';
 import { Card, Button, Input, Badge, PageContainer, Breadcrumb, PageHeader } from '@/ui';
-import { User, Mail, Phone, Building2, MapPin, Calendar, Tag, Search, Filter, Plus, Edit3, Trash2, Star, MessageSquare, Video, Send, ExternalLink, Briefcase, Users, Network } from 'lucide-react';
+import { Mail, Phone, Building2, MapPin, Calendar, Tag, Search, Edit3, Trash2, Star, MessageSquare, Video, Send, ExternalLink, Briefcase, Users } from 'lucide-react';
 import { getRouteConfig } from '@/config/routes';
 import { SideDrawer } from '@/components/side-drawer';
 import { RelationshipScore, calculateRelationshipScore, type RelationshipMetrics } from '@/components/crm/relationship-score';
-import { SmartLists, type SmartList, type FilterCondition } from '@/components/crm/smart-lists';
+import { SmartLists, type SmartList } from '@/components/crm/smart-lists';
 import { EmailIntegration, type EmailAccount } from '@/components/crm/email-integration';
-import { InteractionTimeline, type TimelineInteraction } from '@/components/crm/interaction-timeline';
+import { InteractionTimeline } from '@/components/crm/interaction-timeline';
 import { NetworkGraph } from './network-graph';
 import { useUIKey } from '@/store/ui';
 import { crmDataRequested, crmSelectors } from '@/store/slices/crmSlice';
-import type { Contact, Interaction } from '@/services/crm/contactsService';
+import type { Contact } from '@/services/crm/contactsService';
 import { EmptyState, ErrorState, LoadingState } from '@/components/ui/async-states';
 import { StatsCard } from '@/components/ui';
 import { useAsyncData } from '@/hooks/useAsyncData';

@@ -1,7 +1,7 @@
 'use client'
 
 import { Breadcrumb, PageHeader, PageContainer } from '@/ui';
-import { TrendingUp, BarChart3, PieChart, Activity } from 'lucide-react';
+import { BarChart3 } from 'lucide-react';
 import { FundPerformanceOverview } from './analytics/fund-performance-overview';
 import { JCurveChart } from './analytics/j-curve-chart';
 import { CohortAnalysis } from './analytics/cohort-analysis';

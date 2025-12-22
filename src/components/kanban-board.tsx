@@ -114,7 +114,7 @@ export function KanbanBoard({ stateKey = 'default', columns, onItemMove, renderI
     onItemMove(active.id, overColumn.id);
   };
 
-  const handleDragEnd = (event: DragEndEvent) => {
+  const handleDragEnd = (_event: DragEndEvent) => {
     patchUI({ activeId: null });
   };
 

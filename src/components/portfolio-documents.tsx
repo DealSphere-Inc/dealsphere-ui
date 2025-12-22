@@ -1,14 +1,13 @@
 'use client'
 
-import { Plus, Filter, Search, Upload, Download, Eye, FileText, CheckCircle2, Clock, AlertCircle, Circle } from 'lucide-react';
-import { Button, Card, Badge, Input, PageContainer } from '@/ui';
+import { Filter, Search, Upload, Download, Eye, FileText, CheckCircle2, Clock, AlertCircle, Circle } from 'lucide-react';
+import { Button, Card, Badge, Input } from '@/ui';
 import { DocumentPreviewModal, useDocumentPreview, getMockDocumentUrl, inferDocumentType } from './documents/preview';
 import { useUIKey } from '@/store/ui';
 import { PortfolioTabHeader } from '@/components/portfolio-tab-header';
 import {
   getPortfolioDocumentsSnapshot,
   type PortfolioDocumentCompany as PortfolioCompany,
-  type PortfolioDocument as Document,
   type PortfolioDocumentCategory as DocumentCategory,
   type PortfolioDocumentStatus as DocumentStatus,
 } from '@/services/portfolio/portfolioDocumentsService';

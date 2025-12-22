@@ -1,7 +1,7 @@
 'use client';
 
 import { Card, Button, Badge, Input } from '@/ui';
-import { Mail, RefreshCw, Check, X, AlertCircle, Calendar, Paperclip, ExternalLink, Search, Filter, ChevronDown, ChevronUp, Users, Briefcase } from 'lucide-react';
+import { Mail, RefreshCw, Check, X, AlertCircle, Calendar, Paperclip, ExternalLink, Search, ChevronDown, ChevronUp, Users, Briefcase } from 'lucide-react';
 import { useUIKey } from '@/store/ui';
 
 export interface EmailAccount {
@@ -244,7 +244,7 @@ export function EmailIntegration({
               </div>
               <p className="text-xs text-[var(--app-text-muted)] mt-3">
                 <AlertCircle className="w-3 h-3 inline mr-1" />
-                We'll redirect you to authenticate with your email provider. We only read emails, never send on your behalf.
+                We&apos;ll redirect you to authenticate with your email provider. We only read emails, never send on your behalf.
               </p>
             </div>
           </>

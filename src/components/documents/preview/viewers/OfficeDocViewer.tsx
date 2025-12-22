@@ -12,7 +12,7 @@ export function OfficeDocViewer({
   fileType,
   className = '',
   onLoadSuccess,
-  onLoadError,
+  onLoadError: _onLoadError,
 }: OfficeDocViewerProps) {
   const { value: ui, patch: patchUI } = useUIKey(`office-doc-viewer:${url}`, {
     isLoading: true,
@@ -23,11 +23,6 @@ export function OfficeDocViewer({
   const handleDocumentLoad = () => {
     patchUI({ isLoading: false, hasError: false });
     onLoadSuccess?.();
-  };
-
-  const handleDocumentError = (error: Error) => {
-    patchUI({ isLoading: false, hasError: true });
-    onLoadError?.(error);
   };
 
   const docs = [

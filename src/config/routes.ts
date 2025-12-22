@@ -5,7 +5,6 @@ import {
   Briefcase,
   Search,
   Vote,
-  PieChart,
   TrendingUp,
   TrendingDown,
   Users,

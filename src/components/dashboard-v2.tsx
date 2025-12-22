@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect } from 'react';
-import { DollarSign, TrendingUp, Users, BarChart, Target, Clock, LayoutDashboard } from 'lucide-react';
+import { DollarSign, Users, Target, Clock, LayoutDashboard } from 'lucide-react';
 import { AIInsightsBanner } from './dashboard/ai-insights-banner';
 import { ActiveCapitalCalls } from './dashboard/active-capital-calls';
 import { PortfolioHealth } from './dashboard/portfolio-health';
@@ -86,11 +86,6 @@ export function DashboardV2() {
     }
   };
 
-  const handleConsolidatedView = () => {
-    setSelectedFund(null);
-    setViewMode('consolidated');
-  };
-
   // ─────────────────────────────────────────────────────────────────────────────
   // CONSOLIDATED VIEW (No fund selected or consolidated mode)
   // ─────────────────────────────────────────────────────────────────────────────
@@ -101,37 +96,6 @@ export function DashboardV2() {
       { id: 'overview', label: 'Overview' },
       { id: 'capital-calls', label: 'Active Capital Calls' },
       { id: 'portfolio-health', label: 'Portfolio Health' },
-    ];
-
-    const consolidatedMetrics = [
-      {
-        label: 'Total AUM',
-        value: formatCurrency(summary.totalCommitment),
-        change: '+12%',
-        trend: 'up' as const,
-        icon: DollarSign,
-      },
-      {
-        label: 'Portfolio Value',
-        value: formatCurrency(summary.totalPortfolioValue),
-        change: '+8.3%',
-        trend: 'up' as const,
-        icon: TrendingUp,
-      },
-      {
-        label: 'Portfolio Companies',
-        value: summary.totalPortfolioCompanies.toString(),
-        change: '+3',
-        trend: 'up' as const,
-        icon: Users,
-      },
-      {
-        label: 'Avg IRR',
-        value: `${summary.averageIRR.toFixed(1)}%`,
-        change: '+2.1%',
-        trend: 'up' as const,
-        icon: BarChart,
-      },
     ];
 
     return (

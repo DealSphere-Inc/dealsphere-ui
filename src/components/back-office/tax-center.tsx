@@ -1,7 +1,7 @@
 'use client'
 
-import { Card, Button, Badge, Progress, PageContainer, Breadcrumb, PageHeader, Tabs, Tab } from '@/ui';
-import { Receipt, Download, Send, Calendar, DollarSign, Building2, Users, CheckCircle, Clock, AlertTriangle, Mail, Upload, FileText , Scale} from 'lucide-react';
+import { Card, Button, Badge, Progress, PageContainer, Breadcrumb, PageHeader } from '@/ui';
+import { Receipt, Download, Send, Calendar, DollarSign, Mail, FileText } from 'lucide-react';
 import { getRouteConfig } from '@/config/routes';
 import { K1Generator } from '../tax/k1-generator';
 import { useUIKey } from '@/store/ui';

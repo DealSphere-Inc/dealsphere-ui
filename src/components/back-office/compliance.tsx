@@ -1,7 +1,7 @@
 'use client'
 
 import { Card, Button, Badge, Breadcrumb, PageHeader, PageContainer } from '@/ui';
-import { Shield, FileText, AlertTriangle, CheckCircle, Clock, Download, Calendar, Users, Building2, Scale, Bell } from 'lucide-react';
+import { Shield, FileText, AlertTriangle, CheckCircle, Clock, Download, Calendar, Users, Building2, Scale } from 'lucide-react';
 import { getRouteConfig } from '@/config/routes';
 import { AMLKYCWorkflow } from '../compliance/aml-kyc-workflow';
 import { useUIKey } from '@/store/ui';

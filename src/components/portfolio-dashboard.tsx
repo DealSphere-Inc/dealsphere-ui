@@ -1,20 +1,17 @@
 'use client'
 
-import { Card, Badge, Button, Progress, PageContainer } from '@/ui';
+import { Card, Badge, Button, Progress } from '@/ui';
 import {
-  TrendingUp,
-  TrendingDown,
   DollarSign,
   Briefcase,
   Target,
   Activity,
-  AlertCircle,
   ArrowUpRight,
   ArrowDownRight,
   Filter,
   Download,
 } from 'lucide-react';
-import { AdvancedTable, ColumnDef } from '@/components/data-table/advanced-table';
+import { AdvancedTable } from '@/components/data-table/advanced-table';
 import { PortfolioTabHeader } from '@/components/portfolio-tab-header';
 import {
   getPortfolioAssetAllocation,

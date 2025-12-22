@@ -1,7 +1,7 @@
 'use client';
 
-import { Card, Button, Badge, Input } from '@/ui';
-import { TrendingUp, DollarSign, Calendar, ChevronRight, ChevronDown, Info, Download, RefreshCw } from 'lucide-react';
+import { Card, Button, Badge } from '@/ui';
+import { TrendingUp, Calendar, ChevronRight, ChevronDown, Download, RefreshCw } from 'lucide-react';
 import { useUIKey } from '@/store/ui';
 import { formatCurrency, formatPercent } from '@/utils/formatting';
 

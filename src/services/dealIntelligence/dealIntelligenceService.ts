@@ -19,7 +19,7 @@ export type {
   ICStatus,
 } from '@/data/mocks/deal-intelligence/deal-intelligence';
 
-export function getDealIntelligenceData(params: GetDealIntelligenceParams) {
+export function getDealIntelligenceData(_params: GetDealIntelligenceParams) {
   if (isMockMode('dealIntelligence')) {
     // Mock mode: Accept params but return static data
     // Future: Apply pagination/sorting

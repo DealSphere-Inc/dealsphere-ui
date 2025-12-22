@@ -4,7 +4,6 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
-  ModalProps as NextUIModalProps,
 } from '@nextui-org/react';
 import { ReactNode } from 'react';
 
@@ -42,7 +41,7 @@ export function Modal({
       className={className}
     >
       <ModalContent>
-        {(onClose) => (
+        {(_onClose) => (
           <>
             {title && (
               <ModalHeader className="flex flex-col gap-1">

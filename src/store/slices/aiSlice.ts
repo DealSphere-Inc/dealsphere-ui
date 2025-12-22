@@ -40,7 +40,7 @@ const aiSlice = createSlice({
   initialState,
   reducers: {
     // Pitch Deck actions
-    pitchDeckAnalysesRequested: (state, action: PayloadAction<GetPitchDeckAnalysesParams>) => {
+    pitchDeckAnalysesRequested: (state, _action: PayloadAction<GetPitchDeckAnalysesParams>) => {
       state.pitchDeckState.status = 'loading';
       state.pitchDeckState.error = undefined;
     },
@@ -55,7 +55,7 @@ const aiSlice = createSlice({
     },
 
     // DD Chat actions
-    ddChatConversationRequested: (state, action: PayloadAction<GetDDChatConversationParams>) => {
+    ddChatConversationRequested: (state, _action: PayloadAction<GetDDChatConversationParams>) => {
       state.ddChatState.status = 'loading';
       state.ddChatState.error = undefined;
     },

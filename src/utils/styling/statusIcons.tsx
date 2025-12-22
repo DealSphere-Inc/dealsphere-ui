@@ -6,7 +6,7 @@ import type { StatusDomain } from './statusColors';
  * @example getStatusIcon('completed') => CheckCircle
  * @example getStatusIcon('overdue') => AlertTriangle
  */
-export function getStatusIcon(status: string, domain: StatusDomain = 'general'): LucideIcon {
+export function getStatusIcon(status: string, _domain: StatusDomain = 'general'): LucideIcon {
   const iconMap: Record<string, LucideIcon> = {
     'completed': CheckCircle,
     'current': CheckCircle,

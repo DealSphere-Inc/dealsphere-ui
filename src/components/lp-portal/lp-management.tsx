@@ -2,16 +2,13 @@
 
 import { useUIKey } from '@/store/ui';
 import { Card, Button, Badge, Progress, PageContainer, Breadcrumb, PageHeader } from '@/ui';
-import { TrendingUp, DollarSign, Building2, Download, Eye, Lock, Unlock, Send, FileText, PieChart, BarChart3, Calendar, Users, ArrowUpRight, ArrowDownRight, Activity, UserCheck, Mail } from 'lucide-react';
+import { TrendingUp, DollarSign, Download, Eye, Send, FileText, BarChart3, Users, ArrowUpRight, ArrowDownRight, UserCheck, Mail } from 'lucide-react';
 import { getRouteConfig } from '@/config/routes';
 import { LPInvestorPortal } from './lp-investor-portal';
 import { AdvancedTable, ColumnDef } from '@/components/data-table/advanced-table';
 import { BulkActionsToolbar, useBulkSelection, BulkAction } from '@/components/bulk-actions-toolbar';
 import {
-  type CapitalCall,
-  type Distribution,
   type LP,
-  type Report,
   getLPCapitalCalls,
   getLPDistributions,
   getLPReports,
@@ -27,7 +24,7 @@ export function LPManagement() {
     selectedTab: 'overview',
     selectedLP: null,
   });
-  const { selectedTab, selectedLP } = ui;
+  const { selectedTab } = ui;
 
   const lps = getLPs();
   const reports = getLPReports();

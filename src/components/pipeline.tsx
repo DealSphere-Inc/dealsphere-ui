@@ -12,7 +12,7 @@ import { setSuggestionsOverride } from '@/store/slices/copilotSlice';
 import { pipelineDataRequested, dealStageUpdated, pipelineSelectors } from '@/store/slices/pipelineSlice';
 import { useUIKey } from '@/store/ui';
 import { ErrorState, LoadingState } from '@/components/ui/async-states';
-import type { PipelineDeal as Deal, PipelineDealOutcome as DealOutcome } from '@/services/pipelineService';
+import type { PipelineDeal as Deal } from '@/services/pipelineService';
 import { useAsyncData } from '@/hooks/useAsyncData';
 import { dealOutcomeClasses } from '@/utils/styling';
 
@@ -22,7 +22,6 @@ export function Pipeline() {
 
   const pipelineStages = data?.stages || [];
   const pipelineDeals = data?.deals || [];
-  const pipelineCopilotSuggestions = data?.copilotSuggestions || [];
 
   const { value: pipelineUI, patch: patchPipelineUI } = useUIKey('pipeline', {
     viewMode: 'kanban' as 'kanban' | 'list',
@@ -51,13 +50,14 @@ export function Pipeline() {
 
   // Surface the inbound deal-flow suggestion inside the Copilot suggestions panel when on this page
   useEffect(() => {
-    if (pipelineCopilotSuggestions.length > 0) {
-      dispatch(setSuggestionsOverride(pipelineCopilotSuggestions));
+    const suggestions = data?.copilotSuggestions ?? [];
+    if (suggestions.length > 0) {
+      dispatch(setSuggestionsOverride(suggestions));
     }
     return () => {
       dispatch(setSuggestionsOverride(null));
     };
-  }, [dispatch, pipelineCopilotSuggestions]);
+  }, [dispatch, data?.copilotSuggestions]);
 
   return (
     <PageContainer>

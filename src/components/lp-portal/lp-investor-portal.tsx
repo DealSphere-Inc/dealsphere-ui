@@ -2,7 +2,7 @@
 
 import { Card, Button, Badge, Progress } from '@/ui';
 import { Tabs, Tab } from '@/ui';
-import { TrendingUp, DollarSign, Download, FileText, Calendar, Activity, BarChart3, PieChart, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { TrendingUp, Download, FileText, Calendar, Activity, PieChart, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import { useUIKey } from '@/store/ui';
 import { lpPortalRequested, lpPortalSelectors } from '@/store/slices/miscSlice';
 import { EmptyState, ErrorState, LoadingState } from '@/components/ui/async-states';

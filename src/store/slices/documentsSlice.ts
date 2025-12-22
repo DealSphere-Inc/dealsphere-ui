@@ -28,7 +28,7 @@ const documentsSlice = createSlice({
   name: 'documents',
   initialState,
   reducers: {
-    documentsRequested: (state, action: PayloadAction<GetDocumentsParams>) => {
+    documentsRequested: (state, _action: PayloadAction<GetDocumentsParams>) => {
       state.status = 'loading';
       state.error = undefined;
     },

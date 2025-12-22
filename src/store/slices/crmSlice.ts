@@ -25,7 +25,7 @@ const crmSlice = createSlice({
   name: 'crm',
   initialState,
   reducers: {
-    crmDataRequested: (state, action: PayloadAction<GetCRMDataParams>) => {
+    crmDataRequested: (state, _action: PayloadAction<GetCRMDataParams>) => {
       state.status = 'loading';
       state.error = undefined;
     },

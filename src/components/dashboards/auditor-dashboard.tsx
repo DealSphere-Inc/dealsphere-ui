@@ -4,7 +4,6 @@
 import { Shield, CheckCircle2, Search, Download } from 'lucide-react';
 import { Card, Button, Badge, PageContainer } from '@/ui';
 import { MetricCard } from '@/components/metric-card';
-import { useAppDispatch } from '@/store/hooks';
 import { auditorDashboardRequested, auditorDashboardSelectors } from '@/store/slices/dashboardsSlice';
 import { ErrorState, LoadingState } from '@/components/ui/async-states';
 import { useAsyncData } from '@/hooks/useAsyncData';

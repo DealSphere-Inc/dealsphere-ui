@@ -24,7 +24,7 @@ const pipelineSlice = createSlice({
   name: 'pipeline',
   initialState,
   reducers: {
-    pipelineDataRequested: (state, action: PayloadAction<GetPipelineParams>) => {
+    pipelineDataRequested: (state, _action: PayloadAction<GetPipelineParams>) => {
       state.status = 'loading';
       state.error = undefined;
     },

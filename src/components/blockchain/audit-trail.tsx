@@ -1,6 +1,6 @@
 'use client';
 
-import { Card, Button, Badge, Input, Progress, PageContainer, Breadcrumb, PageHeader } from '@/ui';
+import { Card, Button, Badge, Input, PageContainer, Breadcrumb, PageHeader } from '@/ui';
 import {
   Shield,
   Database,
@@ -10,12 +10,10 @@ import {
   Hash,
   FileText,
   Layers,
-  Lock,
   Eye,
   ExternalLink,
   Copy,
-  Search,
-  Filter
+  Search
 } from 'lucide-react';
 import { getRouteConfig } from '@/config/routes';
 import type { AuditEvent } from '@/services/blockchain/auditTrailService';
@@ -160,7 +158,7 @@ export function BlockchainAuditTrail() {
       </div>
 
       {/* Search and Filter */}
-      <div className="flex flex-col sm:flex-row gap-3">
+      <div className="flex flex-col sm:flex-row gap-3 mt-2 mb-2">
         <div className="flex-1">
           <Input
             placeholder="Search by description or transaction hash..."

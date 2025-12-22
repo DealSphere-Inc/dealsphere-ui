@@ -10,13 +10,10 @@ import {
   Clock,
   User,
   Building,
-  FileText,
   Search,
-  RefreshCw,
   Flag,
   Eye,
   Download,
-  Send,
 } from 'lucide-react';
 
 export type EntityType = 'individual' | 'corporation' | 'partnership' | 'trust' | 'llc' | 'other';
@@ -205,12 +202,12 @@ interface AMLKYCWorkflowProps {
 export function AMLKYCWorkflow({
   workflows,
   onInitiateWorkflow,
-  onUpdateStep,
-  onUploadDocument,
-  onRunScreening,
-  onReviewMatch,
+  onUpdateStep: _onUpdateStep,
+  onUploadDocument: _onUploadDocument,
+  onRunScreening: _onRunScreening,
+  onReviewMatch: _onReviewMatch,
   onApproveWorkflow,
-  onRejectWorkflow,
+  onRejectWorkflow: _onRejectWorkflow,
   onRequestEDD,
   onExportReport,
 }: AMLKYCWorkflowProps) {
@@ -225,7 +222,7 @@ export function AMLKYCWorkflow({
     filterRisk: 'all',
     selectedWorkflow: null,
   });
-  const { searchQuery, filterStatus, filterRisk, selectedWorkflow } = ui;
+  const { searchQuery, filterStatus, filterRisk } = ui;
 
   const getRiskBadge = (level: RiskLevel) => {
     const colors = {
@@ -286,21 +283,6 @@ export function AMLKYCWorkflow({
             Expired
           </Badge>
         );
-    }
-  };
-
-  const getStepStatusIcon = (status: WorkflowStep['status']) => {
-    switch (status) {
-      case 'completed':
-        return <CheckCircle className="w-4 h-4 text-[var(--app-success)]" />;
-      case 'in-progress':
-        return <Clock className="w-4 h-4 text-[var(--app-warning)]" />;
-      case 'failed':
-        return <XCircle className="w-4 h-4 text-[var(--app-danger)]" />;
-      case 'skipped':
-        return <div className="w-4 h-4 rounded-full border-2 border-[var(--app-text-muted)] opacity-50" />;
-      default:
-        return <div className="w-4 h-4 rounded-full border-2 border-[var(--app-border)]" />;
     }
   };
 
