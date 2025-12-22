@@ -152,7 +152,7 @@ export function Compliance() {
 
         {/* Overview Tab */}
         {selectedTab === 'overview' && (
-          <div className="space-y-3">
+        <div className="space-y-3 mt-4">
             {[...complianceItems]
               .sort((a, b) => {
                 // Sort by priority and status

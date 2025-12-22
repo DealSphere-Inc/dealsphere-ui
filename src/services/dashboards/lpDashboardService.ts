@@ -1,6 +1,7 @@
 import { isMockMode } from '@/config/data-mode';
 import {
   lpDashboardCapitalActivity,
+  lpDashboardCommitment,
   lpDashboardDocuments,
   lpDashboardMetrics,
   pendingCalls,
@@ -15,10 +16,7 @@ export function getLPDashboardSnapshot() {
       capitalActivity: lpDashboardCapitalActivity,
       pendingCalls,
       pendingSignatures,
-      commitment: {
-        totalCommitment: 10_000_000,
-        calledAmount: 6_500_000,
-      },
+      commitment: lpDashboardCommitment,
     };
   }
   throw new Error('LP dashboard API not implemented yet');
