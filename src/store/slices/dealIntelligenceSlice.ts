@@ -9,6 +9,7 @@ import type {
   FundAnalytics,
   DocumentCategory,
 } from '@/services/dealIntelligence/dealIntelligenceService';
+import type { LucideIcon } from 'lucide-react';
 import type { StandardQueryParams } from '@/types/serviceParams';
 
 export interface DealIntelligenceData {
@@ -17,7 +18,7 @@ export interface DealIntelligenceData {
   documentCategories: Array<{
     id: DocumentCategory;
     name: string;
-    icon: any;
+    icon: LucideIcon;
     color: string;
   }>;
   fundAnalytics: FundAnalytics;

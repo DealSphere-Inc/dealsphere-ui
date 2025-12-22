@@ -41,7 +41,12 @@ interface AdvancedTableUIState {
   visibleColumns: string[];
 }
 
-export function AdvancedTable<T extends Record<string, any>>({
+type TableValue = string | number | boolean | null | undefined | object;
+
+const getValue = <T extends object>(item: T, key: string): TableValue | undefined =>
+  (item as Record<string, TableValue>)[key];
+
+export function AdvancedTable<T extends object>({
   stateKey,
   data,
   columns: initialColumns,
@@ -85,9 +90,9 @@ export function AdvancedTable<T extends Record<string, any>>({
     if (!searchQuery.trim()) return data;
 
     return data.filter(item => {
-      const keysToSearch = searchKeys.length > 0 ? searchKeys : Object.keys(item);
+      const keysToSearch = searchKeys.length > 0 ? searchKeys : (Object.keys(item) as Array<keyof T>);
       return keysToSearch.some(key => {
-        const value = item[key];
+        const value = getValue(item, String(key));
         if (value == null) return false;
         return String(value).toLowerCase().includes(searchQuery.toLowerCase());
       });
@@ -99,8 +104,8 @@ export function AdvancedTable<T extends Record<string, any>>({
     if (!sortKey || !sortDirection) return filteredData;
 
     return [...filteredData].sort((a, b) => {
-      const aValue = a[sortKey];
-      const bValue = b[sortKey];
+      const aValue = getValue(a, sortKey);
+      const bValue = getValue(b, sortKey);
 
       if (aValue == null) return 1;
       if (bValue == null) return -1;
@@ -153,7 +158,7 @@ export function AdvancedTable<T extends Record<string, any>>({
     const headers = columns.map(col => col.label).join(',');
     const rows = sortedData.map(item =>
       columns.map(col => {
-        const value = item[col.key];
+        const value = getValue(item, col.key);
         const stringValue = value == null ? '' : String(value);
         // Escape quotes and wrap in quotes if contains comma
         return stringValue.includes(',') ? `"${stringValue.replace(/"/g, '""')}"` : stringValue;
@@ -300,7 +305,7 @@ export function AdvancedTable<T extends Record<string, any>>({
                           'text-left'
                         }`}
                       >
-                        {column.render ? column.render(item) : String(item[column.key] ?? '')}
+                        {column.render ? column.render(item) : String(getValue(item, column.key) ?? '')}
                       </td>
                     ))}
                   </tr>

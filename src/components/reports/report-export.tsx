@@ -30,6 +30,7 @@ export function ReportExport() {
   const { value: ui, patch: patchUI } = useUIKey('report-export', defaultReportExportState);
   const { selectedTemplate, exportFormat, dateRange, selectedSections, exportJobs, scheduleEnabled } = ui;
   const reportTemplates = getReportTemplates();
+  const formatOptions: ReportTemplate['format'][] = ['pdf', 'excel', 'csv', 'ppt'];
 
   const handleExport = () => {
     if (!selectedTemplate) return;
@@ -203,10 +204,10 @@ export function ReportExport() {
                 <div>
                   <label className="text-sm font-medium mb-2 block">Export Format</label>
                   <div className="grid grid-cols-2 gap-2">
-                    {['pdf', 'excel', 'csv', 'ppt'].map((format) => (
+                    {formatOptions.map((format) => (
                       <button
                         key={format}
-                        onClick={() => patchUI({ exportFormat: format as any })}
+                        onClick={() => patchUI({ exportFormat: format })}
                         className={`p-3 rounded-lg border-2 transition-all ${
                           exportFormat === format
                             ? 'border-[var(--app-primary)] bg-[var(--app-primary-bg)]'

@@ -3,13 +3,15 @@ import type { AsyncState, NormalizedError } from '@/store/types/AsyncState';
 import { createInitialAsyncState } from '@/store/types/AsyncState';
 import { createAsyncSelectors } from '@/store/utils/createAsyncSelectors';
 import type { StandardQueryParams } from '@/types/serviceParams';
+import type { Contact, Interaction } from '@/data/mocks/crm/contacts';
+import type { EmailAccount } from '@/components/crm/email-integration';
+import type { TimelineInteraction } from '@/components/crm/interaction-timeline';
 
-// TODO: Replace 'any' with proper types when CRM types are defined
 export interface CRMData {
-  contacts: any[];
-  emailAccounts: any[];
-  interactions: any[];
-  timelineInteractions: any[];
+  contacts: Contact[];
+  emailAccounts: EmailAccount[];
+  interactions: Interaction[];
+  timelineInteractions: TimelineInteraction[];
 }
 
 export interface GetCRMDataParams extends Partial<StandardQueryParams> {

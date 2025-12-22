@@ -7,7 +7,7 @@ import type { AsyncState, NormalizedError } from '@/store/types/AsyncState';
 /**
  * Options for the useAsyncData hook
  */
-export interface UseAsyncDataOptions<TParams = void> {
+export interface UseAsyncDataOptions<T, TParams = void> {
   /** Parameters to pass to the action dispatcher */
   params?: TParams;
   /** Whether to fetch data on mount (default: true) */
@@ -15,7 +15,7 @@ export interface UseAsyncDataOptions<TParams = void> {
   /** Dependencies array for re-fetching (similar to useEffect deps) */
   dependencies?: React.DependencyList;
   /** Callback when data is successfully loaded */
-  onSuccess?: (data: any) => void;
+  onSuccess?: (data: T) => void;
   /** Callback when an error occurs */
   onError?: (error: NormalizedError) => void;
 }
@@ -109,7 +109,7 @@ export interface UseAsyncDataReturn<T> {
 export function useAsyncData<T, TParams = void>(
   requestAction: (params: TParams) => PayloadAction<TParams>,
   selector: (state: RootState) => AsyncState<T>,
-  options: UseAsyncDataOptions<TParams> = {}
+  options: UseAsyncDataOptions<T, TParams> = {}
 ): UseAsyncDataReturn<T> {
   const {
     params,

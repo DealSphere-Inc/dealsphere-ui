@@ -174,7 +174,7 @@ export function CompanyScoring({ companyId, companyName }: { companyId: number; 
         <h4 className="font-semibold mb-4">Score Breakdown by Criteria</h4>
         <div className="space-y-4">
           {defaultCriteria.map(criteria => {
-            const avgScore = scoreData.individualScores.reduce((sum: number, score: any) =>
+            const avgScore = scoreData.individualScores.reduce((sum: number, score) =>
               sum + (score.scores[criteria.id] || 0), 0) / scoreData.individualScores.length;
 
             return (
@@ -222,7 +222,7 @@ export function CompanyScoring({ companyId, companyName }: { companyId: number; 
       <div>
         <h4 className="font-semibold mb-4">Individual Partner Scores</h4>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-          {scoreData.individualScores.map((partnerScore: any) => (
+          {scoreData.individualScores.map((partnerScore) => (
             <Card key={partnerScore.partnerId} padding="md">
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-3">

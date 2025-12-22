@@ -30,7 +30,7 @@ interface SmartListsProps {
   selectedListId?: string;
 }
 
-const fieldOptions = [
+const fieldOptions: Array<{ value: FilterCondition['field']; label: string }> = [
   { value: 'role', label: 'Role' },
   { value: 'tags', label: 'Tags' },
   { value: 'location', label: 'Location' },
@@ -40,7 +40,7 @@ const fieldOptions = [
   { value: 'starred', label: 'Starred' },
 ];
 
-const operatorOptions: Record<string, { value: string; label: string }[]> = {
+const operatorOptions: Partial<Record<FilterCondition['field'], Array<{ value: FilterCondition['operator']; label: string }>>> = {
   role: [
     { value: 'equals', label: 'is' },
     { value: 'contains', label: 'contains' },
@@ -296,7 +296,9 @@ export function SmartLists({ lists, onListSelect, onListSave, onListDelete, sele
                       <select
                         className="flex-1 px-2 py-1.5 text-xs rounded-lg border border-[var(--app-border)] bg-[var(--app-surface)] text-[var(--app-text)]"
                         value={condition.field}
-                        onChange={(e) => updateCondition(condition.id, { field: e.target.value as any })}
+                        onChange={(e) =>
+                          updateCondition(condition.id, { field: e.target.value as FilterCondition['field'] })
+                        }
                       >
                         {fieldOptions.map((opt) => (
                           <option key={opt.value} value={opt.value}>
@@ -308,7 +310,9 @@ export function SmartLists({ lists, onListSelect, onListSave, onListDelete, sele
                       <select
                         className="flex-1 px-2 py-1.5 text-xs rounded-lg border border-[var(--app-border)] bg-[var(--app-surface)] text-[var(--app-text)]"
                         value={condition.operator}
-                        onChange={(e) => updateCondition(condition.id, { operator: e.target.value as any })}
+                        onChange={(e) =>
+                          updateCondition(condition.id, { operator: e.target.value as FilterCondition['operator'] })
+                        }
                       >
                         {operatorOptions[condition.field]?.map((opt) => (
                           <option key={opt.value} value={opt.value}>

@@ -254,7 +254,7 @@ export function DealflowReview() {
             <div>
               <p className="font-semibold mb-3">Leadership Team</p>
               <div className="space-y-3">
-                {currentSlide.content.team.map((member: any, idx: number) => (
+                {currentSlide.content.team.map((member, idx) => (
                   <div key={idx} className="flex items-start gap-3 p-4 rounded-lg bg-[var(--app-surface-hover)]">
                     <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[var(--app-primary)] to-[var(--app-accent)] flex items-center justify-center text-white font-semibold">
                       {member.name.split(' ').map((n: string) => n[0]).join('')}
@@ -296,7 +296,7 @@ export function DealflowReview() {
             <div>
               <p className="font-semibold mb-3">Use of Funds</p>
               <div className="space-y-3">
-                {currentSlide.content.useOfFunds.map((item: any, idx: number) => (
+                {currentSlide.content.useOfFunds.map((item, idx) => (
                   <div key={idx}>
                     <div className="flex items-center justify-between mb-1">
                       <span className="text-sm font-medium">{item.category}</span>

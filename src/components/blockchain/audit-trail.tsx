@@ -158,7 +158,7 @@ export function BlockchainAuditTrail() {
       </div>
 
       {/* Search and Filter */}
-      <div className="flex flex-col sm:flex-row gap-3 mt-2 mb-2">
+      <div className="flex flex-col sm:flex-row gap-3 mt-4 mb-4">
         <div className="flex-1">
           <Input
             placeholder="Search by description or transaction hash..."
@@ -171,7 +171,6 @@ export function BlockchainAuditTrail() {
           {['all', 'capital_call', 'distribution', 'ownership_transfer', 'compliance_attestation'].map((f) => (
             <Button
               key={f}
-              size="sm"
               variant={filter === f ? 'solid' : 'flat'}
               color={filter === f ? 'primary' : 'default'}
               onPress={() => patchUI({ filter: f })}

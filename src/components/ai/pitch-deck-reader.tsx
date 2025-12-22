@@ -128,9 +128,9 @@ export function PitchDeckReader() {
                     type: 'pdf',
                     url: getMockDocumentUrl('pdf'),
                     metadata: {
-                      aiInsights: selectedAnalysis.aiInsights,
-                      summary: selectedAnalysis.summary,
-                      extractedData: selectedAnalysis.extractedData,
+                      aiInsights: selectedAnalysis.aiInsights ?? [],
+                      summary: selectedAnalysis.summary ?? null,
+                      extractedData: selectedAnalysis.extractedData ?? null,
                     },
                   });
                 }
@@ -415,7 +415,6 @@ export function PitchDeckReader() {
           document={preview.previewDocument}
           isOpen={preview.isOpen}
           onClose={preview.closePreview}
-          aiInsights={preview.previewDocument.metadata as any}
         />
       )}
     </Card>

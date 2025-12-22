@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, type DependencyList } from 'react';
 
 interface ShortcutConfig {
   key: string;
@@ -11,7 +11,7 @@ interface ShortcutConfig {
 export function useKeyboardShortcut(
   config: ShortcutConfig,
   callback: () => void,
-  deps: any[] = []
+  deps: DependencyList = []
 ) {
   const {
     key,

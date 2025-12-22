@@ -12,7 +12,6 @@ import { setSuggestionsOverride } from '@/store/slices/copilotSlice';
 import { pipelineDataRequested, dealStageUpdated, pipelineSelectors } from '@/store/slices/pipelineSlice';
 import { useUIKey } from '@/store/ui';
 import { ErrorState, LoadingState } from '@/components/ui/async-states';
-import type { PipelineDeal as Deal } from '@/services/pipelineService';
 import { useAsyncData } from '@/hooks/useAsyncData';
 import { dealOutcomeClasses } from '@/utils/styling';
 
@@ -136,13 +135,11 @@ export function Pipeline() {
           columns={pipelineStages.map(stage => ({
             id: stage,
             title: stage,
-            items: filteredDeals
-              .filter(deal => deal.stage === stage)
-              .map(deal => ({ ...deal, id: deal.id }))
+            items: filteredDeals.filter(deal => deal.stage === stage)
           }))}
           onItemMove={handleItemMove}
           renderItem={(item) => (
-            <DealCard deal={item as Deal} outcome={(item as Deal).outcome} />
+            <DealCard deal={item} outcome={item.outcome} />
           )}
         />
       ) : (

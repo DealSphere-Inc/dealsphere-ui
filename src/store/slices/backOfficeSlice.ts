@@ -2,31 +2,35 @@ import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import type { AsyncState, NormalizedError } from '@/store/types/AsyncState';
 import { createInitialAsyncState } from '@/store/types/AsyncState';
 import type { RootState } from '../rootReducer';
+import type { ComplianceItem, RegulatoryFiling, AuditSchedule } from '@/data/mocks/back-office/compliance';
+import type { CapitalCall, Distribution, LPResponse } from '@/data/mocks/back-office/fund-admin';
+import type { TaxDocument, TaxSummary, PortfolioCompanyTax } from '@/data/mocks/back-office/tax-center';
+import type { Valuation409A, StrikePrice, ValuationHistory } from '@/data/mocks/back-office/valuation-409a';
 
 // Back-office data interfaces
 export interface ComplianceData {
-  complianceItems: any[];
-  regulatoryFilings: any[];
-  auditSchedule: any[];
+  complianceItems: ComplianceItem[];
+  regulatoryFilings: RegulatoryFiling[];
+  auditSchedule: AuditSchedule[];
 }
 
 export interface FundAdminData {
-  capitalCalls: any[];
-  distributions: any[];
-  lpResponses: any[];
+  capitalCalls: CapitalCall[];
+  distributions: Distribution[];
+  lpResponses: LPResponse[];
 }
 
 export interface TaxCenterData {
   filingDeadline: Date | null;
-  taxDocuments: any[];
-  taxSummaries: any[];
-  portfolioTax: any[];
+  taxDocuments: TaxDocument[];
+  taxSummaries: TaxSummary[];
+  portfolioTax: PortfolioCompanyTax[];
 }
 
 export interface Valuation409aData {
-  valuations: any[];
-  strikePrices: any[];
-  history: any[];
+  valuations: Valuation409A[];
+  strikePrices: StrikePrice[];
+  history: ValuationHistory[];
 }
 
 interface BackOfficeState {

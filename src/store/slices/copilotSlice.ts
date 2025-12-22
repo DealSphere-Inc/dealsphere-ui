@@ -18,6 +18,14 @@ export type ExternalCopilotMessage = {
   confidence?: number;
 };
 
+export type CopilotContextValue =
+  | string
+  | number
+  | boolean
+  | null
+  | CopilotContextValue[]
+  | { [key: string]: CopilotContextValue };
+
 export interface CopilotSuggestionsData {
   suggestions: Suggestion[];
   quickActions: QuickAction[];
@@ -26,7 +34,7 @@ export interface CopilotSuggestionsData {
 export interface GetCopilotSuggestionsParams extends Partial<StandardQueryParams> {
   pathname: string;
   tab?: string | null; // Current active tab on the page
-  context?: Record<string, any>; // Additional context (selected items, filters, etc.)
+  context?: Record<string, CopilotContextValue>; // Additional context (selected items, filters, etc.)
 }
 
 interface CopilotState {

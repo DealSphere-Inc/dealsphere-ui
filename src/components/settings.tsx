@@ -21,12 +21,13 @@ import {
   Settings as SettingsIcon,
   Plus
 } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { getRouteConfig } from '@/config/routes';
 
 interface SettingsSection {
   id: string;
   title: string;
-  icon: any;
+  icon: LucideIcon;
   description: string;
 }
 

@@ -171,17 +171,18 @@ export function InteractionTimeline({
 
         {/* Quick Stats */}
         <div className="grid grid-cols-4 gap-2">
-          {[
+          {([
             { type: 'email', icon: Mail, count: interactionCounts.email },
             { type: 'call', icon: Phone, count: interactionCounts.call },
             { type: 'meeting', icon: Video, count: interactionCounts.meeting },
             { type: 'note', icon: MessageSquare, count: interactionCounts.note },
-          ].map(({ type, icon: Icon, count }) => (
+          ] as Array<{ type: TimelineInteraction['type']; icon: typeof Mail; count: number }>).map(
+            ({ type, icon: Icon, count }) => (
             <div
               key={type}
               className="p-3 rounded-lg bg-[var(--app-surface-hover)] text-center"
             >
-              <Icon className={`w-4 h-4 mx-auto mb-1 ${getInteractionColor(type as any)}`} />
+              <Icon className={`w-4 h-4 mx-auto mb-1 ${getInteractionColor(type)}`} />
               <p className="text-xl font-bold">{count}</p>
               <p className="text-xs text-[var(--app-text-muted)] capitalize">{type}s</p>
             </div>

@@ -2,6 +2,8 @@ import { call, put } from 'redux-saga/effects';
 import { normalizeError } from '../utils/normalizeError';
 import type { NormalizedError } from '../types/AsyncState';
 
+type Action<TPayload> = { type: string; payload: TPayload };
+
 /**
  * Test harness utilities for "service throws → failed state" saga pattern
  * Ensures all sagas handle API mode errors correctly
@@ -36,10 +38,10 @@ import type { NormalizedError } from '../types/AsyncState';
  * });
  * ```
  */
-export function getSagaErrorExpectations<Params>(config: {
-  service: (...args: any[]) => any;
+export function getSagaErrorExpectations<Params, Result>(config: {
+  service: (params: Params) => Result;
   params: Params;
-  failedAction: (error: NormalizedError) => any;
+  failedAction: (error: NormalizedError) => Action<NormalizedError>;
 }) {
   const { service, params, failedAction } = config;
   const testError = new Error('API not implemented yet');
@@ -55,11 +57,16 @@ export function getSagaErrorExpectations<Params>(config: {
  * Helper to verify a saga worker follows the standard error handling pattern
  * Returns assertion helpers that can be used with any test framework
  */
-export function createSagaErrorTest<Params>(config: {
-  sagaWorker: (action: any) => Generator;
-  requestedAction: (params: Params) => any;
-  failedAction: (error: NormalizedError) => any;
-  service: (...args: any[]) => any;
+export function createSagaErrorTest<
+  Params,
+  Result,
+  RequestedAction extends { type: string },
+  FailedAction extends { type: string },
+>(config: {
+  sagaWorker: (action: RequestedAction) => Generator;
+  requestedAction: (params: Params) => RequestedAction;
+  failedAction: (error: NormalizedError) => FailedAction;
+  service: (params: Params) => Result;
   mockParams: Params;
 }) {
   const { sagaWorker, requestedAction, failedAction, service, mockParams } = config;

@@ -20,6 +20,13 @@ import {
 } from '@/store/slices/copilotSlice';
 import type { QuickAction, Suggestion } from '@/services/ai/copilotService';
 
+type UITabState = {
+  activeTab?: string;
+  selectedTab?: string;
+  selected?: string;
+  viewMode?: string;
+};
+
 export function useAICopilot() {
   const dispatch = useAppDispatch();
   const pathname = usePathname();
@@ -73,50 +80,44 @@ export function AICopilotSidebar() {
   // Get the active tab from UI state based on current page
   const uiState = useAppSelector((state) => state.ui.byKey);
   const getCurrentTab = useCallback(() => {
+    const getTabValue = (key: string, field: keyof UITabState) => {
+      const state = uiState[key] as UITabState | undefined;
+      return state?.[field] ?? null;
+    };
+
     // Extract tab from page-specific UI state
     if (pathname === '/contacts') {
-      const state = uiState['crm-contacts'] as any;
-      return state?.activeTab || null;
+      return getTabValue('crm-contacts', 'activeTab');
     }
     if (pathname === '/lp-portal') {
-      const state = uiState['lp-investor-portal'] as any;
-      return state?.selectedTab || null;
+      return getTabValue('lp-investor-portal', 'selectedTab');
     }
     if (pathname === '/lp-management') {
-      const state = uiState['lp-management'] as any;
-      return state?.selectedTab || null;
+      return getTabValue('lp-management', 'selectedTab');
     }
     if (pathname === '/deal-intelligence') {
-      const state = uiState['deal-intelligence'] as any;
-      return state?.viewMode || null;
+      return getTabValue('deal-intelligence', 'viewMode');
     }
     if (pathname === '/fund-admin') {
-      const state = uiState['back-office-fund-admin'] as any;
-      return state?.selectedTab || null;
+      return getTabValue('back-office-fund-admin', 'selectedTab');
     }
     if (pathname === '/compliance') {
-      const state = uiState['back-office-compliance'] as any;
-      return state?.selectedTab || null;
+      return getTabValue('back-office-compliance', 'selectedTab');
     }
     if (pathname === '/tax-center') {
-      const state = uiState['back-office-tax-center'] as any;
-      return state?.selectedTab || null;
+      return getTabValue('back-office-tax-center', 'selectedTab');
     }
     if (pathname === '/409a-valuations') {
-      const state = uiState['back-office-valuation-409a'] as any;
-      return state?.selectedTab || null;
+      return getTabValue('back-office-valuation-409a', 'selectedTab');
     }
     if (pathname === '/analytics') {
-      const state = uiState['analytics'] as any;
-      return state?.selected || null;
+      return getTabValue('analytics', 'selected');
     }
     if (pathname === '/portfolio') {
-      const state = uiState['portfolio'] as any;
-      return state?.selected || null;
+      return getTabValue('portfolio', 'selected');
     }
     if (pathname === '/ai-tools') {
-      const state = uiState['ai-tools'] as any;
-      return state?.selected || null;
+      return getTabValue('ai-tools', 'selected');
     }
     return null;
   }, [pathname, uiState]);
