@@ -18,6 +18,7 @@ import {
   EyeOff,
   Check,
   AlertCircle,
+  Settings as SettingsIcon,
   Plus
 } from 'lucide-react';
 import { getRouteConfig } from '@/config/routes';
@@ -84,6 +85,42 @@ export function Settings() {
   const activeSection = settingsUI.activeSection;
   const showPassword = settingsUI.showPassword;
   const twoFactorEnabled = settingsUI.twoFactorEnabled;
+  const activeSectionConfig = settingsSections.find((section) => section.id === activeSection);
+  const activeSectionLabel = activeSectionConfig?.title ?? 'Settings';
+
+  const aiSummaryText = activeSection === 'security'
+    ? `Security status: 2FA is ${twoFactorEnabled ? 'enabled' : 'disabled'}. Review active sessions and update your password regularly.`
+    : activeSection === 'notifications'
+    ? 'Tune email and push alerts to keep signal high. Prioritize compliance and capital call updates.'
+    : activeSection === 'team'
+    ? 'Review member roles and access to keep permissions aligned with fund operations.'
+    : `You are viewing ${activeSectionLabel}. Adjust preferences to keep your workspace aligned with your team.`;
+
+  const headerBadges = [
+    {
+      label: `${settingsSections.length} sections`,
+      size: 'md',
+      variant: 'bordered',
+      className: 'text-[var(--app-text-muted)] border-[var(--app-border)]',
+    },
+    {
+      label: `Active: ${activeSectionLabel}`,
+      size: 'md',
+      variant: 'flat',
+      className: 'bg-[var(--app-primary-bg)] text-[var(--app-primary)]',
+    },
+  ];
+
+  if (activeSection === 'security') {
+    headerBadges.push({
+      label: twoFactorEnabled ? '2FA enabled' : '2FA disabled',
+      size: 'md',
+      variant: 'bordered',
+      className: twoFactorEnabled
+        ? 'text-[var(--app-success)] border-[var(--app-success)]'
+        : 'text-[var(--app-warning)] border-[var(--app-warning)]',
+    });
+  }
 
   const renderSectionContent = () => {
     switch (activeSection) {
@@ -463,13 +500,21 @@ export function Settings() {
 
   return (
     <PageContainer>
-      <div className="mb-4">
-        <Breadcrumb items={routeConfig?.breadcrumbs || []} aiSuggestion={routeConfig?.aiSuggestion} />
-      </div>
+      {routeConfig && (
+        <div className="mb-4">
+          <Breadcrumb items={routeConfig.breadcrumbs} aiSuggestion={routeConfig.aiSuggestion} />
+        </div>
+      )}
 
       <PageHeader
         title="Settings"
         description="Manage your account settings and preferences"
+        icon={SettingsIcon}
+        aiSummary={{
+          text: aiSummaryText,
+          confidence: 0.83,
+        }}
+        badges={headerBadges}
       />
 
       <div className="mt-6 grid grid-cols-1 lg:grid-cols-4 gap-6">
@@ -504,10 +549,10 @@ export function Settings() {
           <Card padding="lg">
             <div className="mb-6">
               <h2 className="text-2xl font-bold mb-2">
-                {settingsSections.find(s => s.id === activeSection)?.title}
+                {activeSectionConfig?.title ?? 'Settings'}
               </h2>
               <p className="text-[var(--app-text-muted)]">
-                {settingsSections.find(s => s.id === activeSection)?.description}
+                {activeSectionConfig?.description ?? 'Manage your account settings and preferences'}
               </p>
             </div>
             {renderSectionContent()}

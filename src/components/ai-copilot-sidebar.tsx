@@ -23,12 +23,16 @@ import type { QuickAction, Suggestion } from '@/services/ai/copilotService';
 export function useAICopilot() {
   const dispatch = useAppDispatch();
   const pathname = usePathname();
+  const { sidebarState, toggleRightSidebar } = useNavigation();
 
   const openWithQuery = useCallback(
     (query: string) => {
+      if (sidebarState.rightCollapsed) {
+        toggleRightSidebar();
+      }
       dispatch(openWithQueryRequested({ pathname, query }));
     },
-    [dispatch, pathname]
+    [dispatch, pathname, sidebarState.rightCollapsed, toggleRightSidebar]
   );
 
   return { openWithQuery };
