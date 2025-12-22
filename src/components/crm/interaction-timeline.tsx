@@ -1,8 +1,9 @@
 'use client';
 
-import { Card, Button, Badge, Input } from '@/ui';
-import { Mail, Phone, Video, MessageSquare, Calendar, Paperclip, Clock, Plus, Filter, ChevronDown, ExternalLink, Edit3, Trash2 } from 'lucide-react';
+import { Card, Button, Badge } from '@/ui';
+import { Mail, Phone, Video, MessageSquare, Calendar, Paperclip, Clock, Plus, Edit3, Trash2 } from 'lucide-react';
 import { useUIKey } from '@/store/ui';
+import { SearchToolbar } from '@/components/ui';
 
 export interface TimelineInteraction {
   id: string;
@@ -171,17 +172,18 @@ export function InteractionTimeline({
 
         {/* Quick Stats */}
         <div className="grid grid-cols-4 gap-2">
-          {[
+          {([
             { type: 'email', icon: Mail, count: interactionCounts.email },
             { type: 'call', icon: Phone, count: interactionCounts.call },
             { type: 'meeting', icon: Video, count: interactionCounts.meeting },
             { type: 'note', icon: MessageSquare, count: interactionCounts.note },
-          ].map(({ type, icon: Icon, count }) => (
+          ] as Array<{ type: TimelineInteraction['type']; icon: typeof Mail; count: number }>).map(
+            ({ type, icon: Icon, count }) => (
             <div
               key={type}
               className="p-3 rounded-lg bg-[var(--app-surface-hover)] text-center"
             >
-              <Icon className={`w-4 h-4 mx-auto mb-1 ${getInteractionColor(type as any)}`} />
+              <Icon className={`w-4 h-4 mx-auto mb-1 ${getInteractionColor(type)}`} />
               <p className="text-xl font-bold">{count}</p>
               <p className="text-xs text-[var(--app-text-muted)] capitalize">{type}s</p>
             </div>
@@ -189,35 +191,34 @@ export function InteractionTimeline({
         </div>
 
         {/* Controls */}
-        <div className="flex flex-col sm:flex-row gap-2">
-          <Input
-            placeholder="Search interactions..."
-            value={searchQuery}
-            onChange={(e) => patchUI({ searchQuery: e.target.value })}
-            startContent={<Filter className="w-4 h-4" />}
-            size="sm"
-            className="flex-1"
-          />
-          <select
-            className="px-3 py-2 text-sm rounded-lg border border-[var(--app-border)] bg-[var(--app-surface)] text-[var(--app-text)]"
-            value={filterType}
-            onChange={(e) => patchUI({ filterType: e.target.value })}
-          >
-            <option value="all">All Types ({interactionCounts.all})</option>
-            <option value="email">Emails ({interactionCounts.email})</option>
-            <option value="call">Calls ({interactionCounts.call})</option>
-            <option value="meeting">Meetings ({interactionCounts.meeting})</option>
-            <option value="note">Notes ({interactionCounts.note})</option>
-          </select>
-          <select
-            className="px-3 py-2 text-sm rounded-lg border border-[var(--app-border)] bg-[var(--app-surface)] text-[var(--app-text)]"
-            value={groupBy}
-            onChange={(e) => patchUI({ groupBy: e.target.value as 'date' | 'type' })}
-          >
-            <option value="date">Group by Date</option>
-            <option value="type">Group by Type</option>
-          </select>
-        </div>
+        <SearchToolbar
+          searchValue={searchQuery}
+          onSearchChange={(value) => patchUI({ searchQuery: value })}
+          searchPlaceholder="Search interactions..."
+          rightActions={(
+            <div className="flex flex-wrap items-center gap-2">
+              <select
+                className="px-3 py-2 text-sm rounded-lg border border-[var(--app-border)] bg-[var(--app-surface)] text-[var(--app-text)]"
+                value={filterType}
+                onChange={(e) => patchUI({ filterType: e.target.value })}
+              >
+                <option value="all">All Types ({interactionCounts.all})</option>
+                <option value="email">Emails ({interactionCounts.email})</option>
+                <option value="call">Calls ({interactionCounts.call})</option>
+                <option value="meeting">Meetings ({interactionCounts.meeting})</option>
+                <option value="note">Notes ({interactionCounts.note})</option>
+              </select>
+              <select
+                className="px-3 py-2 text-sm rounded-lg border border-[var(--app-border)] bg-[var(--app-surface)] text-[var(--app-text)]"
+                value={groupBy}
+                onChange={(e) => patchUI({ groupBy: e.target.value as 'date' | 'type' })}
+              >
+                <option value="date">Group by Date</option>
+                <option value="type">Group by Type</option>
+              </select>
+            </div>
+          )}
+        />
 
         {/* Add Interaction Buttons */}
         {onAddInteraction && (

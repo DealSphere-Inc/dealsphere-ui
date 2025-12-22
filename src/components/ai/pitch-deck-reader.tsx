@@ -2,14 +2,14 @@
 
 import { useEffect } from 'react';
 import { Card, Button, Badge, Progress } from '@/ui';
-import { Upload, FileText, Sparkles, CheckCircle2, Clock, AlertCircle, Download, Eye } from 'lucide-react';
+import { Upload, FileText, Sparkles, CheckCircle2, Clock, Download, Eye } from 'lucide-react';
 import { DocumentPreviewModal, useDocumentPreview, getMockDocumentUrl } from '@/components/documents/preview';
-import type { PitchDeckAnalysis } from '@/services/ai/pitchDeckService';
 import { useUIKey } from '@/store/ui';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { pitchDeckUploadRequested } from '@/store/slices/uiEffectsSlice';
 import { pitchDeckAnalysesRequested, pitchDeckSelectors } from '@/store/slices/aiSlice';
 import { EmptyState, ErrorState, LoadingState } from '@/components/ui/async-states';
+import { StatusBadge } from '@/components/ui';
 
 const defaultPitchDeckReaderState = {
   selectedAnalysisId: null as string | null,
@@ -65,29 +65,9 @@ export function PitchDeckReader() {
     );
   }
 
-  const getStatusIcon = (status: PitchDeckAnalysis['status']) => {
-    switch (status) {
-      case 'completed':
-        return <CheckCircle2 className="w-4 h-4 text-[var(--app-success)]" />;
-      case 'processing':
-        return <Clock className="w-4 h-4 text-[var(--app-warning)]" />;
-      case 'failed':
-        return <AlertCircle className="w-4 h-4 text-[var(--app-danger)]" />;
-    }
-  };
-
-  const getStatusBadge = (status: PitchDeckAnalysis['status']) => {
-    switch (status) {
-      case 'completed':
-        return <Badge size="sm" className="bg-[var(--app-success-bg)] text-[var(--app-success)]">Completed</Badge>;
-      case 'processing':
-        return <Badge size="sm" className="bg-[var(--app-warning-bg)] text-[var(--app-warning)]">Processing</Badge>;
-      case 'failed':
-        return <Badge size="sm" className="bg-[var(--app-danger-bg)] text-[var(--app-danger)]">Failed</Badge>;
-    }
-  };
-
   if (selectedAnalysis) {
+    const keyHires = selectedAnalysis.summary?.team.keyHires ?? [];
+
     return (
       <div className="space-y-6">
         {/* Header */}
@@ -107,7 +87,7 @@ export function PitchDeckReader() {
               <Badge size="sm" variant="flat" className="bg-[var(--app-surface-hover)]">
                 {selectedAnalysis.extractedData?.slides} slides
               </Badge>
-              {getStatusBadge(selectedAnalysis.status)}
+              <StatusBadge status={selectedAnalysis.status} domain="general" size="sm" showIcon />
               <span className="text-xs text-[var(--app-text-muted)]">
                 Analyzed on {new Date(selectedAnalysis.uploadDate).toLocaleDateString()}
               </span>
@@ -126,9 +106,9 @@ export function PitchDeckReader() {
                     type: 'pdf',
                     url: getMockDocumentUrl('pdf'),
                     metadata: {
-                      aiInsights: selectedAnalysis.aiInsights,
-                      summary: selectedAnalysis.summary,
-                      extractedData: selectedAnalysis.extractedData,
+                      aiInsights: selectedAnalysis.aiInsights ?? [],
+                      summary: selectedAnalysis.summary ?? null,
+                      extractedData: selectedAnalysis.extractedData ?? null,
                     },
                   });
                 }
@@ -233,11 +213,11 @@ export function PitchDeckReader() {
                   ))}
                 </ul>
               </div>
-              {selectedAnalysis.summary?.team.keyHires.length! > 0 && (
+              {keyHires.length > 0 && (
                 <div>
                   <p className="text-xs text-[var(--app-text-muted)] mb-2">Key Hires</p>
                   <ul className="space-y-1">
-                    {selectedAnalysis.summary?.team.keyHires.map((hire, idx) => (
+                    {keyHires.map((hire, idx) => (
                       <li key={idx} className="text-sm">• {hire}</li>
                     ))}
                   </ul>
@@ -352,11 +332,10 @@ export function PitchDeckReader() {
           >
             <div className="flex items-start justify-between gap-4">
               <div className="flex items-start gap-3 flex-1">
-                {getStatusIcon(analysis.status)}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
                     <h4 className="font-medium truncate">{analysis.fileName}</h4>
-                    {getStatusBadge(analysis.status)}
+                    <StatusBadge status={analysis.status} domain="general" size="sm" showIcon />
                   </div>
                   {analysis.status === 'completed' && analysis.summary && (
                     <>
@@ -413,7 +392,6 @@ export function PitchDeckReader() {
           document={preview.previewDocument}
           isOpen={preview.isOpen}
           onClose={preview.closePreview}
-          aiInsights={preview.previewDocument.metadata as any}
         />
       )}
     </Card>

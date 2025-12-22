@@ -7,6 +7,14 @@ export type DocumentType =
   | 'archive'
   | 'other';
 
+export type JsonValue =
+  | string
+  | number
+  | boolean
+  | null
+  | JsonValue[]
+  | { [key: string]: JsonValue };
+
 export interface PreviewDocument {
   id: string;
   name: string;
@@ -19,7 +27,7 @@ export interface PreviewDocument {
   category?: string;
   tags?: string[];
   thumbnailUrl?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, JsonValue>;
 }
 
 export interface DocumentPreviewProps {

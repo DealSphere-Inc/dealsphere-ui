@@ -81,7 +81,7 @@ export function AITaskPrioritizer({ tasks, onTaskClick }: AITaskPrioritizerProps
               All tasks completed!
             </p>
             <p className="text-xs text-[var(--app-text-muted)]">
-              You're all caught up for today
+              You&apos;re all caught up for today
             </p>
           </div>
         ) : (

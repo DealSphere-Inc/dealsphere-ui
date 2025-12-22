@@ -12,10 +12,9 @@ import { normalizeError } from '@/store/utils/normalizeError';
  * Worker saga: Load portfolio updates
  */
 function* loadPortfolioUpdatesWorker(
-  action: ReturnType<typeof portfolioUpdatesRequested>
+  _action: ReturnType<typeof portfolioUpdatesRequested>
 ): SagaIterator {
   try {
-    const params = action.payload;
     const updates = yield call(getPortfolioUpdates);
     yield put(portfolioUpdatesLoaded({ updates }));
   } catch (error: unknown) {

@@ -4,7 +4,7 @@ import { Tabs as NextUITabs, TabsProps as NextUITabsProps, Tab as NextUITab } fr
 import { cn } from '@nextui-org/react';
 import { ComponentProps } from 'react';
 
-export interface TabsProps extends NextUITabsProps {}
+export type TabsProps = NextUITabsProps;
 export type TabProps = ComponentProps<typeof NextUITab>;
 
 export const Tab = NextUITab;

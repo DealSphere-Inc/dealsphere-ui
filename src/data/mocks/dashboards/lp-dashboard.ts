@@ -92,3 +92,8 @@ export const lpDashboardCapitalActivity = [
   { type: 'Distribution', amount: '$125K', date: 'Sep 15, 2024', status: 'Received' },
   { type: 'Capital Call', amount: '$500K', date: 'Jul 01, 2024', status: 'Paid' },
 ];
+
+export const lpDashboardCommitment = {
+  totalCommitment: 10_000_000,
+  calledAmount: 6_500_000,
+};

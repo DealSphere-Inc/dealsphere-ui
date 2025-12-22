@@ -21,7 +21,7 @@ const searchSlice = createSlice({
   name: 'search',
   initialState,
   reducers: {
-    searchRequested: (state, action: PayloadAction<SearchParams>) => {
+    searchRequested: (state, _action: PayloadAction<SearchParams>) => {
       state.status = 'loading';
       state.error = undefined;
     },

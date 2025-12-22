@@ -22,22 +22,21 @@ import { CSS } from '@dnd-kit/utilities';
 import { Card, Badge } from '@/ui';
 import { useUIKey } from '@/store/ui';
 
-interface KanbanItem {
+type KanbanItemBase = {
   id: UniqueIdentifier;
-  [key: string]: any;
-}
+};
 
-interface KanbanColumn {
+interface KanbanColumn<T extends KanbanItemBase> {
   id: string;
   title: string;
-  items: KanbanItem[];
+  items: T[];
 }
 
-interface KanbanBoardProps {
+interface KanbanBoardProps<T extends KanbanItemBase> {
   stateKey?: string;
-  columns: KanbanColumn[];
+  columns: KanbanColumn<T>[];
   onItemMove: (itemId: UniqueIdentifier, newStage: string) => void;
-  renderItem: (item: KanbanItem) => React.ReactNode;
+  renderItem: (item: T) => React.ReactNode;
 }
 
 function SortableItem({
@@ -75,7 +74,12 @@ function SortableItem({
   );
 }
 
-export function KanbanBoard({ stateKey = 'default', columns, onItemMove, renderItem }: KanbanBoardProps) {
+export function KanbanBoard<T extends KanbanItemBase>({
+  stateKey = 'default',
+  columns,
+  onItemMove,
+  renderItem,
+}: KanbanBoardProps<T>) {
   const { value: ui, patch: patchUI } = useUIKey<{
     activeId: UniqueIdentifier | null;
   }>(`kanban-board:${stateKey}`, {
@@ -114,7 +118,7 @@ export function KanbanBoard({ stateKey = 'default', columns, onItemMove, renderI
     onItemMove(active.id, overColumn.id);
   };
 
-  const handleDragEnd = (event: DragEndEvent) => {
+  const handleDragEnd = (_event: DragEndEvent) => {
     patchUI({ activeId: null });
   };
 

@@ -10,9 +10,7 @@ export interface FundsData {
   funds: Fund[];
 }
 
-export interface GetFundsParams extends Partial<StandardQueryParams> {
-  // Add filters as needed (e.g., status, type)
-}
+export type GetFundsParams = Partial<StandardQueryParams>;
 
 interface FundState extends AsyncState<FundsData> {
   // UI state (not part of async data)
@@ -25,14 +23,14 @@ const initialState: FundState = {
   ...createInitialAsyncState<FundsData>(),
   hydrated: false,
   selectedFundId: null,
-  viewMode: 'individual',
+  viewMode: 'consolidated',
 };
 
 const fundSlice = createSlice({
   name: 'fund',
   initialState,
   reducers: {
-    fundsRequested: (state, action: PayloadAction<GetFundsParams>) => {
+    fundsRequested: (state, _action: PayloadAction<GetFundsParams>) => {
       state.status = 'loading';
       state.error = undefined;
     },
@@ -41,8 +39,12 @@ const fundSlice = createSlice({
       state.status = 'succeeded';
       state.error = undefined;
 
-      // Auto-select first fund if none selected
-      if (state.selectedFundId === null && action.payload.funds.length > 0) {
+      // Auto-select first fund only when viewing individual mode
+      if (
+        state.selectedFundId === null
+        && state.viewMode === 'individual'
+        && action.payload.funds.length > 0
+      ) {
         state.selectedFundId = action.payload.funds[0]!.id;
       }
     },

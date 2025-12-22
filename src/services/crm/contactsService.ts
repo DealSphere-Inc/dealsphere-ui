@@ -13,7 +13,7 @@ export type { Contact, Interaction } from '@/data/mocks/crm/contacts';
  * Get CRM contacts with optional filters
  * GraphQL-ready: Accepts params even in mock mode for seamless API migration
  */
-export function getCRMContacts(params: GetCRMDataParams) {
+export function getCRMContacts(_params: GetCRMDataParams) {
   if (isMockMode()) {
     // Mock mode: Accept params but return static data
     // Future: Filter by contactType, apply pagination
@@ -25,21 +25,21 @@ export function getCRMContacts(params: GetCRMDataParams) {
   throw new Error('CRM contacts API not implemented yet');
 }
 
-export function getCRMEmailAccounts(params: GetCRMDataParams) {
+export function getCRMEmailAccounts(_params: GetCRMDataParams) {
   if (isMockMode()) {
     return mockEmailAccounts;
   }
   throw new Error('CRM email accounts API not implemented yet');
 }
 
-export function getCRMInteractions(params: GetCRMDataParams) {
+export function getCRMInteractions(_params: GetCRMDataParams) {
   if (isMockMode()) {
     return mockInteractions;
   }
   throw new Error('CRM interactions API not implemented yet');
 }
 
-export function getCRMTimelineInteractions(params: GetCRMDataParams) {
+export function getCRMTimelineInteractions(_params: GetCRMDataParams) {
   if (isMockMode()) {
     return mockTimelineInteractions;
   }

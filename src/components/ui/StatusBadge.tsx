@@ -1,5 +1,5 @@
 import React from 'react';
-import { getStatusColor, getStatusColorVars, type StatusDomain } from '@/utils/styling/statusColors';
+import { getStatusColor, type StatusDomain } from '@/utils/styling/statusColors';
 import { getStatusIcon } from '@/utils/styling/statusIcons';
 
 /**

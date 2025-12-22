@@ -1,8 +1,7 @@
 'use client'
 
-import { useEffect } from 'react';
 import { Card, Button, Badge, Progress } from '@/ui';
-import { Star, User, TrendingUp, Target, Users, Lightbulb, CheckCircle2, Edit3 } from 'lucide-react';
+import { Star, TrendingUp, Target, Users, Lightbulb, CheckCircle2, Edit3 } from 'lucide-react';
 import { useUIKey } from '@/store/ui';
 import { getCompanyScoreData } from '@/services/dealflow/companyScoringService';
 // import { useAppDispatch, useAppSelector } from '@/store/hooks';
@@ -175,7 +174,7 @@ export function CompanyScoring({ companyId, companyName }: { companyId: number; 
         <h4 className="font-semibold mb-4">Score Breakdown by Criteria</h4>
         <div className="space-y-4">
           {defaultCriteria.map(criteria => {
-            const avgScore = scoreData.individualScores.reduce((sum: number, score: any) =>
+            const avgScore = scoreData.individualScores.reduce((sum: number, score) =>
               sum + (score.scores[criteria.id] || 0), 0) / scoreData.individualScores.length;
 
             return (
@@ -223,7 +222,7 @@ export function CompanyScoring({ companyId, companyName }: { companyId: number; 
       <div>
         <h4 className="font-semibold mb-4">Individual Partner Scores</h4>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-          {scoreData.individualScores.map((partnerScore: any) => (
+          {scoreData.individualScores.map((partnerScore) => (
             <Card key={partnerScore.partnerId} padding="md">
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-3">
@@ -259,7 +258,7 @@ export function CompanyScoring({ companyId, companyName }: { companyId: number; 
               {partnerScore.comments && (
                 <div className="pt-3 border-t border-[var(--app-border)]">
                   <p className="text-xs text-[var(--app-text-muted)] italic">
-                    "{partnerScore.comments}"
+                    &quot;{partnerScore.comments}&quot;
                   </p>
                 </div>
               )}

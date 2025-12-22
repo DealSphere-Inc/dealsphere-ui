@@ -34,6 +34,8 @@ export interface PortfolioCompanyTax {
   contactEmail: string;
 }
 
+export const mockFilingDeadline = new Date('2025-03-15');
+
 export const mockTaxDocuments: TaxDocument[] = [
   {
     id: '1',
@@ -173,4 +175,3 @@ export const mockPortfolioTax: PortfolioCompanyTax[] = [
     contactEmail: 'cfo@aianalytics.com',
   },
 ];
-

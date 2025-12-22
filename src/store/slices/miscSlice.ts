@@ -4,6 +4,9 @@ import { createInitialAsyncState } from '@/store/types/AsyncState';
 import type { RootState } from '../rootReducer';
 import type { CalendarAccount, CalendarEvent } from '@/components/integrations/calendar-integration';
 import type { IntegrationSummary } from '@/types/integrations';
+import type { InvestorData, QuarterlyReport, Transaction } from '@/data/mocks/lp-portal/lp-investor-portal';
+import type { AuditEvent } from '@/data/mocks/blockchain/audit-trail';
+import type { Company } from '@/data/mocks/deal-intelligence/company-search';
 
 // Types for each feature
 interface IntegrationsData {
@@ -13,19 +16,19 @@ interface IntegrationsData {
 }
 
 interface LPPortalData {
-  investor: any;
-  reports: any[];
-  transactions: any[];
+  investor: InvestorData;
+  reports: QuarterlyReport[];
+  transactions: Transaction[];
 }
 
 interface AuditTrailData {
-  events: any[];
+  events: AuditEvent[];
 }
 
 interface CompanySearchData {
-  companies: any[];
-  industries: any[];
-  stages: any[];
+  companies: Company[];
+  industries: string[];
+  stages: string[];
 }
 
 interface MiscState {

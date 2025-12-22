@@ -3,7 +3,7 @@
 import { useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button, Badge } from '@/ui';
-import { X, Check, Trash2, Tag, Archive, Mail, Download, MoreHorizontal } from 'lucide-react';
+import { X, Trash2, Tag, Archive, Download, MoreHorizontal } from 'lucide-react';
 import { useUIKey } from '@/store/ui';
 
 export interface BulkAction {

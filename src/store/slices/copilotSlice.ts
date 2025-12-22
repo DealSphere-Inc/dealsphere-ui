@@ -1,7 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type { AsyncState, NormalizedError } from '@/store/types/AsyncState';
 import { createInitialAsyncState } from '@/store/types/AsyncState';
-import { createAsyncSelectors } from '@/store/utils/createAsyncSelectors';
 import type { QuickAction, Suggestion } from '@/services/ai/copilotService';
 import type { StandardQueryParams } from '@/types/serviceParams';
 
@@ -19,6 +18,14 @@ export type ExternalCopilotMessage = {
   confidence?: number;
 };
 
+export type CopilotContextValue =
+  | string
+  | number
+  | boolean
+  | null
+  | CopilotContextValue[]
+  | { [key: string]: CopilotContextValue };
+
 export interface CopilotSuggestionsData {
   suggestions: Suggestion[];
   quickActions: QuickAction[];
@@ -27,7 +34,7 @@ export interface CopilotSuggestionsData {
 export interface GetCopilotSuggestionsParams extends Partial<StandardQueryParams> {
   pathname: string;
   tab?: string | null; // Current active tab on the page
-  context?: Record<string, any>; // Additional context (selected items, filters, etc.)
+  context?: Record<string, CopilotContextValue>; // Additional context (selected items, filters, etc.)
 }
 
 interface CopilotState {
@@ -133,7 +140,7 @@ const copilotSlice = createSlice({
     },
 
     // Async actions for loading suggestions/quick actions
-    copilotSuggestionsRequested: (state, action: PayloadAction<GetCopilotSuggestionsParams>) => {
+    copilotSuggestionsRequested: (state, _action: PayloadAction<GetCopilotSuggestionsParams>) => {
       state.suggestionsState.status = 'loading';
       state.suggestionsState.error = undefined;
     },

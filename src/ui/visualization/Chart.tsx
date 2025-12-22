@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactNode } from 'react';
+import type { ComponentProps, ReactNode } from 'react';
 import {
   BarChart as RechartsBarChart,
   LineChart as RechartsLineChart,
@@ -18,6 +18,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
+import type { CartesianGridProps, TooltipProps, XAxisProps, YAxisProps } from 'recharts';
 
 /**
  * Chart Wrapper Components
@@ -27,11 +28,11 @@ import {
  */
 
 // Default chart configuration with theme colors
-const defaultAxisStyle = {
+const defaultAxisStyle: XAxisProps['style'] = {
   fontSize: '12px',
 };
 
-const defaultTooltipStyle = {
+const defaultTooltipStyle: TooltipProps<number | string, string>['contentStyle'] = {
   backgroundColor: 'var(--app-surface)',
   border: '1px solid var(--app-border)',
   borderRadius: '8px',
@@ -45,31 +46,40 @@ const defaultAxisStroke = 'var(--app-text-muted)';
 export { ResponsiveContainer, Bar, Line, Area, Pie, Cell, Legend };
 
 // Custom Axis components with default styling
-export function ChartXAxis({ stroke = defaultAxisStroke, style = defaultAxisStyle, ...props }: any) {
+export function ChartXAxis({ stroke = defaultAxisStroke, style = defaultAxisStyle, ...props }: XAxisProps) {
   return <XAxis stroke={stroke} style={style} {...props} />;
 }
 
-export function ChartYAxis({ stroke = defaultAxisStroke, style = defaultAxisStyle, ...props }: any) {
+export function ChartYAxis({ stroke = defaultAxisStroke, style = defaultAxisStyle, ...props }: YAxisProps) {
   return <YAxis stroke={stroke} style={style} {...props} />;
 }
 
 // Custom Grid with default styling
-export function ChartGrid({ strokeDasharray = '3 3', stroke = defaultGridStroke, ...props }: any) {
+export function ChartGrid({ strokeDasharray = '3 3', stroke = defaultGridStroke, ...props }: CartesianGridProps) {
   return <CartesianGrid strokeDasharray={strokeDasharray} stroke={stroke} {...props} />;
 }
 
 // Custom Tooltip with theme styling
-export function ChartTooltip({ contentStyle = defaultTooltipStyle, ...props }: any) {
+export function ChartTooltip({ contentStyle = defaultTooltipStyle, ...props }: TooltipProps<number | string, string>) {
   return <Tooltip contentStyle={contentStyle} {...props} />;
 }
 
+export type ChartDatum = Record<string, string | number | boolean | null | undefined | Date>;
+
+export type ChartMargin = { top?: number; right?: number; bottom?: number; left?: number };
+
+type BarChartBaseProps = Omit<ComponentProps<typeof RechartsBarChart>, 'data' | 'width' | 'height' | 'children'>;
+type LineChartBaseProps = Omit<ComponentProps<typeof RechartsLineChart>, 'data' | 'width' | 'height' | 'children'>;
+type AreaChartBaseProps = Omit<ComponentProps<typeof RechartsAreaChart>, 'data' | 'width' | 'height' | 'children'>;
+type PieChartBaseProps = Omit<ComponentProps<typeof RechartsPieChart>, 'width' | 'height' | 'children'>;
+
 // Bar Chart wrapper
-export interface BarChartProps {
-  data: any[];
+export interface BarChartProps extends BarChartBaseProps {
+  data: ChartDatum[];
   children: ReactNode;
   width?: string | number;
   height?: number;
-  margin?: { top?: number; right?: number; bottom?: number; left?: number };
+  margin?: ChartMargin;
 }
 
 export function BarChart({ data, children, width = '100%', height = 300, margin, ...props }: BarChartProps) {
@@ -83,12 +93,12 @@ export function BarChart({ data, children, width = '100%', height = 300, margin,
 }
 
 // Line Chart wrapper
-export interface LineChartProps {
-  data: any[];
+export interface LineChartProps extends LineChartBaseProps {
+  data: ChartDatum[];
   children: ReactNode;
   width?: string | number;
   height?: number;
-  margin?: { top?: number; right?: number; bottom?: number; left?: number };
+  margin?: ChartMargin;
 }
 
 export function LineChart({ data, children, width = '100%', height = 300, margin, ...props }: LineChartProps) {
@@ -102,12 +112,12 @@ export function LineChart({ data, children, width = '100%', height = 300, margin
 }
 
 // Area Chart wrapper
-export interface AreaChartProps {
-  data: any[];
+export interface AreaChartProps extends AreaChartBaseProps {
+  data: ChartDatum[];
   children: ReactNode;
   width?: string | number;
   height?: number;
-  margin?: { top?: number; right?: number; bottom?: number; left?: number };
+  margin?: ChartMargin;
 }
 
 export function AreaChart({ data, children, width = '100%', height = 300, margin, ...props }: AreaChartProps) {
@@ -121,7 +131,7 @@ export function AreaChart({ data, children, width = '100%', height = 300, margin
 }
 
 // Pie Chart wrapper
-export interface PieChartProps {
+export interface PieChartProps extends PieChartBaseProps {
   children: ReactNode;
   width?: string | number;
   height?: number;

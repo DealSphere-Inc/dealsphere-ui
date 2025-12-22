@@ -1,15 +1,15 @@
 'use client'
 
-import { Plus, Filter, Search, Upload, Download, Eye, FileText, CheckCircle2, Clock, AlertCircle, Circle } from 'lucide-react';
-import { Button, Card, Badge, Input, PageContainer } from '@/ui';
+import { Filter, Upload, Download, Eye, FileText, AlertCircle } from 'lucide-react';
+import { Button, Card, Badge } from '@/ui';
+import { ListItemCard, SearchToolbar, StatusBadge } from '@/components/ui';
 import { DocumentPreviewModal, useDocumentPreview, getMockDocumentUrl, inferDocumentType } from './documents/preview';
 import { useUIKey } from '@/store/ui';
+import { PortfolioTabHeader } from '@/components/portfolio-tab-header';
 import {
   getPortfolioDocumentsSnapshot,
   type PortfolioDocumentCompany as PortfolioCompany,
-  type PortfolioDocument as Document,
   type PortfolioDocumentCategory as DocumentCategory,
-  type PortfolioDocumentStatus as DocumentStatus,
 } from '@/services/portfolio/portfolioDocumentsService';
 
 export function PortfolioDocuments() {
@@ -26,40 +26,6 @@ export function PortfolioDocuments() {
   const { selectedCompany, selectedCategory, searchQuery } = ui;
   const preview = useDocumentPreview();
 
-  const getStatusIcon = (status: DocumentStatus) => {
-    switch (status) {
-      case 'overdue':
-        return <AlertCircle className="w-4 h-4 text-[var(--app-danger)]" />;
-      case 'due-soon':
-        return <Clock className="w-4 h-4 text-[var(--app-warning)]" />;
-      case 'pending-review':
-        return <Eye className="w-4 h-4 text-[var(--app-info)]" />;
-      case 'current':
-        return <CheckCircle2 className="w-4 h-4 text-[var(--app-success)]" />;
-      case 'awaiting-upload':
-        return <Upload className="w-4 h-4 text-[var(--app-text-subtle)]" />;
-      default:
-        return <Circle className="w-4 h-4 text-[var(--app-text-subtle)]" />;
-    }
-  };
-
-  const getStatusBadgeClass = (status: DocumentStatus) => {
-    switch (status) {
-      case 'overdue':
-        return 'bg-[var(--app-danger-bg)] text-[var(--app-danger)]';
-      case 'due-soon':
-        return 'bg-[var(--app-warning-bg)] text-[var(--app-warning)]';
-      case 'pending-review':
-        return 'bg-[var(--app-info-bg)] text-[var(--app-info)]';
-      case 'current':
-        return 'bg-[var(--app-success-bg)] text-[var(--app-success)]';
-      case 'awaiting-upload':
-        return 'bg-[var(--app-surface-hover)] text-[var(--app-text-muted)]';
-      default:
-        return 'bg-[var(--app-surface-hover)] text-[var(--app-text-muted)]';
-    }
-  };
-
   const filteredDocuments = documents.filter(doc => {
     const matchesCompany = !selectedCompany || doc.companyId === selectedCompany.id;
     const matchesCategory = selectedCategory === 'all' || doc.category === selectedCategory;
@@ -73,16 +39,12 @@ export function PortfolioDocuments() {
   const pendingCount = documents.filter(d => d.status === 'pending-review').length;
 
   return (
-    <PageContainer>
+    <div>
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 sm:mb-8 gap-4">
-        <div>
-          <h2 className="text-2xl sm:text-3xl mb-2">Portfolio</h2>
-          <p className="text-sm sm:text-base text-[var(--app-text-muted)]">
-            Document management for portfolio companies
-          </p>
-        </div>
-        <div className="flex items-center gap-2 sm:gap-3">
+      <PortfolioTabHeader
+        title="Portfolio Documents"
+        description="Document management for portfolio companies"
+        actions={(
           <Button
             variant="flat"
             size="sm"
@@ -91,8 +53,8 @@ export function PortfolioDocuments() {
           >
             Upload Document
           </Button>
-        </div>
-      </div>
+        )}
+      />
 
       {/* Attention Items */}
       {(overdueCount > 0 || pendingCount > 0) && (
@@ -185,23 +147,20 @@ export function PortfolioDocuments() {
         {/* Document Library */}
         <Card className="lg:col-span-3" padding="md">
           {/* Search and Filters */}
-          <div className="flex flex-col sm:flex-row gap-4 mb-6">
-            <div className="flex-1">
-              <Input
-                type="text"
-                placeholder="Search documents..."
-                value={searchQuery}
-                onChange={(e) => patchUI({ searchQuery: e.target.value })}
-                startContent={<Search className="w-4 h-4 text-[var(--app-text-subtle)]" />}
-                size="md"
-              />
-            </div>
-            <Button
-              variant="flat"
-              startContent={<Filter className="w-4 h-4" />}
-            >
-              Category
-            </Button>
+          <div className="mb-6">
+            <SearchToolbar
+              searchValue={searchQuery}
+              onSearchChange={(value) => patchUI({ searchQuery: value })}
+              searchPlaceholder="Search documents..."
+              rightActions={(
+                <Button
+                  variant="flat"
+                  startContent={<Filter className="w-4 h-4" />}
+                >
+                  Category
+                </Button>
+              )}
+            />
           </div>
 
           {/* Document Categories */}
@@ -244,55 +203,39 @@ export function PortfolioDocuments() {
             ) : (
               <div className="space-y-2">
                 {filteredDocuments.map((doc) => (
-                  <Card
+                  <ListItemCard
                     key={doc.id}
-                    padding="sm"
-                    className="hover:bg-[var(--app-surface-hover)] transition-colors cursor-pointer"
-                  >
-                    <div className="flex items-center justify-between gap-4">
-                      <div className="flex items-center gap-3 flex-1 min-w-0">
-                        {getStatusIcon(doc.status)}
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-1">
-                            <span className="font-medium text-sm truncate">{doc.name}</span>
-                            <Badge
-                              size="sm"
-                              variant="flat"
-                              className={getStatusBadgeClass(doc.status)}
-                            >
-                              {doc.status.replace('-', ' ')}
-                            </Badge>
-                          </div>
-                          <div className="flex items-center gap-2 text-xs text-[var(--app-text-muted)]">
-                            <span className="font-medium text-[var(--app-text)]">{doc.companyName}</span>
-                            {doc.frequency && (
-                              <>
-                                <span>•</span>
-                                <span className="capitalize">{doc.frequency}</span>
-                              </>
-                            )}
-                            {doc.uploadedBy && (
-                              <>
-                                <span>•</span>
-                                <span>{doc.uploadedBy}</span>
-                              </>
-                            )}
-                            {doc.uploadedDate && (
-                              <>
-                                <span>•</span>
-                                <span>{doc.uploadedDate}</span>
-                              </>
-                            )}
-                            {doc.dueDate && (
-                              <>
-                                <span>•</span>
-                                <span>Due: {doc.dueDate}</span>
-                              </>
-                            )}
-                          </div>
-                        </div>
+                    icon={<FileText className="w-4 h-4 text-[var(--app-primary)]" />}
+                    title={doc.name}
+                    badges={(
+                      <StatusBadge status={doc.status} domain="documents" size="sm" showIcon />
+                    )}
+                    description={doc.companyName}
+                    meta={(
+                      <div className="flex flex-wrap items-center gap-2">
+                        {doc.frequency && (
+                          <>
+                            <span className="capitalize">{doc.frequency}</span>
+                            <span>•</span>
+                          </>
+                        )}
+                        {doc.uploadedBy && (
+                          <>
+                            <span>{doc.uploadedBy}</span>
+                            <span>•</span>
+                          </>
+                        )}
+                        {doc.uploadedDate && (
+                          <>
+                            <span>{doc.uploadedDate}</span>
+                            <span>•</span>
+                          </>
+                        )}
+                        {doc.dueDate && <span>Due: {doc.dueDate}</span>}
                       </div>
-                      <div className="flex items-center gap-4">
+                    )}
+                    actions={(
+                      <div className="flex items-center gap-3">
                         {doc.size && (
                           <span className="text-xs text-[var(--app-text-muted)] hidden sm:inline">{doc.size}</span>
                         )}
@@ -330,8 +273,8 @@ export function PortfolioDocuments() {
                           )}
                         </div>
                       </div>
-                    </div>
-                  </Card>
+                    )}
+                  />
                 ))}
               </div>
             )}
@@ -347,6 +290,6 @@ export function PortfolioDocuments() {
           onClose={preview.closePreview}
         />
       )}
-    </PageContainer>
+    </div>
   );
 }

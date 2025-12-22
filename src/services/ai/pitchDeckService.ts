@@ -8,7 +8,7 @@ export type { PitchDeckAnalysis };
  * Get pitch deck analyses with optional filters
  * GraphQL-ready: Accepts params even in mock mode for seamless API migration
  */
-export function getPitchDeckAnalyses(params: GetPitchDeckAnalysesParams): PitchDeckAnalysis[] {
+export function getPitchDeckAnalyses(_params: GetPitchDeckAnalysesParams): PitchDeckAnalysis[] {
   if (isMockMode()) {
     // Mock mode: Accept params but return static data
     // Future: Filter by dealId, apply pagination

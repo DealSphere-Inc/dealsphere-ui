@@ -1,7 +1,7 @@
 'use client';
 
 import { Card, Button } from '@/ui';
-import { Link as LinkIcon, RefreshCw, Sparkles, Shield, Layers, Zap, ArrowRight, Eye, FileText, Users, BarChart3, Bot, Database, CheckCircle2 } from 'lucide-react';
+import { Link as LinkIcon, RefreshCw, Sparkles, Shield, Layers, ArrowRight, Eye, FileText, BarChart3, Bot, Database, CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
 
 export default function FeaturesPage() {

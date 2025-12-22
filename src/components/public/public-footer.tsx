@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 
 export function PublicFooter() {
   return (
@@ -8,7 +9,16 @@ export function PublicFooter() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 mb-6 sm:mb-8">
           <div className="col-span-2 md:col-span-1">
-            <h4 className="text-base sm:text-lg mb-3 sm:mb-4 text-[var(--app-primary)] font-bold">vestledger</h4>
+            <Link href="/" className="flex items-center gap-2 mb-3 sm:mb-4">
+              <Image
+                src="/logo/Print_Transparent.svg"
+                alt="VestLedger logo"
+                width={24}
+                height={24}
+                className="h-6 w-6"
+              />
+              <h4 className="text-base sm:text-lg text-[var(--app-primary)] font-bold">VestLedger</h4>
+            </Link>
             <p className="text-xs sm:text-sm text-[var(--app-text-muted)]">
               The next-generation VC workflow management platform.
             </p>

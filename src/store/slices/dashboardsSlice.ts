@@ -2,14 +2,103 @@ import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import type { AsyncState, NormalizedError } from '@/store/types/AsyncState';
 import { createInitialAsyncState } from '@/store/types/AsyncState';
 import type { RootState } from '../rootReducer';
+import type { LucideIcon } from 'lucide-react';
+import type { PendingCapitalCall, PendingSignature } from '@/data/mocks/dashboards/lp-dashboard';
+
+export interface DashboardMetric {
+  label: string;
+  value: string;
+  change: string;
+  trend: 'up' | 'down';
+  icon: LucideIcon;
+}
+
+export interface LPDashboardDocument {
+  name: string;
+  type: string;
+  date: string;
+}
+
+export interface LPDashboardCapitalActivity {
+  type: string;
+  amount: string;
+  date: string;
+  status: string;
+}
+
+export interface AnalystRecentDeal {
+  name: string;
+  stage: string;
+  score: number;
+  sector: string;
+}
+
+export interface AnalystUrgentTask {
+  task: string;
+  due: string;
+  priority: 'High' | 'Medium' | 'Low';
+}
+
+export interface OpsComplianceAlert {
+  title: string;
+  fund: string;
+  description: string;
+  severity: 'High' | 'Medium' | 'Low';
+}
+
+export interface OpsUpcomingDistribution {
+  event: string;
+  date: string;
+  amount: string;
+  status: string;
+}
+
+export interface AuditorAuditTrail {
+  action: string;
+  fund: string;
+  date: string;
+  hash: string;
+}
+
+export interface AuditorComplianceItem {
+  item: string;
+  status: string;
+  lastCheck: string;
+}
+
+export interface IRRecentInteraction {
+  lp: string;
+  type: string;
+  date: string;
+  notes: string;
+}
+
+export interface IRUpcomingTask {
+  task: string;
+  due: string;
+  priority: 'High' | 'Medium' | 'Low';
+}
+
+export interface ResearcherRecentReport {
+  name: string;
+  type: string;
+  date: string;
+  status: string;
+}
+
+export interface ResearcherTrendingTopic {
+  topic: string;
+  sentiment: string;
+  change: string;
+}
 
 // Define types for each dashboard's data
 export interface LPDashboardData {
-  metrics: any;
-  documents: any[];
-  capitalActivity: any[];
-  pendingCalls: any[];
-  pendingSignatures: any[];
+  metrics: DashboardMetric[];
+  documents: LPDashboardDocument[];
+  capitalActivity: LPDashboardCapitalActivity[];
+  pendingCalls: PendingCapitalCall[];
+  pendingSignatures: PendingSignature[];
   commitment: {
     totalCommitment: number;
     calledAmount: number;
@@ -17,33 +106,33 @@ export interface LPDashboardData {
 }
 
 export interface AnalystDashboardData {
-  metrics: any;
-  recentDeals: any[];
-  urgentTasks: any[];
+  metrics: DashboardMetric[];
+  recentDeals: AnalystRecentDeal[];
+  urgentTasks: AnalystUrgentTask[];
 }
 
 export interface OpsDashboardData {
-  metrics: any;
-  complianceAlerts: any[];
-  upcomingDistributions: any[];
+  metrics: DashboardMetric[];
+  complianceAlerts: OpsComplianceAlert[];
+  upcomingDistributions: OpsUpcomingDistribution[];
 }
 
 export interface AuditorDashboardData {
-  metrics: any;
-  auditTrail: any[];
-  complianceItems: any[];
+  metrics: DashboardMetric[];
+  auditTrail: AuditorAuditTrail[];
+  complianceItems: AuditorComplianceItem[];
 }
 
 export interface IRDashboardData {
-  metrics: any;
-  recentInteractions: any[];
-  upcomingTasks: any[];
+  metrics: DashboardMetric[];
+  recentInteractions: IRRecentInteraction[];
+  upcomingTasks: IRUpcomingTask[];
 }
 
 export interface ResearcherDashboardData {
-  metrics: any;
-  recentReports: any[];
-  trendingTopics: any[];
+  metrics: DashboardMetric[];
+  recentReports: ResearcherRecentReport[];
+  trendingTopics: ResearcherTrendingTopic[];
 }
 
 interface DashboardsState {

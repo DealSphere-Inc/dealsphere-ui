@@ -12,8 +12,6 @@ import {
   GitBranch,
   BarChart3,
   DollarSign,
-  Settings,
-  Calendar,
   Sparkles,
 } from 'lucide-react';
 import './command-palette.css';
@@ -171,8 +169,6 @@ export function CommandPalette() {
       keywords: ['create', 'lp', 'funding'],
     },
   ];
-
-  const allItems = [...pages, ...actions];
 
   return (
     <>

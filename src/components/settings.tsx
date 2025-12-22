@@ -1,14 +1,14 @@
 'use client';
 
 import { useUIKey } from '@/store/ui';
-import { Card, Button, Input, PageContainer, PageHeader, Breadcrumb, Badge } from '@/ui';
+import { Card, Button, Input, Badge } from '@/ui';
+import type { PageHeaderBadge } from '@/ui';
 import {
   User,
   Bell,
   Shield,
   Palette,
   Globe,
-  Key,
   CreditCard,
   Users,
   Mail,
@@ -18,14 +18,16 @@ import {
   EyeOff,
   Check,
   AlertCircle,
+  Settings as SettingsIcon,
   Plus
 } from 'lucide-react';
-import { getRouteConfig } from '@/config/routes';
+import type { LucideIcon } from 'lucide-react';
+import { PageScaffold, StatusBadge } from '@/components/ui';
 
 interface SettingsSection {
   id: string;
   title: string;
-  icon: any;
+  icon: LucideIcon;
   description: string;
 }
 
@@ -75,7 +77,6 @@ const settingsSections: SettingsSection[] = [
 ];
 
 export function Settings() {
-  const routeConfig = getRouteConfig('/settings');
   const { value: settingsUI, patch: patchSettingsUI } = useUIKey('settings', {
     activeSection: 'profile',
     showPassword: false,
@@ -84,6 +85,42 @@ export function Settings() {
   const activeSection = settingsUI.activeSection;
   const showPassword = settingsUI.showPassword;
   const twoFactorEnabled = settingsUI.twoFactorEnabled;
+  const activeSectionConfig = settingsSections.find((section) => section.id === activeSection);
+  const activeSectionLabel = activeSectionConfig?.title ?? 'Settings';
+
+  const aiSummaryText = activeSection === 'security'
+    ? `Security status: 2FA is ${twoFactorEnabled ? 'enabled' : 'disabled'}. Review active sessions and update your password regularly.`
+    : activeSection === 'notifications'
+    ? 'Tune email and push alerts to keep signal high. Prioritize compliance and capital call updates.'
+    : activeSection === 'team'
+    ? 'Review member roles and access to keep permissions aligned with fund operations.'
+    : `You are viewing ${activeSectionLabel}. Adjust preferences to keep your workspace aligned with your team.`;
+
+  const headerBadges: PageHeaderBadge[] = [
+    {
+      label: `${settingsSections.length} sections`,
+      size: 'md',
+      variant: 'bordered',
+      className: 'text-[var(--app-text-muted)] border-[var(--app-border)]',
+    },
+    {
+      label: `Active: ${activeSectionLabel}`,
+      size: 'md',
+      variant: 'flat',
+      className: 'bg-[var(--app-primary-bg)] text-[var(--app-primary)]',
+    },
+  ];
+
+  if (activeSection === 'security') {
+    headerBadges.push({
+      label: twoFactorEnabled ? '2FA enabled' : '2FA disabled',
+      size: 'md',
+      variant: 'bordered',
+      className: twoFactorEnabled
+        ? 'text-[var(--app-success)] border-[var(--app-success)]'
+        : 'text-[var(--app-warning)] border-[var(--app-warning)]',
+    });
+  }
 
   const renderSectionContent = () => {
     switch (activeSection) {
@@ -404,7 +441,7 @@ export function Settings() {
                       <div className="text-sm text-[var(--app-text-muted)]">Professional Plan</div>
                     </div>
                     <div className="flex items-center gap-4">
-                      <Badge color="success">{invoice.status}</Badge>
+                      <StatusBadge status={invoice.status} domain="general" size="sm" />
                       <span className="font-semibold">{invoice.amount}</span>
                       <Button variant="ghost" size="sm">Download</Button>
                     </div>
@@ -441,7 +478,7 @@ export function Settings() {
                       </div>
                     </div>
                     <div className="flex items-center gap-4">
-                      <Badge color={member.status === 'Active' ? 'success' : 'warning'}>{member.status}</Badge>
+                      <StatusBadge status={member.status} domain="general" size="sm" />
                       <select className="px-3 py-1 rounded-lg border border-[var(--app-border)] bg-[var(--app-surface)] text-sm">
                         <option selected={member.role === 'Owner'}>Owner</option>
                         <option selected={member.role === 'Admin'}>Admin</option>
@@ -462,16 +499,19 @@ export function Settings() {
   };
 
   return (
-    <PageContainer>
-      <div className="mb-4">
-        <Breadcrumb items={routeConfig?.breadcrumbs || []} aiSuggestion={routeConfig?.aiSuggestion} />
-      </div>
-
-      <PageHeader
-        title="Settings"
-        description="Manage your account settings and preferences"
-      />
-
+    <PageScaffold
+      routePath="/settings"
+      header={{
+        title: 'Settings',
+        description: 'Manage your account settings and preferences',
+        icon: SettingsIcon,
+        aiSummary: {
+          text: aiSummaryText,
+          confidence: 0.83,
+        },
+        badges: headerBadges,
+      }}
+    >
       <div className="mt-6 grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Settings Navigation */}
         <div className="lg:col-span-1">
@@ -504,16 +544,16 @@ export function Settings() {
           <Card padding="lg">
             <div className="mb-6">
               <h2 className="text-2xl font-bold mb-2">
-                {settingsSections.find(s => s.id === activeSection)?.title}
+                {activeSectionConfig?.title ?? 'Settings'}
               </h2>
               <p className="text-[var(--app-text-muted)]">
-                {settingsSections.find(s => s.id === activeSection)?.description}
+                {activeSectionConfig?.description ?? 'Manage your account settings and preferences'}
               </p>
             </div>
             {renderSectionContent()}
           </Card>
         </div>
       </div>
-    </PageContainer>
+    </PageScaffold>
   );
 }

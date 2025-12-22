@@ -2,7 +2,7 @@
 
 import { Card } from '@/ui';
 import { getValuationTrends } from '@/services/analytics/fundAnalyticsService';
-import { TrendingUp, DollarSign } from 'lucide-react';
+import { DollarSign } from 'lucide-react';
 
 export function ValuationTrends() {
   const valuationTrends = getValuationTrends();
@@ -28,13 +28,6 @@ export function ValuationTrends() {
   const yScaleTVPI = (value: number) => {
     return padding.top + innerHeight - (value / maxTVPI) * innerHeight;
   };
-
-  // Generate path for total portfolio value area
-  const portfolioValuePath = valuationTrends.map((d, i) => {
-    const x = xScale(i);
-    const y = yScaleValue(d.portfolioValue);
-    return i === 0 ? `M ${x} ${y}` : `L ${x} ${y}`;
-  }).join(' ');
 
   // Generate path for unrealized value area
   const unrealizedValuePath = valuationTrends.map((d, i) => {

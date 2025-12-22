@@ -1,7 +1,7 @@
 'use client';
 
 import type { FormEvent } from 'react';
-import { Button, Input, Card, Textarea, Select, SelectItem } from '@/ui';
+import { Button, Input, Card, Textarea, Select } from '@/ui';
 import { ArrowLeft, CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
 import { useUIKey } from '@/store/ui';

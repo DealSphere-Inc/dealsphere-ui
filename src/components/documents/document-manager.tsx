@@ -1,7 +1,7 @@
 'use client';
 
 import { useUIKey } from '@/store/ui';
-import { Card, Button, Badge, Input } from '@/ui';
+import { Card, Button, Badge } from '@/ui';
 import {
   Folder,
   File,
@@ -12,19 +12,16 @@ import {
   Unlock,
   Trash2,
   Star,
-  Clock,
   Tag,
-  Search,
-  Filter,
   Grid3x3,
   List,
   ChevronRight,
   FileText,
-  Image,
+  Image as ImageIcon,
   FileSpreadsheet,
   Archive,
-  MoreVertical,
 } from 'lucide-react';
+import { SearchToolbar } from '@/components/ui';
 
 export type DocumentCategory =
   | 'legal'
@@ -154,8 +151,8 @@ export function DocumentManager({
   onShareDocument,
   onDeleteDocument,
   onToggleFavorite,
-  onMoveDocument,
-  onUpdateAccess,
+  onMoveDocument: _onMoveDocument,
+  onUpdateAccess: _onUpdateAccess,
 }: DocumentManagerProps) {
   const { value: ui, patch: patchUI } = useUIKey<{
     searchQuery: string;
@@ -191,7 +188,7 @@ export function DocumentManager({
       case 'excel':
         return <FileSpreadsheet className="w-5 h-5 text-[var(--app-success)]" />;
       case 'image':
-        return <Image className="w-5 h-5 text-[var(--app-warning)]" />;
+        return <ImageIcon className="w-5 h-5 text-[var(--app-warning)]" />;
       case 'archive':
         return <Archive className="w-5 h-5 text-[var(--app-text-muted)]" />;
       default:
@@ -355,71 +352,70 @@ export function DocumentManager({
       {/* Filters & Search */}
       <Card padding="md">
         <div className="space-y-3">
-          <div className="flex flex-col sm:flex-row gap-2">
-            <Input
-              placeholder="Search documents..."
-              value={searchQuery}
-              onChange={(e) => patchUI({ searchQuery: e.target.value })}
-              startContent={<Search className="w-4 h-4" />}
-              size="sm"
-              className="flex-1"
-            />
-            <select
-              className="px-3 py-2 text-sm rounded-lg border border-[var(--app-border)] bg-[var(--app-surface)] text-[var(--app-text)]"
-              value={filterCategory}
-              onChange={(e) => patchUI({ filterCategory: e.target.value as DocumentCategory | 'all' })}
-            >
-              <option value="all">All Categories</option>
-              <option value="legal">Legal</option>
-              <option value="financial">Financial</option>
-              <option value="tax">Tax</option>
-              <option value="compliance">Compliance</option>
-              <option value="investor-relations">Investor Relations</option>
-              <option value="due-diligence">Due Diligence</option>
-              <option value="portfolio">Portfolio</option>
-              <option value="other">Other</option>
-            </select>
-            <select
-              className="px-3 py-2 text-sm rounded-lg border border-[var(--app-border)] bg-[var(--app-surface)] text-[var(--app-text)]"
-              value={filterAccessLevel}
-              onChange={(e) =>
-                patchUI({ filterAccessLevel: e.target.value as AccessLevel | 'all' })
-              }
-            >
-              <option value="all">All Access</option>
-              <option value="private">Private</option>
-              <option value="internal">Internal</option>
-              <option value="investor">Investor</option>
-              <option value="public">Public</option>
-            </select>
-            <select
-              className="px-3 py-2 text-sm rounded-lg border border-[var(--app-border)] bg-[var(--app-surface)] text-[var(--app-text)]"
-              value={sortBy}
-              onChange={(e) => patchUI({ sortBy: e.target.value as 'name' | 'date' | 'size' })}
-            >
-              <option value="date">Sort by Date</option>
-              <option value="name">Sort by Name</option>
-              <option value="size">Sort by Size</option>
-            </select>
-            <div className="flex gap-1">
-              <Button
-                size="sm"
-                variant={viewMode === 'list' ? 'solid' : 'flat'}
-                isIconOnly
-                onPress={() => patchUI({ viewMode: 'list' })}
-              >
-                <List className="w-4 h-4" />
-              </Button>
-              <Button
-                size="sm"
-                variant={viewMode === 'grid' ? 'solid' : 'flat'}
-                isIconOnly
-                onPress={() => patchUI({ viewMode: 'grid' })}
-              >
-                <Grid3x3 className="w-4 h-4" />
-              </Button>
-            </div>
-          </div>
+          <SearchToolbar
+            searchValue={searchQuery}
+            onSearchChange={(value) => patchUI({ searchQuery: value })}
+            searchPlaceholder="Search documents..."
+            rightActions={(
+              <div className="flex flex-wrap items-center gap-2">
+                <select
+                  className="px-3 py-2 text-sm rounded-lg border border-[var(--app-border)] bg-[var(--app-surface)] text-[var(--app-text)]"
+                  value={filterCategory}
+                  onChange={(e) => patchUI({ filterCategory: e.target.value as DocumentCategory | 'all' })}
+                >
+                  <option value="all">All Categories</option>
+                  <option value="legal">Legal</option>
+                  <option value="financial">Financial</option>
+                  <option value="tax">Tax</option>
+                  <option value="compliance">Compliance</option>
+                  <option value="investor-relations">Investor Relations</option>
+                  <option value="due-diligence">Due Diligence</option>
+                  <option value="portfolio">Portfolio</option>
+                  <option value="other">Other</option>
+                </select>
+                <select
+                  className="px-3 py-2 text-sm rounded-lg border border-[var(--app-border)] bg-[var(--app-surface)] text-[var(--app-text)]"
+                  value={filterAccessLevel}
+                  onChange={(e) =>
+                    patchUI({ filterAccessLevel: e.target.value as AccessLevel | 'all' })
+                  }
+                >
+                  <option value="all">All Access</option>
+                  <option value="private">Private</option>
+                  <option value="internal">Internal</option>
+                  <option value="investor">Investor</option>
+                  <option value="public">Public</option>
+                </select>
+                <select
+                  className="px-3 py-2 text-sm rounded-lg border border-[var(--app-border)] bg-[var(--app-surface)] text-[var(--app-text)]"
+                  value={sortBy}
+                  onChange={(e) => patchUI({ sortBy: e.target.value as 'name' | 'date' | 'size' })}
+                >
+                  <option value="date">Sort by Date</option>
+                  <option value="name">Sort by Name</option>
+                  <option value="size">Sort by Size</option>
+                </select>
+                <div className="flex gap-1">
+                  <Button
+                    size="sm"
+                    variant={viewMode === 'list' ? 'solid' : 'flat'}
+                    isIconOnly
+                    onPress={() => patchUI({ viewMode: 'list' })}
+                  >
+                    <List className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant={viewMode === 'grid' ? 'solid' : 'flat'}
+                    isIconOnly
+                    onPress={() => patchUI({ viewMode: 'grid' })}
+                  >
+                    <Grid3x3 className="w-4 h-4" />
+                  </Button>
+                </div>
+              </div>
+            )}
+          />
 
           {/* Tag Filter */}
           {allTags.length > 0 && (

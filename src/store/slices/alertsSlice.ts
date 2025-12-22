@@ -31,7 +31,7 @@ const alertsSlice = createSlice({
   name: 'alerts',
   initialState,
   reducers: {
-    alertsRequested: (state, action: PayloadAction<GetAlertsParams>) => {
+    alertsRequested: (state, _action: PayloadAction<GetAlertsParams>) => {
       state.status = 'loading';
       state.error = undefined;
     },

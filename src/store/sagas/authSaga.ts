@@ -21,14 +21,16 @@ const STORAGE_USER_KEY = 'user';
 
 function* hydrateAuthWorker() {
   const savedAuth = safeLocalStorage.getItem(STORAGE_AUTH_KEY);
-  const savedUser = safeLocalStorage.getJSON<User>(STORAGE_USER_KEY);
+  const savedUser = safeLocalStorage.getJSON<Partial<User>>(STORAGE_USER_KEY);
 
-  if (savedAuth === 'true' && savedUser) {
-    // Ensure role exists for backwards compatibility
-    if (!('role' in savedUser) || !savedUser.role) {
-      (savedUser as any).role = 'gp';
-    }
-    yield put(authHydrated({ isAuthenticated: true, user: savedUser }));
+  if (savedAuth === 'true' && savedUser?.email && savedUser?.name) {
+    const normalizedUser: User = {
+      name: savedUser.name,
+      email: savedUser.email,
+      role: savedUser.role ?? 'gp',
+      avatar: savedUser.avatar,
+    };
+    yield put(authHydrated({ isAuthenticated: true, user: normalizedUser }));
     return;
   }
 

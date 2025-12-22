@@ -42,7 +42,7 @@ type DecisionWriterState = {
   letterCopied: boolean;
 };
 
-type SagaGenerator = Generator<unknown, void, any>;
+type SagaGenerator = Generator;
 
 const selectUIKey =
   <T>(key: string) =>

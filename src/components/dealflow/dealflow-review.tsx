@@ -1,16 +1,16 @@
 'use client'
 
-import { Card, Button, Badge, Progress, PageContainer, Breadcrumb, PageHeader } from '@/ui';
-import { ThumbsUp, ThumbsDown, MinusCircle, MessageSquare, Users, Building2, TrendingUp, DollarSign, Target, Lightbulb, Share2, Download, Play, Pause, SkipForward, SkipBack, Maximize2, Plus, Edit3, FileSearch , Vote} from 'lucide-react';
-import { getRouteConfig } from '@/config/routes';
+import { Card, Button, Badge, Progress } from '@/ui';
+import { ThumbsUp, ThumbsDown, MinusCircle, MessageSquare, Users, Building2, Target, SkipForward, SkipBack, Plus, Edit3, FileSearch } from 'lucide-react';
 import { CompanyScoring } from './company-scoring';
 import { getDealflowReviewSlides, type DealflowReviewSlide } from '@/services/dealflow/dealflowReviewService';
 import { useUIKey } from '@/store/ui';
 import { dealflowDealsRequested, dealflowSelectors } from '@/store/slices/dealflowSlice';
-import { LoadingState, ErrorState, EmptyState } from '@/components/ui/async-states';
+import { LoadingState, ErrorState } from '@/components/ui/async-states';
 import { UI_STATE_KEYS, UI_STATE_DEFAULTS } from '@/store/constants/uiStateKeys';
 import { formatCurrencyCompact } from '@/utils/formatting';
 import { useAsyncData } from '@/hooks/useAsyncData';
+import { PageScaffold } from '@/components/ui';
 
 interface Vote {
   partnerId: string;
@@ -18,15 +18,6 @@ interface Vote {
   vote: 'yes' | 'no' | 'maybe';
   comments?: string;
   timestamp: string;
-}
-
-interface ReviewSession {
-  id: string;
-  dealId: string;
-  scheduledDate: string;
-  status: 'scheduled' | 'in-progress' | 'completed';
-  votes: Vote[];
-  decision?: 'proceed' | 'pass' | 'defer';
 }
 
 export function DealflowReview() {
@@ -44,10 +35,7 @@ export function DealflowReview() {
   const { value: myVote, patch: patchMyVote } = useUIKey<'yes' | 'no' | 'maybe' | null>('dealflow-review-my-vote', null);
   const { value: voteComment, patch: patchVoteComment } = useUIKey<string>('dealflow-review-vote-comment', '');
 
-  const { currentSlideIndex, selectedDealId } = ui;
-
-  // Get route config for breadcrumbs and AI suggestions
-  const routeConfig = getRouteConfig('/dealflow-review');
+  const { currentSlideIndex } = ui;
 
   // Loading state
   if (isLoading) {
@@ -71,23 +59,18 @@ export function DealflowReview() {
 
   if (!selectedDeal) {
     return (
-      <PageContainer>
-        {routeConfig && (
-          <div className="mb-4">
-            <Breadcrumb items={routeConfig.breadcrumbs} aiSuggestion={routeConfig.aiSuggestion} />
-          </div>
-        )}
-
-        <PageHeader
-          title="Dealflow Review"
-          description="No deals available to review yet"
-          icon={FileSearch}
-        />
-
+      <PageScaffold
+        routePath="/dealflow-review"
+        header={{
+          title: 'Dealflow Review',
+          description: 'No deals available to review yet',
+          icon: FileSearch,
+        }}
+      >
         <Card padding="lg" className="mt-6">
           <div className="text-sm text-[var(--app-text-muted)]">Add deals via the backend integration when ready.</div>
         </Card>
-      </PageContainer>
+      </PageScaffold>
     );
   }
 
@@ -97,7 +80,6 @@ export function DealflowReview() {
 
   // Calculate AI insights for summary
   const yesVotes = votes.filter(v => v.vote === 'yes').length;
-  const noVotes = votes.filter(v => v.vote === 'no').length;
   const maybeVotes = votes.filter(v => v.vote === 'maybe').length;
   const totalVotes = votes.length;
   const consensusPercentage = totalVotes > 0 ? Math.round((yesVotes / totalVotes) * 100) : 0;
@@ -264,7 +246,7 @@ export function DealflowReview() {
             <div>
               <p className="font-semibold mb-3">Leadership Team</p>
               <div className="space-y-3">
-                {currentSlide.content.team.map((member: any, idx: number) => (
+                {currentSlide.content.team.map((member, idx) => (
                   <div key={idx} className="flex items-start gap-3 p-4 rounded-lg bg-[var(--app-surface-hover)]">
                     <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[var(--app-primary)] to-[var(--app-accent)] flex items-center justify-center text-white font-semibold">
                       {member.name.split(' ').map((n: string) => n[0]).join('')}
@@ -306,7 +288,7 @@ export function DealflowReview() {
             <div>
               <p className="font-semibold mb-3">Use of Funds</p>
               <div className="space-y-3">
-                {currentSlide.content.useOfFunds.map((item: any, idx: number) => (
+                {currentSlide.content.useOfFunds.map((item, idx) => (
                   <div key={idx}>
                     <div className="flex items-center justify-between mb-1">
                       <span className="text-sm font-medium">{item.category}</span>
@@ -326,47 +308,36 @@ export function DealflowReview() {
   };
 
   return (
-    <PageContainer>
-      <div className="space-y-6">
-        {/* Breadcrumb Navigation */}
-        {routeConfig && (
-          <div className="mb-4">
-            <Breadcrumb
-              items={routeConfig.breadcrumbs}
-              aiSuggestion={routeConfig.aiSuggestion}
-            />
-          </div>
-        )}
-
-        {/* Page Header with AI Summary */}
-        <PageHeader
-          title="Dealflow Review"
-          description="Collaborative deal review with slide presentation and team voting"
-          icon={FileSearch}
-          aiSummary={{
-            text: totalVotes > 0
-              ? `${consensusPercentage}% consensus for proceeding (${yesVotes}/${totalVotes} votes in favor). ${maybeVotes} votes requiring more due diligence. Reviewing: ${selectedDeal.companyName}.`
-              : `Ready to review ${selectedDeal.companyName}. No votes cast yet. Waiting for team feedback on ${currentSlide?.title ?? 'the deck'}.`,
-            confidence: totalVotes > 0 ? 0.88 : 0.72
-          }}
-          primaryAction={{
-            label: isPresenting ? 'Stop Presenting' : 'Start Presentation',
-            onClick: () => patchIsPresenting(!isPresenting),
-            aiSuggested: false
-          }}
-          secondaryActions={[
-            {
-              label: 'Share',
-              onClick: () => console.log('Share clicked')
-            },
-            {
-              label: 'Export',
-              onClick: () => console.log('Export clicked')
-            }
-          ]}
-        />
-
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+    <PageScaffold
+      routePath="/dealflow-review"
+      header={{
+        title: 'Dealflow Review',
+        description: 'Collaborative deal review with slide presentation and team voting',
+        icon: FileSearch,
+        aiSummary: {
+          text: totalVotes > 0
+            ? `${consensusPercentage}% consensus for proceeding (${yesVotes}/${totalVotes} votes in favor). ${maybeVotes} votes requiring more due diligence. Reviewing: ${selectedDeal.companyName}.`
+            : `Ready to review ${selectedDeal.companyName}. No votes cast yet. Waiting for team feedback on ${currentSlide?.title ?? 'the deck'}.`,
+          confidence: totalVotes > 0 ? 0.88 : 0.72,
+        },
+        primaryAction: {
+          label: isPresenting ? 'Stop Presenting' : 'Start Presentation',
+          onClick: () => patchIsPresenting(!isPresenting),
+          aiSuggested: false,
+        },
+        secondaryActions: [
+          {
+            label: 'Share',
+            onClick: () => console.log('Share clicked'),
+          },
+          {
+            label: 'Export',
+            onClick: () => console.log('Export clicked'),
+          },
+        ],
+      }}
+    >
+      <div className="mt-6 grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Slide Navigation */}
         <div className="lg:col-span-1">
           <Card padding="md">
@@ -540,7 +511,6 @@ export function DealflowReview() {
           </Card>
         </div>
       </div>
-      </div>
-    </PageContainer>
+    </PageScaffold>
   );
 }

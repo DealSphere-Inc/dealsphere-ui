@@ -1,4 +1,4 @@
-import { call, put, takeLatest, debounce } from 'redux-saga/effects';
+import { call, put, debounce } from 'redux-saga/effects';
 import type { SagaIterator } from 'redux-saga';
 import {
   searchRequested,

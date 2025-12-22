@@ -27,9 +27,11 @@ function* hydrateFundWorker(): SagaIterator {
   const viewMode: FundViewMode =
     rawViewMode === 'individual' || rawViewMode === 'consolidated' || rawViewMode === 'comparison'
       ? rawViewMode
-      : 'individual';
+      : 'consolidated';
 
-  yield put(fundHydrated({ selectedFundId, viewMode }));
+  const normalizedSelectedFundId = viewMode === 'consolidated' ? null : selectedFundId;
+
+  yield put(fundHydrated({ selectedFundId: normalizedSelectedFundId, viewMode }));
 }
 
 function* persistSelectedFundIdWorker(): SagaIterator {

@@ -1,10 +1,8 @@
 'use client'
 
 import { useEffect } from 'react';
-import { useTheme } from 'next-themes';
 import { motion } from 'framer-motion';
-import { Switch } from '@/ui';
-import { LayoutDashboard, GitBranch, Briefcase, Search, Vote, TrendingUp, Users, UserCheck, DollarSign, Shield, Scale, Receipt, FileDown, Sparkles, Activity, BarChart3, Sun, Moon, Settings, FileText, Plug } from 'lucide-react';
+import { LayoutDashboard, GitBranch, Briefcase, Search, Vote, TrendingUp, Users, UserCheck, DollarSign, Shield, Scale, Receipt, FileDown, Sparkles, Activity, BarChart3, Settings, FileText, Plug } from 'lucide-react';
 import { NavigationGroup } from './navigation-group';
 import { NavigationItem } from './navigation-item';
 import { SidebarToggleButton } from './sidebar-toggle-button';
@@ -12,6 +10,7 @@ import { useNavigation } from '@/contexts/navigation-context';
 import { useAIBadges } from '@/hooks/use-ai-badges';
 import { useAuth, UserRole } from '@/contexts/auth-context';
 import { useUIKey } from '@/store/ui';
+import Image from 'next/image';
 
 // Define navigation structure
 const navigationStructure = {
@@ -89,7 +88,6 @@ const navigationStructure = {
 export function SidebarGrouped() {
   const { updateBadge, sidebarState, toggleLeftSidebar } = useNavigation();
   const aiBadges = useAIBadges();
-  const { theme, setTheme } = useTheme();
   const { user } = useAuth();
   const isCollapsed = sidebarState.leftCollapsed;
   const { value: sidebarUI, patch: patchSidebarUI } = useUIKey('sidebar-grouped', {
@@ -148,14 +146,26 @@ export function SidebarGrouped() {
       >
         {effectivelyCollapsed ? (
           <div className="flex items-center justify-center w-full">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[var(--app-primary)] to-[var(--app-secondary)] flex items-center justify-center">
-              <span className="text-white font-bold text-sm">VL</span>
+            <div className="w-9 h-9 rounded-lg bg-[var(--app-surface)]/80 border border-[var(--app-border)] flex items-center justify-center">
+              <Image
+                src="/logo/Print_Transparent.svg"
+                alt="VestLedger logo"
+                width={24}
+                height={24}
+                className="h-6 w-6"
+              />
             </div>
           </div>
         ) : (
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[var(--app-primary)] to-[var(--app-secondary)] flex items-center justify-center">
-              <span className="text-white font-bold text-sm">VL</span>
+            <div className="w-8 h-8 rounded-lg bg-[var(--app-surface)]/80 border border-[var(--app-border)] flex items-center justify-center">
+              <Image
+                src="/logo/Print_Transparent.svg"
+                alt="VestLedger logo"
+                width={24}
+                height={24}
+                className="h-6 w-6"
+              />
             </div>
             <div>
               <h1 className="text-sm font-bold text-[var(--app-text)]">VestLedger</h1>

@@ -3,7 +3,6 @@
 import { motion } from 'framer-motion';
 import { Sparkles, Send, FileText, Users, DollarSign, BarChart, MessageSquare } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
-import { Button } from '@/ui';
 
 export interface QuickAction {
   id: string;

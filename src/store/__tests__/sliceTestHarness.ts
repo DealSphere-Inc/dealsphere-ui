@@ -1,6 +1,8 @@
 import type { AsyncState } from '../types/AsyncState';
 import type { NormalizedError } from '../types/AsyncState';
 
+type Action<TPayload> = { type: string; payload: TPayload };
+
 /**
  * Test harness utilities for async state slice reducers
  * Ensures all slices follow the standard AsyncState<T> contract
@@ -79,18 +81,22 @@ export function getSliceTestExpectations<T>(config: { mockData: T }) {
  * Creates a complete set of slice reducer tests
  * Returns an object with test functions that can be called in your test suite
  */
-export function createSliceTests<T>(config: {
-  reducer: (state: AsyncState<T> | undefined, action: any) => AsyncState<T>;
+export function createSliceTests<T, Params = Record<string, never>>(config: {
+  reducer: (
+    state: AsyncState<T> | undefined,
+    action: { type: string; payload?: T | Params | NormalizedError }
+  ) => AsyncState<T>;
   actions: {
-    requested: (params: any) => any;
-    loaded: (data: T) => any;
-    failed: (error: NormalizedError) => any;
+    requested: (params: Params) => Action<Params>;
+    loaded: (data: T) => Action<T>;
+    failed: (error: NormalizedError) => Action<NormalizedError>;
   };
   mockData: T;
-  mockParams?: any;
+  mockParams?: Params;
 }) {
-  const { reducer, actions, mockData, mockParams = {} } = config;
+  const { reducer, actions, mockData, mockParams } = config;
   const expectations = getSliceTestExpectations({ mockData });
+  const requestedParams = mockParams ?? ({} as Params);
 
   return {
     /**
@@ -105,7 +111,7 @@ export function createSliceTests<T>(config: {
      * Verify requested action sets loading state
      */
     getLoadingState: () => {
-      return reducer(expectations.initialState, actions.requested(mockParams));
+      return reducer(expectations.initialState, actions.requested(requestedParams));
     },
     expectedLoadingStatus: 'loading' as const,
 

@@ -7,6 +7,7 @@ import { Button, Input, Card, Modal } from '@/ui';
 import { Select, SelectItem } from "@nextui-org/react";
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export function Homepage() {
   const { login } = useAuth();
@@ -75,6 +76,17 @@ export function Homepage() {
       {/* Hero Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-20 md:py-32">
         <div className="max-w-4xl mx-auto text-center">
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <Image
+              src="/logo/Print_Transparent.svg"
+              alt="VestLedger logo"
+              width={48}
+              height={48}
+              className="h-10 w-10"
+              priority
+            />
+            <span className="text-xs uppercase tracking-[0.35em] text-[var(--app-text-muted)]">VestLedger</span>
+          </div>
           <div className="inline-block px-3 sm:px-4 py-1.5 sm:py-2 bg-[var(--app-primary-bg)] text-[var(--app-primary)] rounded-full text-xs sm:text-sm mb-4 sm:mb-6">
             Tokenized Trust • Automated Operations • AI Advisor
           </div>

@@ -13,7 +13,7 @@ import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
  * - Coordinating multiple saga operations from a single action
  * - Lifecycle events (e.g., clientMounted for hydration timing)
  */
-interface UIEffectsState {}
+type UIEffectsState = Record<string, never>;
 
 const initialState: UIEffectsState = {};
 

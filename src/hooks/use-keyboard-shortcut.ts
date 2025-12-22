@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, type DependencyList } from 'react';
 
 interface ShortcutConfig {
   key: string;
@@ -11,18 +11,18 @@ interface ShortcutConfig {
 export function useKeyboardShortcut(
   config: ShortcutConfig,
   callback: () => void,
-  deps: any[] = []
+  deps: DependencyList = []
 ) {
+  const {
+    key,
+    metaKey = false,
+    ctrlKey = false,
+    shiftKey = false,
+    altKey = false,
+  } = config;
+
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      const {
-        key,
-        metaKey = false,
-        ctrlKey = false,
-        shiftKey = false,
-        altKey = false,
-      } = config;
-
       const modifiersMatch =
         event.metaKey === metaKey &&
         event.ctrlKey === ctrlKey &&
@@ -39,5 +39,5 @@ export function useKeyboardShortcut(
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [config.key, config.metaKey, config.ctrlKey, config.shiftKey, config.altKey, ...deps]);
+  }, [key, metaKey, ctrlKey, shiftKey, altKey, callback, deps]);
 }

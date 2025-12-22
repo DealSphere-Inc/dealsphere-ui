@@ -7,7 +7,7 @@ import { mockFunds } from '@/data/mocks/funds';
  * Fetch funds with optional filters
  * GraphQL-ready: Accepts params even in mock mode for seamless API migration
  */
-export async function fetchFunds(params: GetFundsParams): Promise<Fund[]> {
+export async function fetchFunds(_params: GetFundsParams): Promise<Fund[]> {
   if (isMockMode()) {
     // Mock mode: Accept params but return static data
     // Future: Filter/sort by params (status, type, etc.)

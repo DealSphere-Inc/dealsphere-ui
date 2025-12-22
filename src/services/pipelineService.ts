@@ -41,7 +41,7 @@ export function getPipelineCopilotSuggestions() {
  * GraphQL-ready function to load complete pipeline data
  * Accepts params even in mock mode for seamless API migration
  */
-export function getPipelineData(params: GetPipelineParams): PipelineData {
+export function getPipelineData(_params: GetPipelineParams): PipelineData {
   if (isMockMode()) {
     // Mock mode: Accept params but return static data
     // Future: Filter by stageFilter, apply pagination

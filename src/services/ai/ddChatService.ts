@@ -12,7 +12,7 @@ export type { Message };
  * Get initial DD chat conversation for a deal
  * GraphQL-ready: Accepts params even in mock mode for seamless API migration
  */
-export function getInitialDDChatConversation(params: GetDDChatConversationParams): Message[] {
+export function getInitialDDChatConversation(_params: GetDDChatConversationParams): Message[] {
   if (isMockMode()) {
     // Mock mode: Accept params but return static data
     // Future: Fetch conversation for specific dealId

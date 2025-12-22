@@ -2,6 +2,8 @@
  * Centralized UI state persistence keys
  * Prevents key collisions and ensures namespacing
  */
+import type { ActiveDeal } from '@/services/dealIntelligence/dealIntelligenceService';
+
 export const UI_STATE_KEYS = {
   // Navigation
   NAV_EXPANDED_GROUPS: 'vestledger-nav-expanded-groups',
@@ -36,7 +38,7 @@ export const UI_STATE_DEFAULTS = {
   },
 
   dealIntelligence: {
-    selectedDeal: null as any,
+    selectedDeal: null as ActiveDeal | null,
     selectedCategory: 'all',
     searchQuery: '',
     viewMode: 'fund-level' as 'fund-level' | 'per-deal',

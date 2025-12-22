@@ -9,6 +9,7 @@ import type {
   FundAnalytics,
   DocumentCategory,
 } from '@/services/dealIntelligence/dealIntelligenceService';
+import type { LucideIcon } from 'lucide-react';
 import type { StandardQueryParams } from '@/types/serviceParams';
 
 export interface DealIntelligenceData {
@@ -17,14 +18,14 @@ export interface DealIntelligenceData {
   documentCategories: Array<{
     id: DocumentCategory;
     name: string;
-    icon: any;
+    icon: LucideIcon;
     color: string;
   }>;
   fundAnalytics: FundAnalytics;
   documents: Document[];
 }
 
-export interface GetDealIntelligenceParams extends Partial<StandardQueryParams> {}
+export type GetDealIntelligenceParams = Partial<StandardQueryParams>;
 
 type DealIntelligenceState = AsyncState<DealIntelligenceData>;
 
@@ -34,7 +35,7 @@ const dealIntelligenceSlice = createSlice({
   name: 'dealIntelligence',
   initialState,
   reducers: {
-    dealIntelligenceRequested: (state, action: PayloadAction<GetDealIntelligenceParams>) => {
+    dealIntelligenceRequested: (state, _action: PayloadAction<GetDealIntelligenceParams>) => {
       state.status = 'loading';
       state.error = undefined;
     },
